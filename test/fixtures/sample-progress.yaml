@@ -1,0 +1,81 @@
+project:
+  name: Agent Context Protocol
+  version: 6.4.5
+  started: '2026-01-01'
+  status: in_progress
+  current_milestone: M25
+  description: ACP Enhanced framework
+
+milestones:
+  M25:
+    name: ACP Progress Visualizer (P0 MVP)
+    priority: 1
+    status: in_progress
+    progress: 13
+    started: '2026-05-06'
+    completed: null
+    estimated_weeks: '2'
+    tasks_completed: 1
+    tasks_total: 8
+    file: agent/milestones/milestone-25-acp-progress-visualizer.md
+    notes: ''
+  M33:
+    name: Pattern Documentation
+    priority: 2
+    status: completed
+    progress: 100
+    started: '2026-05-01'
+    completed: '2026-05-06'
+    estimated_weeks: '1'
+    tasks_completed: 3
+    tasks_total: 3
+    file: agent/milestones/milestone-33-pattern-docs.md
+    notes: ''
+
+tasks:
+  M25:
+    - id: task-137
+      name: Bootstrap Repository
+      priority: 1
+      status: completed
+      started: '2026-05-06'
+      file: agent/tasks/milestone-25-acp-progress-visualizer/task-137-bootstrap-repository.md
+      estimated_hours: '1-2'
+      actual_hours: 1.5
+      completed_date: '2026-05-06T10:00:00Z'
+      notes: ''
+    - id: task-138
+      name: YAML Parser + TypeScript Data Model
+      priority: 2
+      status: not_started
+      started: null
+      file: agent/tasks/milestone-25-acp-progress-visualizer/task-138-yaml-parser-data-model.md
+      estimated_hours: '2-3'
+      actual_hours: null
+      completed_date: null
+      notes: ''
+  M33:
+    - id: task-173
+      name: Pattern Documentation
+      priority: 1
+      status: completed
+      started: '2026-05-01'
+      file: agent/tasks/milestone-33-pattern-docs/task-173-pattern-docs.md
+      estimated_hours: '2-3'
+      actual_hours: 2.5
+      completed_date: '2026-05-06T08:00:00Z'
+      notes: ''
+
+recent_work:
+  - date: '2026-05-06'
+    description: Bootstrapped visualizer repo
+    items:
+      - Created TanStack Start project
+      - Added dependencies
+
+next_steps:
+  - Implement YAML parser
+  - Build milestone table view
+
+notes:
+  - macOS BSD compatibility required

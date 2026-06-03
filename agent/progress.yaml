@@ -346,3 +346,18 @@ current_blockers: []
     notes: |
       Ship visualizer as npm package. npx acp-visualizer for zero-install usage.
       CLI entry point, auto-detect project, flags, publish workflow.
+
+  M32:
+    name: Extended Visualizations
+    priority: 2
+    status: not_started
+    progress: 0
+    started: null
+    completed: null
+    estimated_weeks: "1.5"
+    tasks_completed: 0
+    tasks_total: 6
+    file: agent/milestones/milestone-32-extended-visualizations.md
+    notes: |
+      Visualize sessions, ADRs, lessons, patterns, packages, and audits.
+      Six new views beyond milestones and tasks.

@@ -5,6 +5,13 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-06-03
+
+### Fixed
+
+- **M31 audit fixes**: Version sync (package.json → 1.2.0), removed extra `scripts/` from files field, fixed positional arg parsing in CLI, added `test/cli-e2e.test.ts` (4 tests)
+- 43 tests passing (39 + 4 CLI E2E)
+
 ## [1.2.0] - 2026-06-03
 
 ### Added

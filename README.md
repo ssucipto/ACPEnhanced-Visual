@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/ACP%20Enhanced-v6.8.2-6e47ff?style=flat-square" alt="ACP Enhanced">
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License">
   <img src="https://img.shields.io/badge/milestones-7%20complete-blueviolet?style=flat-square" alt="Milestones">
-  <img src="https://img.shields.io/badge/tests-39%20passing-success?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/tests-43%20passing-success?style=flat-square" alt="Tests">
 </p>
 
 > **Bring your ACP Enhanced progress.yaml to life.** A local web dashboard that turns structured YAML milestone data into an interactive, sortable, searchable UI.

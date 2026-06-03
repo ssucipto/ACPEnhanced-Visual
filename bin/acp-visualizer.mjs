@@ -114,8 +114,8 @@ if (flags.repo) {
 } else if (flags.path) {
   env.PROGRESS_YAML_PATH = resolve(flags.path);
 } else {
-  // Auto-detect from CWD or use positional arg
-  const positional = args.find(a => !a.startsWith('-') && a !== flags.path && a !== flags.repo && a !== flags.port);
+  // Auto-detect from CWD or use positional arg (first non-flag argument)
+  const positional = args.find(a => !a.startsWith('-'));
   const detected = positional
     ? resolve(positional)
     : findProgressYaml(process.cwd());

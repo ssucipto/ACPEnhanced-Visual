@@ -1,6 +1,6 @@
 {
   "name": "acp-visualizer",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "private": false,
   "type": "module",
   "bin": {
@@ -26,7 +26,6 @@
     "src/",
     "public/",
     "bin/",
-    "scripts/",
     "package.json",
     "README.md",
     "vite.config.ts",

@@ -5,13 +5,14 @@ export interface ProgressData {
   recent_work: WorkEntry[];
   next_steps: string[];
   notes: string[];
+  current_blockers: string[];
 }
 
 export interface ProjectMetadata {
   name: string;
   version: string;
   started: string;
-  status: 'in_progress' | 'completed' | 'not_started';
+  status: 'active' | 'in_progress' | 'completed' | 'not_started';
   current_milestone: string;
   description: string;
 }

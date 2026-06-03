@@ -28,5 +28,6 @@ export function parseProgressYaml(raw: string): ProgressData {
     recent_work: (doc['recent_work'] as WorkEntry[]) ?? [],
     next_steps: (doc['next_steps'] as string[]) ?? [],
     notes: (doc['notes'] as string[]) ?? [],
+    current_blockers: (doc['current_blockers'] as string[]) ?? [],
   };
 }

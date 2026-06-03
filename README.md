@@ -5,7 +5,8 @@
   <img src="https://img.shields.io/badge/status-active-emerald?style=flat-square" alt="Status">
   <img src="https://img.shields.io/badge/ACP%20Enhanced-v6.8.2-6e47ff?style=flat-square" alt="ACP Enhanced">
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/milestones-4%20total%20%7C%201%20done%20%7C%203%20planned-blueviolet?style=flat-square" alt="Milestones">
+  <img src="https://img.shields.io/badge/milestones-4%20complete-blueviolet?style=flat-square" alt="Milestones">
+  <img src="https://img.shields.io/badge/tests-25%20passing-success?style=flat-square" alt="Tests">
 </p>
 
 > **Bring your ACP Enhanced progress.yaml to life.** A local web dashboard that turns structured YAML milestone data into an interactive, sortable, searchable UI.
@@ -124,11 +125,11 @@ See [`agent/memory/decisions.md`](agent/memory/decisions.md) for the full sync c
 | Milestone | Status | Tasks |
 |-----------|--------|-------|
 | M25 — P0 MVP | ✅ Completed | 7/7 |
-| M26 — Schema Hardening | ⬚ Planned | 0/4 |
-| M27 — CI & Quality Pipeline | ⬚ Planned | 0/6 |
-| M28 — ACP Sync Contract | ⬚ Planned | 0/5 |
+| M26 — Schema Hardening | ✅ Completed | 4/4 |
+| M27 — CI & Quality Pipeline | ✅ Completed | 6/6 |
+| M28 — ACP Sync Contract | ✅ Completed | 5/5 |
 
-> Run `npm run dev` to see the live dashboard with full details.
+> **25 tests passing** · TypeScript strict · GitHub Actions CI · Zod validation · ACP Enhanced v6.8.2 compatible
 
 ---
 

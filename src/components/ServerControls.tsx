@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { shutdown, getServerInfo } from '../../server/routes/api/shutdown';
 
+const DS_MAX_LENGTH = 50;
+
 /**
  * Displays server port and data source in the header.
  */
@@ -13,8 +15,8 @@ export function ServerInfoDisplay() {
 
   if (!info) return null;
 
-  const dsShort = info.dataSource.length > 50
-    ? '…' + info.dataSource.slice(-47)
+  const dsShort = info.dataSource.length > DS_MAX_LENGTH
+    ? '…' + info.dataSource.slice(-(DS_MAX_LENGTH - 3))
     : info.dataSource;
 
   return (

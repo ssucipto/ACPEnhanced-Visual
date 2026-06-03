@@ -2,7 +2,7 @@ import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-r
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useSyncExternalStore } from 'react'
 import { SearchBar } from '../components/SearchBar'
 import { RateLimitBanner } from '../components/RateLimitBanner'
 import { TabBar } from '../components/TabBar'
@@ -25,6 +25,17 @@ export const Route = createRootRoute({
   component: RootLayout,
 })
 
+/** Subscribes to a never-changing store — `getSnapshot` runs only on client */
+const subscribe = () => () => {}
+function ClientOnly({ children }: { children: React.ReactNode }) {
+  const isServer = useSyncExternalStore(
+    subscribe,
+    () => false,
+    () => true,
+  )
+  return isServer ? null : <>{children}</>
+}
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -33,10 +44,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
-        <TanStackDevtools
-          config={{ position: 'bottom-right' }}
-          plugins={[{ name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> }]}
-        />
+        <ClientOnly>
+          <TanStackDevtools
+            config={{ position: 'bottom-right' }}
+            plugins={[{ name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> }]}
+          />
+        </ClientOnly>
         <Scripts />
       </body>
     </html>

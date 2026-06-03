@@ -255,32 +255,33 @@ tasks:
 recent_work:
   - date: 2026-06-03
     description: |
-      ✅ ACP Enhanced v6.8.2 bootstrapped into project. Full agent/ directory
-      with 63 commands, routing, memory, and wiki. Identity, taxonomy, and
-      wiki files customized for the visualizer project.
+      ✅ Comprehensive session: ACP Enhanced v6.8.2 bootstrapped, project configured,
+      3 audits completed, M26-M28 planned (15 tasks), 3 commits pushed. All framework
+      files committed — project is fully initialized and ready for implementation.
     items:
       - "✅ ACP Enhanced v6.8.2 installed via acp-bootstrap.sh + acp.install.sh"
-      - "✅ 63 slash commands available in .github/prompts/"
+      - "✅ 63 slash commands in .github/prompts/, 63 in agent/commands/, 9 scripts"
       - "✅ Identity, taxonomy, architecture, domain, integrations, skills customized"
-      - "✅ 3 ADRs written (TanStack Start, YAML format, polling strategy)"
-      - "✅ 3 audits completed (scope+sync, plan gap analysis, final gap check)"
-      - "✅ M26-M28 planned: 3 milestones, 15 tasks, ~14h estimated"
-      - "✅ GitHub repo created: ssucipto/agent-context-protocol-visualizer (public)"
-      - "✅ SSH configured for ssucipto identity"
+      - "✅ 3 ADRs: TanStack Start (#1), YAML format (#2), polling strategy (#3)"
+      - "✅ 3 audits: scope+sync (#1), plan gap analysis (#2), final gap check (#3)"
+      - "✅ 9 carryovers tracked in audit-carryovers.md"
+      - "✅ M26-M28 planned: 3 milestones, 15 tasks, ~14h"
+      - "✅ GitHub repo: ssucipto/agent-context-protocol-visualizer (public)"
+      - "✅ 3 commits: d3af196 (plan), a9bcb33 (framework), pending (update)"
+      - "✅ SSH + git config: ssucipto identity, github-ssucipto host alias"
 
 next_steps:
-  - "🔴 M26 T1: Add active status + current_blockers to types, badge & filter"
-  - "🔴 M26 T2: Add Zod schemas for all types"
-  - "🔴 M28 T10: Document schema version pin"
-  - "🔴 M28 T11: Copy ACP Enhanced fixture"
-  - "🟡 M27 T5: GitHub Actions CI workflow"
-  - "🟡 M27 T7-8: Hook and component tests"
+  - "🔴 M26 T1 (task-144): Add active status + current_blockers to types"
+  - "🔴 M26 T2 (task-145): Add Zod schemas for all types"
+  - "🔴 M28 T10 (task-154): Document schema version pin"
+  - "🟡 M27 T5 (task-148): GitHub Actions CI workflow"
 
 notes:
   - M25 MVP completed: 7/7 tasks, TanStack Start + Tailwind dashboard
   - ACP Enhanced v6.8.2 framework installed and configured
-  - 3 audit reports: scope+sync, plan gap analysis, final gap check
-  - 9 carryovers tracked in audit-carryovers.md
-  - M26 (schema), M27 (CI), M28 (sync) planned — 15 tasks total
+  - 3 audit reports in agent/reports/
+  - 9 carryovers tracked in agent/memory/audit-carryovers.md
+  - M26-M28 planned: 15 tasks, ~14h estimated
+  - 3 commits today (2 committed, 1 pending)
 
 current_blockers: []

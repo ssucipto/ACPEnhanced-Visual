@@ -9,16 +9,24 @@ description: >
   fuzzy search, status filtering, and auto-refresh via file watcher.
 
 stack:
-  - primary: TypeScript
-  - framework: TanStack Start (React SSR)
-  - backend: None (reads local YAML files via Node.js server functions)
-  - deployment: Vercel (static + serverless)
+  runtime: Node.js 22+
+  language: TypeScript 5.x (strict mode)
+  framework: TanStack Start (React 19 SSR)
+  ui: React 19 + Tailwind CSS 4
+  table: @tanstack/react-table 8
+  search: fuse.js 7
+  parsing: js-yaml 4 + Zod 4
+  router: @tanstack/react-router 1 (file-based)
+  testing: Vitest 4 + @testing-library/react 16 + jsdom 28
+  build: Vite 8 + @vitejs/plugin-react
+  icons: lucide-react
 
 team: solo-developer
 priorities:
   - code-quality
   - correctness
   - maintainability
+  - performance (fast fuzzy search, low-overhead polling)
 
 repo: github.com/ssucipto/ACPEnhanced-Visual
 
@@ -27,22 +35,3 @@ progress_yaml_target:
   version: 6.8.2
   verified_date: 2026-06-03
   notes: "Schema verified against real ACP Enhanced progress.yaml (5354 lines, 45+ milestones)"
-
-team: solo-developer
-priorities:
-  - correctness: command docs must be unambiguous for any LLM
-  - shell_compat: every .sh must pass on macOS AND Linux
-  - token_efficiency: ACP itself must model what it preaches
-  - test_coverage: every command must have an E2E test file
-
-fork_of: github.com/prmichaelsen/agent-context-protocol
-repo: github.com/ssucipto/acp-enhanced
-version: 6.8.2
-
-# Optional: configure git branch awareness (uncomment to enable)
-# When set, Step 1b will warn if working on the production branch.
-# Uncomment git_workflow to enable branch safety checks in Step 1b.
-# git_workflow:
-#   default_working_branch: develop   # branch agent commits to by default
-#   production_branch: main           # never commit directly to this
-#   branch_model: gitflow-lite        # gitflow-lite | trunk | github-flow

@@ -1,6 +1,6 @@
 project:
   name: ACPEnhanced-Visual
-  version: 1.0.0
+  version: 1.0.1
   started: 2026-06-03
   status: active
   current_milestone: null
@@ -538,6 +538,17 @@ tasks:
 recent_work:
   - date: 2026-06-03
     description: |
+      📋 /acp-init: Bootstrapped domain knowledge from source — extracted 7 entities,
+      5 modules, 6 operations across the TanStack Start codebase. Cleaned wiki docs
+      from prior session artifacts.
+    items:
+      - "📋 agent/wiki/domain.yml — removed leaked command listings, restructured entities/operations/modules with paths"
+      - "📋 agent/core/identity.yml — removed duplicate parent-repo content (fork_of, shell_compat), expanded stack to key-value pairs"
+      - "📋 agent/wiki/integrations.md — verified accurate (filesystem, CI, testing, deployment)"
+      - "✓ No artifacts exist — artifact health check skipped"
+
+  - date: 2026-06-03
+    description: |
       ✅ Comprehensive session: ACP Enhanced v6.8.2 bootstrapped, project configured,
       3 audits completed, M26-M28 planned (15 tasks), 3 commits pushed. All framework
       files committed — project is fully initialized and ready for implementation.
@@ -584,5 +595,7 @@ notes:
   - GitHub Actions CI: lint + test + build on push/PR
   - 4 audits: scope+sync, plan gap, final check, post-impl verification
   - 9 carryovers tracked
+  - /acp-init domain extraction: 7 entities, 5 modules, 6 operations mapped
+  - Wiki docs (domain, identity, integrations) current as of 2026-06-03
 
 current_blockers: []

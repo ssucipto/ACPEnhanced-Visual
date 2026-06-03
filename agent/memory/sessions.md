@@ -7,6 +7,26 @@
   persona: A
   tasks_completed: []
   done:
+    - acp-init-domain-extraction-7-entities-5-modules-6-operations
+    - domain-yml-cleaned-removed-leaked-command-listings
+    - identity-yml-fixed-removed-parent-repo-duplicates
+    - identity-yml-stack-expanded-to-key-value-pairs
+    - integrations-md-verified-accurate-no-changes-needed
+    - acp-update-progress-yaml-synced-with-recent-work
+  deferred: []
+  key_fact: >
+    Wiki hygiene matters. The existing domain.yml had 30+ leaked acp.* command
+    entries from a prior session mixed into the modules section. Identity.yml
+    had duplicate team/priorities blocks and content from the parent
+    ssucipto/acp-enhanced repo (fork_of, shell_compat, token_efficiency) that
+    don't apply to this standalone visualizer. Always verify inherited ACP
+    framework files don't carry parent-project artifacts.
+
+- date: 2026-06-03
+  executor: copilot
+  persona: A
+  tasks_completed: []
+  done:
     - acp-enhanced-v6.8.2-bootstrapped-and-configured
     - project-identity-taxonomy-wiki-customized
     - 3-adrs-written-tanstack-start-yaml-format-polling

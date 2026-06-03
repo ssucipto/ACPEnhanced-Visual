@@ -1,7 +1,7 @@
 # 🚀 ACP Progress Visualizer
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0.0-blue?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/version-1.0.1-blue?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/status-active-emerald?style=flat-square" alt="Status">
   <img src="https://img.shields.io/badge/ACP%20Enhanced-v6.8.2-6e47ff?style=flat-square" alt="ACP Enhanced">
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License">

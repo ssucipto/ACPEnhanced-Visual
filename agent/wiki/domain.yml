@@ -5,99 +5,43 @@
 entities:
   - ProgressData:        Top-level container (project, milestones, tasks, recent_work, next_steps, notes, current_blockers)
   - ProjectMetadata:     name, version, started, status (active|in_progress|completed|not_started), current_milestone, description
-  - Milestone:           Named deliverable with priority, status, progress %, task counts, timeline, notes
-  - Task:                Individual work item with priority, status, estimated/actual hours, milestoneId
+  - Milestone:           Named deliverable with priority, status, progress %, task counts, timeline, notes — id injected from YAML key
+  - Task:                Individual work item with priority, status, estimated/actual hours, milestoneId injected from parent YAML key
   - WorkEntry:           Dated log entry with description and items array
+  - SearchResult:        Discriminated union — { type: 'milestone', item: Milestone } | { type: 'task', item: Task }
+  - StatusFilter:        Union type — 'all' | 'active' | 'in_progress' | 'completed' | 'not_started'
 
 operations:
-  - fetchProgress:       Server function — readFileSync → js-yaml → Zod validate → typed ProgressData
-  - fetchWatchToken:     Server function — statSync mtime for polling-based auto-refresh
-  - useProgressData:     React hook — fetch + 2s polling loop with cleanup on unmount
-  - parseProgressYaml:   YAML → Zod validate → inject milestone/task IDs → typed ProgressData
-  - buildSearchIndex:    fuse.js index — milestones + tasks by name and ID
-  - formatParseError:    ZodError → human-readable field-path error messages
+  data_fetching:
+    - fetchProgress:       Server function (TanStack Start) — readFileSync → js-yaml → Zod validate → typed ProgressData
+    - fetchWatchToken:     Server function — statSync mtime for polling-based auto-refresh (2s interval)
+    - useProgressData:     React hook — initial fetch + 2s polling loop with cleanup on unmount
+  parsing:
+    - parseProgressYaml:   YAML string → js-yaml parse → Zod validate → inject milestone.id / task.milestoneId
+    - formatParseError:    ZodError → human-readable field-path error messages
+  search:
+    - buildSearchIndex:    fuse.js index — milestones + tasks searchable by name (weight 0.7) and ID (weight 0.3)
 
 modules:
-  - server/routes/api:   TanStack Start server functions (progress.ts, watch.ts)
-  - src/lib:             Core logic (types, schemas, yaml-loader, format-error, data-source, search)
-  - src/components:      10 UI components (MilestoneTable, MilestoneTree, ProgressBar, StatusBadge, FilterBar, SearchBar, NextSteps, OverallProgress, ProjectHeader, TaskList)
-  - src/routes:          File-based routes (index, milestones, search)
-  - .github/workflows:   CI pipeline (lint + test + build)
-  - test/fixtures:       Sample and ACP Enhanced progress.yaml fixtures
-      category: core
-      purpose: Invoke the ACP dispatch engine (Persona B/C) to execute a routing task via OpenRouter API, assembling context-optimised prompts and streaming LLM responses.
-    - command: acp.feedback
-      category: core
-      purpose: Capture structured developer feedback about ACP system failures, protocol gaps, or improvement suggestions; write to agent/feedback/feedback-NNN.md.
-      category: core
-      purpose: Generate a context-aware handoff report for transferring work to an agent in a different context.
-    - command: acp.index
-      category: core
-      purpose: Manage the key file index — list, add, remove, explore, and show indexed key files.
-    - command: acp.init
-      category: core
-      purpose: Initialize agent context by loading all documentation, reviewing source code, and preparing for work.
-    - command: acp.install
-      category: core
-      purpose: Install or upgrade ACP Enhanced in the current project directory; copies static ACP files while preserving user state.
-      category: core
-      purpose: Compress old session history into monthly summaries, flag stale patterns, and check wiki files for re-verification — keeps the memory layer lean without losing history.
-    - command: acp.plan
-      category: core
-      purpose: Plan milestones or tasks for undefined items in progress.yaml or new requirements.
-    - command: acp.proceed
-      category: core
-      purpose: Immediately implement the current or next task, with support for autonomous and parallel execution modes.
-    - command: acp.report
-      category: core
-      purpose: Generate a comprehensive project status report including progress, accomplishments, and next steps.
-    - command: acp.resume
-      category: core
-      purpose: Resume work on a project by initializing context, reviewing recent progress, and continuing with the next task.
-    - command: acp.route
-      category: core
-      purpose: Route a task to the cheapest capable AI executor by classifying it against the taxonomy and creating a route file with cost estimates.
-    - command: acp.sessions
-      category: core
-      purpose: Manage and view active agent sessions across projects.
-    - command: acp.spec
-      category: core
-      purpose: Generate a specification document from a clarification, design, draft, requirements doc, or interactive input.
-    - command: acp.status
-      category: core
-      purpose: Display current project status including milestone progress, current task, recent work, and next steps.
-    - command: acp.sync
-      category: core
-      purpose: Synchronize documentation with source code by identifying and updating stale documentation.
-    - command: acp.task
-      category: core
-      purpose: Create, list, read, and stamp routing task files in agent/routing/tasks/ (CRUD wrapper for the routing task layer).
-    - command: acp.task-create
-      category: core
-      purpose: Create task files with proper structure, milestone linking, and automatic progress.yaml updates.
-    - command: acp.update
-      category: core
-      purpose: Update progress.yaml with latest project status, task completion, and recent work.
-    - command: acp.validate
-      category: core
-      purpose: Validate all ACP documents for structure, consistency, correctness, and namespace conventions.
-    - command: acp.wiki-update
-      category: core
-      purpose: Keep wiki files accurate after project evolution — update only the affected section without rewriting the entire file.
-    - command: acp.artifact-glossary
-      category: artifact
-      purpose: Create and maintain project glossaries through auto-extraction and interactive refinement.
-    - command: acp.artifact-reference
-      category: artifact
-      purpose: Create reference guides for passive information after a command-first principle check.
-    - command: acp.artifact-research
-      category: artifact
-      purpose: Create long-lived research artifacts via systematic investigation with web/MCP integration and quality standards.
-    - command: acp.clarification-address
-      category: clarification
-      purpose: Address clarification responses by researching, exploring code/web, using tools, and presenting recommendations.
-    - command: acp.clarification-capture
-      category: clarification
+  server/routes/api:
+    path: server/routes/api/
+    files: [progress.ts, watch.ts]
+    purpose: TanStack Start server functions for filesystem I/O
+  src/lib:
+    path: src/lib/
+    files: [types.ts, schemas.ts, yaml-loader.ts, format-error.ts, data-source.ts, search.ts]
+    purpose: Core domain logic — types, Zod schemas, YAML parsing, data fetching hook, fuse.js search
+  src/components:
+    path: src/components/
+    files: [MilestoneTable.tsx, MilestoneTree.tsx, ProgressBar.tsx, StatusBadge.tsx, FilterBar.tsx, SearchBar.tsx, NextSteps.tsx, OverallProgress.tsx, ProjectHeader.tsx, TaskList.tsx]
+    purpose: Presentational UI components — table, tree, badges, bars, filters
+  src/routes:
+    path: src/routes/
+    files: [__root.tsx, index.tsx, milestones.tsx, search.tsx]
+    purpose: TanStack Router file-based routes — dashboard, milestones (table/tree), fuzzy search
+  test:
+    path: test/
+    purpose: Vitest test suite — yaml-loader (10), hooks (4), components (6), integration (3), sync (2)
       internal: true
       purpose: Capture decisions from ephemeral clarification files and chat context into permanent entity documents.
     - command: acp.clarification-create

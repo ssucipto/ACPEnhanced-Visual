@@ -17,22 +17,47 @@ function getConfig(): DataSourceConfig {
   return _config;
 }
 
+function configFromProject(project?: {
+  source: 'local' | 'github';
+  path?: string;
+  repo?: string;
+  branch?: string;
+}): DataSourceConfig {
+  if (!project) return getConfig();
+  if (project.source === 'github' && project.repo) {
+    return {
+      type: 'github',
+      repo: project.repo,
+      ref: project.branch ?? 'main',
+      filePath: 'agent/progress.yaml',
+    };
+  }
+  return {
+    type: 'local',
+    path: project.path ?? 'agent/progress.yaml',
+  };
+}
+
 /**
  * React hook for fetching and auto-refreshing progress.yaml data.
  *
- * Supports dual data sources:
- *   - Local filesystem (PROGRESS_YAML_PATH)
- *   - GitHub remote (PROGRESS_YAML_REPO)
- *
- * Auto-detects source from environment and routes to correct server functions.
- * Uses adaptive polling: 2s local, 10s remote.
+ * @param pathOrProject   Local path string (backward compat) or project config
+ *                        { source, path?, repo?, branch? } for multi-project routing.
  */
-export function useProgressData(path?: string) {
+export function useProgressData(
+  pathOrProject?: string | { source: 'local' | 'github'; path?: string; repo?: string; branch?: string },
+) {
   const [data, setData] = useState<ProgressData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const lastTokenRef = useRef<number | null>(null);
-  const config = path ? { type: 'local' as const, path } : getConfig();
+
+  const config: DataSourceConfig =
+    typeof pathOrProject === 'string'
+      ? { type: 'local', path: pathOrProject }
+      : pathOrProject && typeof pathOrProject === 'object'
+        ? configFromProject(pathOrProject)
+        : getConfig();
 
   const load = async () => {
     try {
@@ -51,7 +76,7 @@ export function useProgressData(path?: string) {
         result = { data: ghResult.data, error: ghResult.error };
       } else {
         result = await fetchProgress({
-          data: path ? { path } : {},
+          data: config.path ? { path: config.path } : {},
         });
       }
 
@@ -90,7 +115,7 @@ export function useProgressData(path?: string) {
           mtime = remoteResult.mtime;
         } else {
           const localResult = await fetchWatchToken({
-            data: path ? { path } : {},
+            data: config.path ? { path: config.path } : {},
           });
           mtime = localResult.mtime;
         }
@@ -111,7 +136,7 @@ export function useProgressData(path?: string) {
 
     return () => clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [path]);
+  }, [typeof pathOrProject === 'string' ? pathOrProject : JSON.stringify(pathOrProject)]);
 
   return { data, error, loading, reload: load };
 }

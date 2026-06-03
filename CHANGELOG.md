@@ -5,6 +5,20 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-06-03
+
+### Fixed
+
+- **M30 audit fixes (10 gaps resolved)**:
+- `useProgressData` now accepts project config objects for per-project GitHub routing
+- AggregateHome loads all project data in parallel (was showing all-zero stats)
+- TabBar × button now connected to onRemove handler with confirmation dialog
+- All tabs render simultaneously with CSS visibility toggling (polling stays alive)
+- AggregateHome uses SPA navigation instead of `window.location` (no full reload)
+- `saveProjectConfigs` called on project removal
+- `.visualizer-projects.json` added to `.gitignore`
+- Search parameter added to URL validateSearch for future persistence
+
 ## [1.1.0] - 2026-06-03
 
 ### Added

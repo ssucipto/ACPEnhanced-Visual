@@ -16,4 +16,6 @@ dist/
 .visualizer-port
 # GitHub tokens for multi-account — NEVER commit
 .github-tokens.json
+# User project config — contains local paths
+.visualizer-projects.json
 

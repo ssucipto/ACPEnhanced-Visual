@@ -6,7 +6,7 @@ import { useState, useMemo } from 'react'
 import { SearchBar } from '../components/SearchBar'
 import { RateLimitBanner } from '../components/RateLimitBanner'
 import { TabBar } from '../components/TabBar'
-import { loadProjectConfigs } from '../lib/projects'
+import { loadProjectConfigs, saveProjectConfigs } from '../lib/projects'
 
 import appCss from '../styles.css?url'
 
@@ -53,12 +53,22 @@ function RootLayout() {
   const search = useSearch({ strict: false }) as { tab?: string }
 
   // Load project configs (stable across renders — module-level in production)
-  const projects = useMemo(() => loadProjectConfigs(), [])
+  const [projects, setProjects] = useState(() => loadProjectConfigs())
   const activeTab = search.tab || 'Home'
   const allTabs = useMemo(() => {
     const homeFirst = { name: 'Home', source: 'local' as const };
     return [homeFirst, ...projects];
   }, [projects]);
+
+  const handleRemove = (name: string) => {
+    const updated = projects.filter((p) => p.name !== name);
+    setProjects(updated);
+    try { saveProjectConfigs(updated); } catch { /* ignore */ }
+    // If removing the active tab, switch to Home
+    if (activeTab === name) {
+      void navigate({ to: '/', search: {} as any });
+    }
+  };
 
   return (
     <div className="flex h-screen overflow-hidden font-sans">
@@ -104,9 +114,9 @@ function RootLayout() {
             void navigate({ to: '/', search: { tab: name === 'Home' ? undefined : name } as any });
           }}
           onAdd={() => {
-            // Navigate with a flag to show the add dialog
             void navigate({ to: '/', search: { tab: activeTab, add: '1' } as any });
           }}
+          onRemove={handleRemove}
         />
 
         {/* Rate limit warning (only visible when approaching GitHub limits) */}

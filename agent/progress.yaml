@@ -3,7 +3,7 @@ project:
   version: 1.0.0
   started: 2026-06-03
   status: active
-  current_milestone: M26
+  current_milestone: null
   description: >
     Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
     interactive, sortable, searchable UI with milestone tables, task trees,
@@ -29,12 +29,12 @@ milestones:
   M26:
     name: Schema Hardening
     priority: 1
-    status: in_progress
-    progress: 0
+    status: completed
+    progress: 100
     started: 2026-06-03
-    completed: null
+    completed: 2026-06-03
     estimated_weeks: '0.5'
-    tasks_completed: 0
+    tasks_completed: 4
     tasks_total: 4
     file: agent/milestones/milestone-26-schema-hardening.md
     notes: |
@@ -45,12 +45,12 @@ milestones:
   M27:
     name: CI & Quality Pipeline
     priority: 2
-    status: not_started
-    progress: 0
-    started: null
-    completed: null
+    status: completed
+    progress: 100
+    started: 2026-06-03
+    completed: 2026-06-03
     estimated_weeks: '1'
-    tasks_completed: 0
+    tasks_completed: 6
     tasks_total: 6
     file: agent/milestones/milestone-27-ci-quality-pipeline.md
     notes: |
@@ -60,12 +60,12 @@ milestones:
   M28:
     name: ACP Enhanced Sync Contract
     priority: 1
-    status: not_started
-    progress: 0
-    started: null
-    completed: null
+    status: completed
+    progress: 100
+    started: 2026-06-03
+    completed: 2026-06-03
     estimated_weeks: '0.5'
-    tasks_completed: 0
+    tasks_completed: 5
     tasks_total: 5
     file: agent/milestones/milestone-28-acp-sync-contract.md
     notes: |

@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { FilterBar, type StatusFilter } from '../components/FilterBar'
 import { MilestoneTable } from '../components/MilestoneTable'
 import { MilestoneTree } from '../components/MilestoneTree'
+import { ErrorCard } from '../components/ErrorCard'
 import { useProgressData } from '../lib/data-source'
 
 export const Route = createFileRoute('/milestones')({ component: MilestonesPage })
@@ -21,7 +22,7 @@ function MilestonesPage() {
   )
 
   if (loading) return <p className="p-4 text-gray-500">Loading…</p>
-  if (error ?? !data) return <p className="p-4 text-red-500 whitespace-pre-wrap">Error: {error}</p>
+  if (error ?? !data) return <ErrorCard error={error ?? 'Unknown error'} />
 
   return (
     <div className="p-4">

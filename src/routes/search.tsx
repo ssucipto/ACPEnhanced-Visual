@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { StatusBadge } from '../components/StatusBadge'
+import { ErrorCard } from '../components/ErrorCard'
 import { useProgressData } from '../lib/data-source'
 import { buildSearchIndex } from '../lib/search'
 
@@ -24,7 +25,7 @@ function SearchPage() {
   }, [data, q])
 
   if (loading) return <p className="p-4 text-gray-500">Loading…</p>
-  if (error) return <p className="p-4 text-red-500 whitespace-pre-wrap">Error: {error}</p>
+  if (error) return <ErrorCard error={error} />
 
   if (!q || q.length < 2) {
     return (

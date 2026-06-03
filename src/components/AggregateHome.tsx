@@ -5,6 +5,7 @@ import { StatusBadge } from './StatusBadge';
 interface ProjectSnapshot {
   config: ProjectConfig;
   data: ProgressData | null;
+  error?: string | null;
 }
 
 interface Props {
@@ -72,7 +73,12 @@ export function AggregateHome({ projects, onSelectProject }: Props) {
                   </span>
                 </>
               ) : (
-                <span className="text-xs text-red-400 font-mono">Failed to load</span>
+                <span
+                  className="text-xs text-red-400 font-mono cursor-help"
+                  title={p.error ?? 'Project data could not be loaded'}
+                >
+                  Failed to load
+                </span>
               )}
             </button>
           ))}

@@ -1,6 +1,6 @@
 project:
   name: ACPEnhanced-Visual
-  version: 1.5.0
+  version: 1.5.1
   started: 2026-06-03
   status: completed
   current_milestone: null
@@ -686,6 +686,23 @@ tasks:
 recent_work:
   - date: 2026-06-03
     description: |
+      🐛 Fixed React 19 "Expected static flag was missing" error flood.
+      TanStackDevtools and TanStackRouterDevtoolsPanel were rendering during
+      SSR in the shell component, causing static tree mismatch with hydration.
+      Wrapped in ClientOnly (useSyncExternalStore) to render only on client.
+      Also improved YAML error UX: smart formatParseError detects YAMLException
+      with hints, ErrorCard component with amber warning box + "How to fix"
+      steps. AggregateHome now shows error tooltip on "Failed to load" hover.
+    items:
+      - "🔧 ClientOnly wrapper in __root.tsx — devtools never render during SSR"
+      - "🔧 formatParseError.ts — YAMLException detection with line/column + diagnostic hints"
+      - "🎨 ErrorCard.tsx — amber warning card with actionable fix steps for YAML errors"
+      - "🎨 Updated 3 routes (/, /milestones, /search) to use ErrorCard"
+      - "🎨 AggregateHome: Failed to load now shows error tooltip on hover"
+      - "📋 Audit #1 — verified error flood eliminated; 1 residual from TanStack Start internals"
+      - "✓ No artifacts — all templates, skip staleness check"
+  - date: 2026-06-03
+    description: |
       🔧 Bug fixes: project root resolution for global install. When visualizer
       is installed via curl and run against a different project (acp-visualizer
       --path /target), all server functions now correctly read from the target
@@ -782,9 +799,9 @@ recent_work:
 
 next_steps:
   - "🔵 npm publish — ship v1.5.0 to npm registry"
-  - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
   - "🔵 Add E2E tests — Playwright full browser flow"
   - "🔵 Accessibility audit — axe-core on all pages"
+  - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
   - "🔵 Split vitest environments — Node for CLI/YAML, jsdom for components"
   - "Maintenance: monitor ACP Enhanced schema changes"
 
@@ -794,10 +811,12 @@ notes:
   - Coverage reporting enabled via npm run test:coverage
   - ACP Enhanced v6.8.2 framework installed
   - GitHub Actions CI: lint + test + build on push/PR
-  - 19 audit reports, all findings resolved
+  - 20 audit reports, all findings resolved
   - npx acp-visualizer CLI ready for npm publish
   - 16 routes: Home, Milestones, Search, Sessions, ADRs, Lessons, Patterns, Packages, Audits, Docs, Maintenance, Route Costs
   - 20+ components across Dashboard, Intelligence, Tools, Management sections
+  - React 19 SSR fix: devtools wrapped in ClientOnly (useSyncExternalStore)
+  - YAML error UX: ErrorCard component with smart formatParseError for YAMLException
   - Collapsible sidebar with localStorage persistence
   - Dual data source: local filesystem + GitHub remote
   - Path traversal protection on all file-reading server functions

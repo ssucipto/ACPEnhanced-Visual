@@ -113,6 +113,8 @@ if (flags.repo) {
   env.PROGRESS_YAML_REPO = flags.repo;
 } else if (flags.path) {
   env.PROGRESS_YAML_PATH = resolve(flags.path);
+} else if (env.PROGRESS_YAML_PATH) {
+  // Already set by caller (e.g. /acp-visualize) — keep it, skip auto-detect
 } else {
   // Auto-detect from CWD or use positional arg (first non-flag argument)
   const positional = args.find(a => !a.startsWith('-'));

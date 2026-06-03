@@ -5,6 +5,19 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-06-03
+
+### Fixed
+
+- **React 19 "Expected static flag" error flood**: Devtools rendered during SSR in shell component, causing hydration mismatch. Wrapped in `ClientOnly` using `useSyncExternalStore` — devtools now render only on client, eliminating the error.
+- **CLI respects existing PROGRESS_YAML_PATH**: `acp-visualizer.mjs` no longer overrides the env var when already set by caller.
+- **AggregateHome "Failed to load"**: Now shows error details on hover via tooltip.
+
+### Changed
+
+- **YAML error UX**: `formatParseError` detects `YAMLException` and generates clean messages with line numbers, problem snippet, and diagnostic hints (unquoted colon, duplicate keys).
+- **ErrorCard component**: Amber warning card with heading, formatted error details, and "How to fix" steps for YAML errors. Used across Home, Milestones, and Search routes.
+
 ## [1.5.0] - 2026-06-03
 
 ### Added

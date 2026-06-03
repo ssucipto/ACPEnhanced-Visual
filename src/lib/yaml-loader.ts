@@ -1,33 +1,35 @@
 import yaml from 'js-yaml';
-import type { ProgressData, Milestone, Task, WorkEntry } from './types';
+import type { ProgressData, Milestone, Task } from './types';
+import { progressDataSchema } from './schemas';
 
 export function parseProgressYaml(raw: string): ProgressData {
-  const doc = yaml.load(raw) as Record<string, unknown>;
+  const rawDoc = yaml.load(raw);
+
+  // Zod validates the raw structure
+  const doc = progressDataSchema.parse(rawDoc);
 
   // Normalise milestones: inject 'id' from the YAML key
-  const milestonesRaw = (doc['milestones'] ?? {}) as Record<string, unknown>;
   const milestones: Record<string, Milestone> = {};
-  for (const [id, data] of Object.entries(milestonesRaw)) {
-    milestones[id] = { id, ...(data as object) } as Milestone;
+  for (const [id, data] of Object.entries(doc.milestones)) {
+    milestones[id] = { ...data, id } as Milestone;
   }
 
   // Normalise tasks: inject 'milestoneId' from the YAML key
-  const tasksRaw = (doc['tasks'] ?? {}) as Record<string, unknown[]>;
   const tasks: Record<string, Task[]> = {};
-  for (const [milestoneId, taskList] of Object.entries(tasksRaw)) {
+  for (const [milestoneId, taskList] of Object.entries(doc.tasks)) {
     tasks[milestoneId] = (taskList ?? []).map((t) => ({
+      ...t,
       milestoneId,
-      ...(t as object),
     })) as Task[];
   }
 
   return {
-    project: doc['project'] as ProgressData['project'],
+    project: doc.project,
     milestones,
     tasks,
-    recent_work: (doc['recent_work'] as WorkEntry[]) ?? [],
-    next_steps: (doc['next_steps'] as string[]) ?? [],
-    notes: (doc['notes'] as string[]) ?? [],
-    current_blockers: (doc['current_blockers'] as string[]) ?? [],
+    recent_work: doc.recent_work,
+    next_steps: doc.next_steps,
+    notes: doc.notes,
+    current_blockers: doc.current_blockers,
   };
 }

@@ -1,6 +1,6 @@
 ---
 created: 2026-06-03
-completed:
+completed: 2026-06-03
 ---
 
 # Task 162: Adaptive Polling — 10s Remote, 2s Local + Shared Manager

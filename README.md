@@ -122,6 +122,45 @@ npm run dev
 
 ---
 
+## 🌐 GitHub Remote Read
+
+> **New in v1.0.2+**: Read progress.yaml directly from GitHub repos — no local clone needed.
+
+### Remote Repo
+
+```bash
+# Public repo
+PROGRESS_YAML_REPO=ssucipto/acp-enhanced npm run dev
+
+# Specific branch
+PROGRESS_YAML_REPO=ssucipto/acp-enhanced:develop npm run dev
+
+# Custom path
+PROGRESS_YAML_REPO=ssucipto/acp-enhanced:main:agent/progress.yaml npm run dev
+```
+
+### Private Repos
+
+Set `GITHUB_TOKEN` for private repo access:
+
+```bash
+GITHUB_TOKEN=ghp_xxx PROGRESS_YAML_REPO=private-org/private-repo npm run dev
+```
+
+For multi-account setups, use `.github-tokens.json` (gitignored):
+
+```json
+{ "ssucipto": "ghp_xxx", "other-org": "ghp_yyy" }
+```
+
+Or per-repo token env vars:
+```bash
+PROGRESS_YAML_TOKEN_ENV=GITHUB_TOKEN_SSUCIPTO \
+  PROGRESS_YAML_REPO=ssucipto/private-project npm run dev
+```
+
+---
+
 ## 🧱 Tech Stack
 
 | Layer | Technology |

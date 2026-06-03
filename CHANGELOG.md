@@ -5,6 +5,15 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-06-03
+
+### Added
+
+- `server/routes/api/remote-watch.ts` — HEAD-based remote polling with ETag (304-safe)
+- `src/lib/poll-manager.ts` — shared PollManager with adaptive intervals (2s local, 10s remote)
+- `src/components/RateLimitBanner.tsx` — warning banner at < 20% rate limit remaining
+- GitHub Remote Read section in README with GITHUB_TOKEN / .github-tokens.json docs
+
 ## [1.0.3] - 2026-06-03
 
 ### Added

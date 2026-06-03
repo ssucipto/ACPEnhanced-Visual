@@ -8,39 +8,54 @@
 Browser (React SPA)
   │
   ├─ TanStack Start Server Functions (Node.js)
-  │   ├─ fetchProgress()   — reads agent/progress.yaml, returns parsed JSON
-  │   └─ fetchWatchToken() — stats the file mtime for polling
+  │   ├─ fetchProgress()   — readFileSync → Zod parse → typed JSON
+  │   └─ fetchWatchToken() — statSync → mtime for polling
   │
   └─ Client Components
-      ├─ useProgressData()  — hook: fetch + 2s poll loop
+      ├─ useProgressData()  — hook: fetch + 2s poll loop with cleanup
       ├─ fuse.js index      — fuzzy search across milestones + tasks
-      └─ TanStack Table     — sortable milestone grid
+      ├─ TanStack Table     — sortable milestone grid
+      └─ StatusBadge        — emerald (active), green (completed), blue (in_progress), gray (not_started)
 ```
 
 ## Service Boundaries
 
 | Layer | Responsibility |
 | --- | --- |
-| `server/routes/api/` | Server functions: read YAML from disk, return typed JSON |
-| `src/lib/yaml-loader.ts` | Parse progress.yaml → typed `ProgressData` |
-| `src/lib/data-source.ts` | React hook: fetch + poll mtime → auto-refresh |
+| `server/routes/api/` | Server functions: read YAML, return typed JSON with formatted errors |
+| `src/lib/types.ts` | TypeScript interfaces: ProgressData, Milestone, Task, WorkEntry |
+| `src/lib/schemas.ts` | Zod schemas replacing `as` assertions — runtime validation |
+| `src/lib/yaml-loader.ts` | Parse YAML → Zod validate → inject IDs → typed ProgressData |
+| `src/lib/format-error.ts` | Human-readable ZodError → UI-friendly messages |
+| `src/lib/data-source.ts` | React hook: fetch + 2s mtime poll + cleanup |
 | `src/lib/search.ts` | fuse.js index builder for client-side fuzzy search |
-| `src/components/` | Presentational components: table, tree, badges, filters |
+| `src/components/` | 10 components: table, tree, badges, filters, search, progress |
 
 ## Key Data Flows
 
-1. **Page load** → `useProgressData()` calls `fetchProgress()` server function → reads YAML → returns typed `ProgressData` → renders components
-2. **Polling** → every 2s, calls `fetchWatchToken()` → returns file mtime → if changed, re-fetches data
-3. **Search** → user types → `SearchBar` calls fuse.js on indexed milestones+tasks → filters results
-4. **Filtering** → user selects status → `FilterBar` filters milestones by status
+1. **Page load** → `useProgressData()` calls `fetchProgress()` → readFileSync → js-yaml → Zod validate → inject milestone/task IDs → typed ProgressData → render
+2. **Polling** → every 2s, calls `fetchWatchToken()` → statSync mtime → if changed, re-fetch
+3. **Search** → user types → `SearchBar` → fuse.js on indexed milestones+tasks → filter results
+4. **Filtering** → user clicks status → `FilterBar` supports active, in_progress, completed, not_started
+5. **Error handling** → ZodError → `formatParseError()` → field-path messages → `whitespace-pre-wrap` UI
+
+## Testing & CI
+
+| Layer | Tool | Coverage |
+| --- | --- | --- |
+| Unit | Vitest + jsdom | yaml-loader (10), hooks (4), components (6), integration (3), sync (2) |
+| CI | GitHub Actions | lint (tsc), test (vitest), build (vite) on push/PR |
+| Schema sync | sync.test.ts | Validates against real ACP Enhanced 5354-line progress.yaml |
 
 ## External Dependencies
 
-- **ACP Enhanced's progress.yaml** — the data source this dashboard reads (no network calls)
-- **TanStack Start** — SSR framework providing server functions + file-based routing
-- **fuse.js** — client-side fuzzy search library
-- **js-yaml** — YAML parser (used server-side)
+- **ACP Enhanced's progress.yaml** — the data source (local filesystem, no network)
+- **TanStack Start** — SSR framework with server functions + file-based routing
+- **fuse.js** — client-side fuzzy search
+- **js-yaml** — YAML parser (server-side)
+- **Zod** — runtime schema validation
 - **@tanstack/react-table** — headless table with sorting
+- **Vitest + Testing Library** — test framework
 | git commit touching >5 files | Treat as phase boundary → write sessions.md |
 
 **Corollary**: `/acp-commit` is NOT an end-of-session-only command. It runs at every phase boundary.

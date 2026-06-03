@@ -1,4 +1,5 @@
 # Service Integrations — XML-tagged sections, load one section at a time
+# last_verified: 2026-06-03
 
 <filesystem>
   type: Local filesystem (Node.js fs)
@@ -6,14 +7,22 @@
   polling: mtime check every 2s via fs.statSync
 </filesystem>
 
-<external_apis>
-  # No external APIs — this is a read-only dashboard that consumes local YAML files
-  # Future: GitHub API for remote progress.yaml reading (P1 roadmap)
-</external_apis>
+<ci>
+  platform: GitHub Actions
+  triggers: push, pull_request
+  steps: lint (tsc --noEmit), test (vitest run), build (vite build)
+  config: .github/workflows/ci.yml
+</ci>
+
+<testing>
+  framework: Vitest + @testing-library/react + jsdom
+  files: 5 test files, 25 tests
+  coverage: yaml-loader (10), hooks (4), components (6), integration (3), sync (2)
+</testing>
 
 <deployment>
-  platform: Vercel (serverless + static)
-  runtime: Node.js (for TanStack Start server functions)
-  env_vars:
-    - PROGRESS_YAML_PATH: Path to the progress.yaml file (defaults to agent/progress.yaml)
+  model: Local dev tool — no cloud deployment
+  primary: npm run dev (reads local progress.yaml)
+  future: npx acp-visualizer (P2 roadmap — starts local server)
+  demo: Vercel could serve this repo's own progress.yaml as a self-hosting status page (not primary)
 </deployment>

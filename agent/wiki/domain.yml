@@ -1,26 +1,29 @@
 # Domain Entity Model
 # Auto-populated via /acp-init from source code analysis
+# last_verified: 2026-06-03
 
 entities:
-  - ProgressData:        Top-level container for all progress info (project, milestones, tasks, next_steps)
-  - ProjectMetadata:     Project name, version, status, current_milestone, description
-  - Milestone:           Named deliverable with status, progress %, task counts, timeline
-  - Task:                Individual work item under a milestone with priority, hours, status
-  - WorkEntry:           Dated log entry for recent work activity
+  - ProgressData:        Top-level container (project, milestones, tasks, recent_work, next_steps, notes, current_blockers)
+  - ProjectMetadata:     name, version, started, status (active|in_progress|completed|not_started), current_milestone, description
+  - Milestone:           Named deliverable with priority, status, progress %, task counts, timeline, notes
+  - Task:                Individual work item with priority, status, estimated/actual hours, milestoneId
+  - WorkEntry:           Dated log entry with description and items array
 
 operations:
-  - fetchProgress:       Server function — reads progress.yaml from disk, returns parsed ProgressData
-  - fetchWatchToken:     Server function — stats file mtime for polling-based auto-refresh
-  - useProgressData:     React hook — wraps fetch + 2s polling loop with loading/error states
-  - buildSearchIndex:    fuse.js index builder — indexes milestones + tasks by name, notes, description
-  - parseProgressYaml:   YAML → typed ProgressData parser (js-yaml + Zod validation)
+  - fetchProgress:       Server function — readFileSync → js-yaml → Zod validate → typed ProgressData
+  - fetchWatchToken:     Server function — statSync mtime for polling-based auto-refresh
+  - useProgressData:     React hook — fetch + 2s polling loop with cleanup on unmount
+  - parseProgressYaml:   YAML → Zod validate → inject milestone/task IDs → typed ProgressData
+  - buildSearchIndex:    fuse.js index — milestones + tasks by name and ID
+  - formatParseError:    ZodError → human-readable field-path error messages
 
 modules:
   - server/routes/api:   TanStack Start server functions (progress.ts, watch.ts)
-  - src/lib:             Core logic (types, yaml-loader, data-source hook, search index)
-  - src/components:      UI components (MilestoneTable, MilestoneTree, ProgressBar, StatusBadge, FilterBar, SearchBar, NextSteps, OverallProgress, ProjectHeader, TaskList)
+  - src/lib:             Core logic (types, schemas, yaml-loader, format-error, data-source, search)
+  - src/components:      10 UI components (MilestoneTable, MilestoneTree, ProgressBar, StatusBadge, FilterBar, SearchBar, NextSteps, OverallProgress, ProjectHeader, TaskList)
   - src/routes:          File-based routes (index, milestones, search)
-  - agent/:              ACP Enhanced agent context files (progress data source)
+  - .github/workflows:   CI pipeline (lint + test + build)
+  - test/fixtures:       Sample and ACP Enhanced progress.yaml fixtures
       category: core
       purpose: Invoke the ACP dispatch engine (Persona B/C) to execute a routing task via OpenRouter API, assembling context-optimised prompts and streaming LLM responses.
     - command: acp.feedback

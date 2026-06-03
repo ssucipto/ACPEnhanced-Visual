@@ -1,9 +1,20 @@
 import { z } from 'zod';
 
+// Coerce helpers: js-yaml auto-parses bare dates as Date objects and bare numbers
+// as number. These schemas accept both raw types and normalize to string.
+const dateString = z.union([z.string(), z.date()]).transform((v) =>
+  v instanceof Date ? v.toISOString().split('T')[0] : String(v)
+);
+const nullableDateString = z.union([z.string(), z.date(), z.null()]).transform((v) =>
+  v instanceof Date ? v.toISOString().split('T')[0] : v === null ? null : String(v)
+);
+const numberString = z.union([z.string(), z.number()]).transform((v) => String(v));
+const nullableNumber = z.union([z.number(), z.null()]).transform((v) => v);
+
 export const projectMetadataSchema = z.object({
   name: z.string(),
   version: z.string(),
-  started: z.string(),
+  started: dateString,
   status: z.enum(['active', 'in_progress', 'completed', 'not_started']),
   current_milestone: z.string(),
   description: z.string(),
@@ -15,9 +26,9 @@ export const milestoneSchema = z.object({
   priority: z.number(),
   status: z.enum(['active', 'in_progress', 'completed', 'not_started']),
   progress: z.number().min(0).max(100),
-  started: z.string().nullable().optional(),
-  completed: z.string().nullable().optional(),
-  estimated_weeks: z.string().optional(),
+  started: nullableDateString.optional(),
+  completed: nullableDateString.optional(),
+  estimated_weeks: numberString.optional(),
   tasks_completed: z.number().optional(),
   tasks_total: z.number().optional(),
   file: z.string().optional(),
@@ -29,17 +40,17 @@ export const taskSchema = z.object({
   name: z.string(),
   priority: z.number(),
   status: z.enum(['active', 'in_progress', 'completed', 'not_started']),
-  started: z.string().nullable().optional(),
+  started: nullableDateString.optional(),
   file: z.string().optional(),
-  estimated_hours: z.string().optional(),
-  actual_hours: z.number().nullable().optional(),
-  completed_date: z.string().nullable().optional(),
+  estimated_hours: numberString.optional(),
+  actual_hours: nullableNumber.optional(),
+  completed_date: nullableDateString.optional(),
   notes: z.string().default(''),
   milestoneId: z.string().optional(),
 });
 
 export const workEntrySchema = z.object({
-  date: z.string(),
+  date: dateString,
   description: z.string(),
   items: z.array(z.string()),
 });

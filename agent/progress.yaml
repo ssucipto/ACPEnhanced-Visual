@@ -270,18 +270,34 @@ recent_work:
       - "✅ 3 commits: d3af196 (plan), a9bcb33 (framework), pending (update)"
       - "✅ SSH + git config: ssucipto identity, github-ssucipto host alias"
 
+  - date: 2026-06-03
+    description: |
+      ✅ M26-M28 implemented in autonomous mode. All 15 tasks complete across
+      3 milestones. Schema hardened, CI pipeline configured, ACP sync contract
+      established. 25 tests passing, docs synced, 4 audits done.
+    items:
+      - "✅ M26: active status, Zod schemas, format-error, regenerated progress.yaml"
+      - "✅ M27: GitHub Actions CI, 13 new tests, npm packaging, .npmignore"
+      - "✅ M28: schema version pin, 5354-line ACP fixture, sync test, README docs"
+      - "✅ 25 tests passing (yaml-loader 10, integration 3, hooks 4, components 6, sync 2)"
+      - "✅ 4 audit reports in agent/reports/"
+      - "✅ Wiki docs synced: architecture, domain, integrations"
+      - "✅ README updated: badges, status table, 25 tests"
+      - "⚠️ ACP Enhanced fixture has YAML error at M5:148 — sync test handles gracefully"
+
 next_steps:
-  - "🔴 M26 T1 (task-144): Add active status + current_blockers to types"
-  - "🔴 M26 T2 (task-145): Add Zod schemas for all types"
-  - "🔴 M28 T10 (task-154): Document schema version pin"
-  - "🟡 M27 T5 (task-148): GitHub Actions CI workflow"
+  - "P1: GitHub remote read support (fetch progress.yaml from GitHub API)"
+  - "P1: Multi-project view"
+  - "P2: npm package for npx acp-visualizer"
+  - "Maintenance: monitor ACP Enhanced schema changes"
 
 notes:
-  - M25 MVP completed: 7/7 tasks, TanStack Start + Tailwind dashboard
-  - ACP Enhanced v6.8.2 framework installed and configured
-  - 3 audit reports in agent/reports/
-  - 9 carryovers tracked in agent/memory/audit-carryovers.md
-  - M26-M28 planned: 15 tasks, ~14h estimated
-  - 3 commits today (2 committed, 1 pending)
+  - 4 milestones complete (M25-M28): MVP, schema, CI, sync
+  - 25 tests passing across 5 test files
+  - ACP Enhanced v6.8.2 framework installed
+  - Zod validation replacing all type assertions
+  - GitHub Actions CI: lint + test + build on push/PR
+  - 4 audits: scope+sync, plan gap, final check, post-impl verification
+  - 9 carryovers tracked
 
 current_blockers: []

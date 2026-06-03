@@ -29,7 +29,7 @@ The current progress.yaml is a bootstrap stub — M25 shows as completed with no
 
 ```yaml
 project:
-  name: agent-context-protocol-visualizer
+  name: ACPEnhanced-Visual
   version: 1.0.0
   started: 2026-06-03
   status: active

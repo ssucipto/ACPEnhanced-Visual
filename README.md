@@ -29,8 +29,8 @@ ACP Progress Visualizer reads any ACP Enhanced project's `agent/progress.yaml` a
 ## 🚦 Quick Start
 
 ```bash
-git clone https://github.com/ssucipto/agent-context-protocol-visualizer
-cd agent-context-protocol-visualizer
+git clone https://github.com/ssucipto/ACPEnhanced-Visual
+cd ACPEnhanced-Visual
 npm install
 
 # Point at your ACP Enhanced project and open browser:
@@ -52,7 +52,7 @@ The visualizer works alongside any ACP Enhanced project. Two install options:
 ### Option A: Global install (recommended)
 
 ```bash
-git clone https://github.com/ssucipto/agent-context-protocol-visualizer ~/.acp/visualizer
+git clone https://github.com/ssucipto/ACPEnhanced-Visual ~/.acp/visualizer
 cd ~/.acp/visualizer && npm install
 ```
 
@@ -66,8 +66,8 @@ PROGRESS_YAML_PATH=$(pwd)/agent/progress.yaml ~/.acp/visualizer/npm run visualiz
 ```bash
 # From your ACP Enhanced project:
 cd ..
-git clone https://github.com/ssucipto/agent-context-protocol-visualizer
-cd agent-context-protocol-visualizer && npm install
+git clone https://github.com/ssucipto/ACPEnhanced-Visual
+cd ACPEnhanced-Visual && npm install
 
 # Then:
 PROGRESS_YAML_PATH=../acp-enhanced/agent/progress.yaml npm run visualize

@@ -1,5 +1,5 @@
 project:
-  name: agent-context-protocol-visualizer
+  name: ACPEnhanced-Visual
   version: 1.0.0
   started: 2026-06-03
   status: active
@@ -549,7 +549,7 @@ recent_work:
       - "✅ 3 audits: scope+sync (#1), plan gap analysis (#2), final gap check (#3)"
       - "✅ 9 carryovers tracked in audit-carryovers.md"
       - "✅ M26-M28 planned: 3 milestones, 15 tasks, ~14h"
-      - "✅ GitHub repo: ssucipto/agent-context-protocol-visualizer (public)"
+      - "✅ GitHub repo: ssucipto/ACPEnhanced-Visual (public)"
       - "✅ 3 commits: d3af196 (plan), a9bcb33 (framework), pending (update)"
       - "✅ SSH + git config: ssucipto identity, github-ssucipto host alias"
 

@@ -39,8 +39,8 @@ TanStack Start (React) + Tailwind CSS + @tanstack/react-table + fuse.js + js-yam
 ## Quick Start
 
 ```bash
-git clone https://github.com/ssucipto/agent-context-protocol-visualizer
-cd agent-context-protocol-visualizer
+git clone https://github.com/ssucipto/ACPEnhanced-Visual
+cd ACPEnhanced-Visual
 npm install
 npm run dev
 ```

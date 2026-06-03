@@ -37,8 +37,8 @@ ACP Enhanced project's `agent/progress.yaml` and renders it in the browser.
 ### Quick Start
 
 ```bash
-git clone https://github.com/ssucipto/agent-context-protocol-visualizer
-cd agent-context-protocol-visualizer
+git clone https://github.com/ssucipto/ACPEnhanced-Visual
+cd ACPEnhanced-Visual
 npm install
 
 # Point at your ACP Enhanced project:

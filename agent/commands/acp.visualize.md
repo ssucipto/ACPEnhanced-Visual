@@ -8,7 +8,7 @@
 **Created**: 2026-05-06  
 **Last Updated**: 2026-06-03  
 **Status**: Active  
-**Requires**: agent-context-protocol-visualizer repository cloned locally
+**Requires**: ACPEnhanced-Visual repository cloned locally
 
 ---
 
@@ -20,14 +20,14 @@
 
 ## What This Command Does
 
-Launches the TanStack Start development server for `agent-context-protocol-visualizer`
+Launches the TanStack Start development server for `ACPEenhanced-Visual`
 and opens the browser dashboard pointed at the current project's `progress.yaml`.
 
 ---
 
 ## Prerequisites
 
-- [ ] `agent-context-protocol-visualizer` cloned locally
+- [ ] `ACPEenhanced-Visual` cloned locally
 - [ ] Node.js 18+ installed
 - [ ] Dependencies installed (`npm install` in visualizer directory)
 
@@ -40,13 +40,13 @@ and opens the browser dashboard pointed at the current project's `progress.yaml`
 Check for the visualizer in these locations (in order):
 1. `VISUALIZER_PATH` environment variable (if set)
 2. `~/.acp/visualizer/` (default global install path)
-3. Sibling directory: `../agent-context-protocol-visualizer/`
-4. Current user's `~/code/agent-context-protocol-visualizer/`
+3. Sibling directory: `../ACPEenhanced-Visual/`
+4. Current user's `~/code/ACPEenhanced-Visual/`
 
 If not found, display:
 ```
 ⚠️  Visualizer not found. Install it:
-  git clone https://github.com/ssucipto/agent-context-protocol-visualizer ~/.acp/visualizer
+  git clone https://github.com/ssucipto/ACPEnhanced-Visual ~/.acp/visualizer
   cd ~/.acp/visualizer && npm install
 ```
 

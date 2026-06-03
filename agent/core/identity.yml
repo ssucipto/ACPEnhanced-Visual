@@ -1,7 +1,7 @@
 # DO NOT add dynamic content to this file (no dates, no task IDs)
 # This file is prompt-cached by the LLM API after first call
 
-project: agent-context-protocol-visualizer
+project: ACPEnhanced-Visual
 type: web-app                  # web dashboard / visualization tool
 description: >
   Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
@@ -20,7 +20,7 @@ priorities:
   - correctness
   - maintainability
 
-repo: github.com/ssucipto/agent-context-protocol-visualizer
+repo: github.com/ssucipto/ACPEnhanced-Visual
 
 progress_yaml_target:
   source: ssucipto/acp-enhanced

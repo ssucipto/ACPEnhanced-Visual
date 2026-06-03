@@ -1,24 +1,21 @@
 import { useState, useEffect } from 'react';
 import type { PackageEntry } from '../../server/routes/api/memory-files';
 import { fetchPackages } from '../../server/routes/api/memory-files';
-
-interface NpmDep { name: string; version: string; type: string; }
+import { fetchPackageJson, type NpmDependency } from '../../server/routes/api/package-json';
 
 export function PackageInventory() {
   const [acpPkgs, setAcpPkgs] = useState<PackageEntry[]>([]);
-  const [npmDeps, setNpmDeps] = useState<{ deps: NpmDep[]; devDeps: NpmDep[] }>({ deps: [], devDeps: [] });
+  const [npmDeps, setNpmDeps] = useState<{ deps: NpmDependency[]; devDeps: NpmDependency[] }>({ deps: [], devDeps: [] });
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'npm' | 'acp'>('npm');
 
   useEffect(() => {
     Promise.all([
       fetchPackages(),
-      fetch('/package.json').then((r) => r.json()).catch(() => ({})),
+      fetchPackageJson(),
     ]).then(([acp, pkg]) => {
       setAcpPkgs(acp.entries);
-      const deps: NpmDep[] = Object.entries(pkg.dependencies || {}).map(([k, v]) => ({ name: k, version: String(v), type: 'prod' }));
-      const devDeps: NpmDep[] = Object.entries(pkg.devDependencies || {}).map(([k, v]) => ({ name: k, version: String(v), type: 'dev' }));
-      setNpmDeps({ deps, devDeps });
+      setNpmDeps({ deps: pkg.deps, devDeps: pkg.devDeps });
       setLoading(false);
     });
   }, []);
@@ -83,7 +80,7 @@ export function PackageInventory() {
   );
 }
 
-function DepTable({ deps }: { deps: NpmDep[] }) {
+function DepTable({ deps }: { deps: NpmDependency[] }) {
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden">
       <table className="min-w-full text-left text-sm">

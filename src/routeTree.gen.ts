@@ -9,18 +9,54 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SessionsRouteImport } from './routes/sessions'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as PatternsRouteImport } from './routes/patterns'
+import { Route as PackagesRouteImport } from './routes/packages'
 import { Route as MilestonesRouteImport } from './routes/milestones'
+import { Route as LessonsRouteImport } from './routes/lessons'
+import { Route as AuditsRouteImport } from './routes/audits'
+import { Route as AdrsRouteImport } from './routes/adrs'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SessionsRoute = SessionsRouteImport.update({
+  id: '/sessions',
+  path: '/sessions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatternsRoute = PatternsRouteImport.update({
+  id: '/patterns',
+  path: '/patterns',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PackagesRoute = PackagesRouteImport.update({
+  id: '/packages',
+  path: '/packages',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MilestonesRoute = MilestonesRouteImport.update({
   id: '/milestones',
   path: '/milestones',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LessonsRoute = LessonsRouteImport.update({
+  id: '/lessons',
+  path: '/lessons',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditsRoute = AuditsRouteImport.update({
+  id: '/audits',
+  path: '/audits',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdrsRoute = AdrsRouteImport.update({
+  id: '/adrs',
+  path: '/adrs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -31,36 +67,95 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/adrs': typeof AdrsRoute
+  '/audits': typeof AuditsRoute
+  '/lessons': typeof LessonsRoute
   '/milestones': typeof MilestonesRoute
+  '/packages': typeof PackagesRoute
+  '/patterns': typeof PatternsRoute
   '/search': typeof SearchRoute
+  '/sessions': typeof SessionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/adrs': typeof AdrsRoute
+  '/audits': typeof AuditsRoute
+  '/lessons': typeof LessonsRoute
   '/milestones': typeof MilestonesRoute
+  '/packages': typeof PackagesRoute
+  '/patterns': typeof PatternsRoute
   '/search': typeof SearchRoute
+  '/sessions': typeof SessionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/adrs': typeof AdrsRoute
+  '/audits': typeof AuditsRoute
+  '/lessons': typeof LessonsRoute
   '/milestones': typeof MilestonesRoute
+  '/packages': typeof PackagesRoute
+  '/patterns': typeof PatternsRoute
   '/search': typeof SearchRoute
+  '/sessions': typeof SessionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/milestones' | '/search'
+  fullPaths:
+    | '/'
+    | '/adrs'
+    | '/audits'
+    | '/lessons'
+    | '/milestones'
+    | '/packages'
+    | '/patterns'
+    | '/search'
+    | '/sessions'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/milestones' | '/search'
-  id: '__root__' | '/' | '/milestones' | '/search'
+  to:
+    | '/'
+    | '/adrs'
+    | '/audits'
+    | '/lessons'
+    | '/milestones'
+    | '/packages'
+    | '/patterns'
+    | '/search'
+    | '/sessions'
+  id:
+    | '__root__'
+    | '/'
+    | '/adrs'
+    | '/audits'
+    | '/lessons'
+    | '/milestones'
+    | '/packages'
+    | '/patterns'
+    | '/search'
+    | '/sessions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdrsRoute: typeof AdrsRoute
+  AuditsRoute: typeof AuditsRoute
+  LessonsRoute: typeof LessonsRoute
   MilestonesRoute: typeof MilestonesRoute
+  PackagesRoute: typeof PackagesRoute
+  PatternsRoute: typeof PatternsRoute
   SearchRoute: typeof SearchRoute
+  SessionsRoute: typeof SessionsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sessions': {
+      id: '/sessions'
+      path: '/sessions'
+      fullPath: '/sessions'
+      preLoaderRoute: typeof SessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -68,11 +163,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patterns': {
+      id: '/patterns'
+      path: '/patterns'
+      fullPath: '/patterns'
+      preLoaderRoute: typeof PatternsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/packages': {
+      id: '/packages'
+      path: '/packages'
+      fullPath: '/packages'
+      preLoaderRoute: typeof PackagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/milestones': {
       id: '/milestones'
       path: '/milestones'
       fullPath: '/milestones'
       preLoaderRoute: typeof MilestonesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lessons': {
+      id: '/lessons'
+      path: '/lessons'
+      fullPath: '/lessons'
+      preLoaderRoute: typeof LessonsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audits': {
+      id: '/audits'
+      path: '/audits'
+      fullPath: '/audits'
+      preLoaderRoute: typeof AuditsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/adrs': {
+      id: '/adrs'
+      path: '/adrs'
+      fullPath: '/adrs'
+      preLoaderRoute: typeof AdrsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -87,8 +217,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdrsRoute: AdrsRoute,
+  AuditsRoute: AuditsRoute,
+  LessonsRoute: LessonsRoute,
   MilestonesRoute: MilestonesRoute,
+  PackagesRoute: PackagesRoute,
+  PatternsRoute: PatternsRoute,
   SearchRoute: SearchRoute,
+  SessionsRoute: SessionsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

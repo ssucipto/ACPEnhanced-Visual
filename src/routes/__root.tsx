@@ -41,11 +41,76 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   )
 }
 
-const NAV_LINKS = [
-  { to: '/' as const, label: '🏠 Dashboard' },
-  { to: '/milestones' as const, label: '📊 Milestones' },
-  { to: '/search' as const, label: '🔍 Search' },
-]
+const NAV_SECTIONS = [
+  {
+    label: 'Dashboard', icon: '📊', defaultOpen: true,
+    links: [
+      { to: '/' as const, label: 'Home' },
+      { to: '/milestones' as const, label: 'Milestones' },
+      { to: '/search' as const, label: 'Search' },
+    ],
+  },
+  {
+    label: 'Intelligence', icon: '📋', defaultOpen: false,
+    links: [
+      { to: '/sessions' as const, label: 'Sessions' },
+      { to: '/adrs' as const, label: 'ADRs' },
+      { to: '/lessons' as const, label: 'Lessons' },
+      { to: '/patterns' as const, label: 'Patterns' },
+    ],
+  },
+  {
+    label: 'Management', icon: '📦', defaultOpen: false,
+    links: [
+      { to: '/packages' as const, label: 'Packages' },
+      { to: '/audits' as const, label: 'Audits' },
+    ],
+  },
+];
+
+function CollapsibleSection({ section }: { section: typeof NAV_SECTIONS[0] }) {
+  const storageKey = `nav-${section.label}`;
+  const [open, setOpen] = useState(() => {
+    const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(storageKey) : null;
+    return stored !== null ? stored === 'true' : section.defaultOpen;
+  });
+
+  const toggle = () => {
+    const next = !open;
+    setOpen(next);
+    try { localStorage.setItem(storageKey, String(next)); } catch { /* ignore */ }
+  };
+
+  return (
+    <div className="mb-1">
+      <button
+        onClick={toggle}
+        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide hover:text-gray-200 transition-colors"
+      >
+        <span className="text-gray-400 text-xs">{open ? '▼' : '▶'}</span>
+        <span>{section.icon}</span>
+        <span>{section.label}</span>
+      </button>
+      <div
+        className="overflow-hidden transition-all duration-200"
+        style={{ maxHeight: open ? `${section.links.length * 36}px` : '0px', opacity: open ? 1 : 0 }}
+      >
+        {section.links.map(({ to, label }) => (
+          <Link
+            key={to}
+            to={to}
+            activeOptions={{ exact: to === '/' }}
+            activeProps={{ className: 'bg-gray-700 text-white' }}
+            inactiveProps={{ className: 'text-gray-400 hover:bg-gray-800 hover:text-white' }}
+            className="block pl-8 pr-4 py-1.5 text-sm transition-colors rounded-sm mx-1"
+          >
+            {label}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function RootLayout() {
   const [query, setQuery] = useState('')
@@ -77,18 +142,9 @@ function RootLayout() {
         <div className="px-4 py-5 border-b border-gray-700">
           <span className="text-sm font-semibold tracking-tight">ACP Visualizer</span>
         </div>
-        <nav className="flex-1 py-3">
-          {NAV_LINKS.map(({ to, label }) => (
-            <Link
-              key={to}
-              to={to}
-              activeOptions={{ exact: to === '/' }}
-              activeProps={{ className: 'bg-gray-700 text-white' }}
-              inactiveProps={{ className: 'text-gray-400 hover:bg-gray-800 hover:text-white' }}
-              className="block px-4 py-2 text-sm transition-colors rounded-sm mx-1"
-            >
-              {label}
-            </Link>
+        <nav className="flex-1 py-3 overflow-y-auto">
+          {NAV_SECTIONS.map((section) => (
+            <CollapsibleSection key={section.label} section={section} />
           ))}
         </nav>
       </aside>

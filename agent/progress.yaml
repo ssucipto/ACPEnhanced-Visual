@@ -3,7 +3,7 @@ project:
   version: 1.0.1
   started: 2026-06-03
   status: active
-  current_milestone: M32
+  current_milestone: M33
   description: >
     Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
     interactive, sortable, searchable UI with milestone tables, task trees,
@@ -120,12 +120,12 @@ milestones:
   M32:
     name: Extended Visualizations
     priority: 2
-    status: not_started
-    progress: 0
-    started: null
-    completed: null
+    status: completed
+    progress: 100
+    started: 2026-06-03
+    completed: 2026-06-03
     estimated_weeks: "1.5"
-    tasks_completed: 0
+    tasks_completed: 7
     tasks_total: 7
     file: agent/milestones/milestone-32-extended-visualizations.md
     notes: |
@@ -532,51 +532,79 @@ tasks:
     - id: task-176
       name: Session Timeline view
       priority: 1
-      status: not_started
+      status: completed
+      started: 2026-06-03T02:15:00Z
       file: agent/tasks/milestone-32-extended-visualizations/task-176-session-timeline.md
       estimated_hours: '2'
+      actual_hours: 0.3
+      completed_date: 2026-06-03T02:30:00Z
+      notes: src/components/SessionTimeline.tsx + /sessions route. Collapsible entries.
 
     - id: task-177
       name: ADR Browser view
       priority: 1
-      status: not_started
+      status: completed
+      started: 2026-06-03T02:15:00Z
       file: agent/tasks/milestone-32-extended-visualizations/task-177-adr-browser.md
       estimated_hours: '2'
+      actual_hours: 0.3
+      completed_date: 2026-06-03T02:30:00Z
+      notes: src/components/ADRBrowser.tsx + /adrs route. Status filter + reopen triggers.
 
     - id: task-178
       name: Lessons Feed view
       priority: 2
-      status: not_started
+      status: completed
+      started: 2026-06-03T02:15:00Z
       file: agent/tasks/milestone-32-extended-visualizations/task-178-lessons-feed.md
       estimated_hours: '1.5'
+      actual_hours: 0.3
+      completed_date: 2026-06-03T02:30:00Z
+      notes: src/components/LessonsFeed.tsx + /lessons route. Grouped by task_type.
 
     - id: task-179
       name: Pattern Library view
       priority: 2
-      status: not_started
+      status: completed
+      started: 2026-06-03T02:15:00Z
       file: agent/tasks/milestone-32-extended-visualizations/task-179-pattern-library.md
       estimated_hours: '1.5'
+      actual_hours: 0.3
+      completed_date: 2026-06-03T02:30:00Z
+      notes: src/components/PatternLibrary.tsx + /patterns route. Searchable list.
 
     - id: task-180
       name: Package Inventory view
       priority: 3
-      status: not_started
+      status: completed
+      started: 2026-06-03T02:15:00Z
       file: agent/tasks/milestone-32-extended-visualizations/task-180-package-inventory.md
       estimated_hours: '1'
+      actual_hours: 0.2
+      completed_date: 2026-06-03T02:30:00Z
+      notes: src/components/PackageInventory.tsx + /packages route. Table view.
 
     - id: task-181
       name: Audit Index view
       priority: 3
-      status: not_started
+      status: completed
+      started: 2026-06-03T02:15:00Z
       file: agent/tasks/milestone-32-extended-visualizations/task-181-audit-index.md
       estimated_hours: '1.5'
+      actual_hours: 0.3
+      completed_date: 2026-06-03T02:30:00Z
+      notes: src/components/AuditIndex.tsx + /audits route. Severity badges.
 
     - id: task-183
       name: Sidebar redesign with collapsible sections
       priority: 2
-      status: not_started
+      status: completed
+      started: 2026-06-03T02:15:00Z
       file: agent/tasks/milestone-32-extended-visualizations/task-183-sidebar-redesign.md
       estimated_hours: '1.5'
+      actual_hours: 0.3
+      completed_date: 2026-06-03T02:30:00Z
+      notes: Collapsible sections in __root.tsx. Persists state in localStorage. 3 groups.
 
   M33:
     - id: task-184

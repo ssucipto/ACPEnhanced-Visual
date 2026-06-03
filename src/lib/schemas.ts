@@ -1,15 +1,24 @@
 import { z } from 'zod';
 
-// Coerce helpers: js-yaml auto-parses bare dates as Date objects and bare numbers
-// as number. These schemas accept both raw types and normalize to string.
-const dateString = z.union([z.string(), z.date()]).transform((v) =>
-  v instanceof Date ? v.toISOString().split('T')[0] : String(v)
+// js-yaml auto-parses bare dates (2026-02-16) as Date objects
+// and bare numbers (1) as number. Preprocess to string before validation.
+const toDateString = (v: unknown) => {
+  if (v instanceof Date) return v.toISOString().split('T')[0];
+  if (typeof v === 'string') return v;
+  return v;
+};
+const toNumberString = (v: unknown) => {
+  if (typeof v === 'number') return String(v);
+  return v;
+};
+
+const dateString = z.preprocess(toDateString, z.string());
+const nullableDateString = z.preprocess(
+  (v) => (v === null || v === undefined ? null : toDateString(v)),
+  z.string().nullable(),
 );
-const nullableDateString = z.union([z.string(), z.date(), z.null()]).transform((v) =>
-  v instanceof Date ? v.toISOString().split('T')[0] : v === null ? null : String(v)
-);
-const numberString = z.union([z.string(), z.number()]).transform((v) => String(v));
-const nullableNumber = z.union([z.number(), z.null()]).transform((v) => v);
+const numberString = z.preprocess(toNumberString, z.string());
+const nullableNumber = z.preprocess((v) => v, z.number().nullable());
 
 export const projectMetadataSchema = z.object({
   name: z.string(),

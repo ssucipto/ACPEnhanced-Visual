@@ -12,18 +12,16 @@ function MilestonesPage() {
   const [view, setView] = useState<'table' | 'tree'>('table')
   const [filter, setFilter] = useState<StatusFilter>('all')
 
-  if (loading) return <p className="p-4 text-gray-500">Loading…</p>
-  if (error ?? !data) return <p className="p-4 text-red-500 whitespace-pre-wrap">Error: {error}</p>
+  // Hooks must be called before any early returns
+  const milestones = Object.values(data?.milestones ?? {})
 
-  const milestones = Object.values(data.milestones)
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const filtered = useMemo(
     () => (filter === 'all' ? milestones : milestones.filter((m) => m.status === filter)),
-    // milestones reference changes on every render from Object.values; filter is stable
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [filter, data],
   )
+
+  if (loading) return <p className="p-4 text-gray-500">Loading…</p>
+  if (error ?? !data) return <p className="p-4 text-red-500 whitespace-pre-wrap">Error: {error}</p>
 
   return (
     <div className="p-4">

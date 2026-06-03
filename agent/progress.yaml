@@ -686,6 +686,22 @@ tasks:
 recent_work:
   - date: 2026-06-03
     description: |
+      🔧 Bug fixes: project root resolution for global install. When visualizer
+      is installed via curl and run against a different project (acp-visualizer
+      --path /target), all server functions now correctly read from the target
+      project instead of the visualizer's own directory.
+    items:
+      - "🔧 Fixed install script — direct symlink instead of npm link (avoids EACCES)"
+      - "🔧 Fixed docs.ts — uses getProjectRoot() from PROGRESS_YAML_PATH"
+      - "🔧 Fixed memory-files.ts — sessions, ADRs, lessons, patterns, packages, audits"
+      - "🔧 Fixed package-json.ts — npm deps now from target project"
+      - "🔧 Fixed route-costs.ts — ledger path from target project"
+      - "🔧 Fixed progress.ts + watch.ts — sanitizePath resolves relative paths against project root"
+      - "🔧 Audit #20 — thorough CWD vs project root audit (12 usages, 6 fixed, 3 legitimate)"
+      - "📝 README — added install/update instructions with curl one-liner"
+      - "✅ All 6 project-data server functions now use getProjectRoot()"
+  - date: 2026-06-03
+    description: |
       🧪 M35: Test Coverage & Quality Hardening — audit #19 follow-up.
       Added @vitest/coverage-v8, @testing-library/jest-dom, test:coverage/test:watch
       scripts. 28 new tests: 11 server function export verification, 10 component
@@ -765,11 +781,11 @@ recent_work:
       - "⚠️ ACP Enhanced fixture has YAML error at M5:148 — sync test handles gracefully"
 
 next_steps:
-  - "🔵 Split vitest environments — Node for CLI/YAML, jsdom for components (T12 remaining from M35)"
+  - "🔵 npm publish — ship v1.5.0 to npm registry"
   - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
   - "🔵 Add E2E tests — Playwright full browser flow"
-  - "🔵 npm publish — ship v1.5.0 to npm registry"
   - "🔵 Accessibility audit — axe-core on all pages"
+  - "🔵 Split vitest environments — Node for CLI/YAML, jsdom for components"
   - "Maintenance: monitor ACP Enhanced schema changes"
 
 notes:

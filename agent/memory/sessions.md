@@ -6,8 +6,31 @@
   executor: copilot
   persona: A
   tasks_completed:
-    - audit-18-ux-polish
-    - audit-19-test-packages
+    - audit-20-cwd-vs-project-root
+    - install-script-fix
+    - project-root-fixes
+  done:
+    - audit-20-process-cwd-audit-12-usages-6-fixed
+    - install-script-symlink-instead-of-npm-link
+    - docs-ts-getProjectRoot-from-PROGRESS_YAML_PATH
+    - memory-files-ts-getProjectRoot-sessions-adrs-lessons-patterns-packages-audits
+    - package-json-ts-getProjectRoot-npm-deps
+    - route-costs-ts-getProjectRoot-ledger
+    - progress-ts-sanitizePath-relative-path-resolution
+    - watch-ts-sanitizePath-relative-path-resolution
+    - readme-install-update-curl-one-liner
+    - acp-update-progress-yaml
+  deferred:
+    - npm-publish-v1.5.0
+    - visual-regression-tests-screenshot-diffs
+    - e2e-tests-playwright
+  key_fact: >
+    When a tool is installed globally (not run from its own directory),
+    process.cwd() points to the install location, not the target project.
+    Always derive the project root from PROGRESS_YAML_PATH env var
+    (set by CLI --path or auto-detect) instead of relying on CWD.
+    Also: npm link on macOS ignores user-level prefix configuration
+    and always tries /usr/local/lib/ — use ln -s directly instead.
     - m35-test-coverage-quality-hardening
   done:
     - audit-18-markdown-viewer-custom-prose-css-tables-charts

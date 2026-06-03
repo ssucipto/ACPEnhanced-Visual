@@ -1,6 +1,6 @@
 {
   "name": "acp-visualizer",
-  "version": "1.2.0",
+  "version": "1.4.2",
   "private": false,
   "type": "module",
   "bin": {

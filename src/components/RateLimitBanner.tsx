@@ -1,19 +1,29 @@
 import { useEffect, useState } from 'react';
-import { getLastRateLimit, type RateLimitInfo } from '../../server/routes/api/github-fetch';
+import { getRateLimitInfo } from '../../server/routes/api/github-fetch';
+
+interface RateLimitInfo {
+  remaining: number;
+  limit: number;
+  resetEpoch: number;
+}
 
 /**
  * Displays a warning banner when GitHub API rate limit is below 20%.
- * Polls rate limit info every 30s.
+ * Polls rate limit info via server function every 30s.
  */
 export function RateLimitBanner() {
   const [rateLimit, setRateLimit] = useState<RateLimitInfo | null>(null);
 
   useEffect(() => {
-    const check = () => {
-      const info = getLastRateLimit();
-      if (info && info.remaining / info.limit < 0.2) {
-        setRateLimit(info);
-      } else {
+    const check = async () => {
+      try {
+        const info = await getRateLimitInfo();
+        if (info && info.remaining / info.limit < 0.2) {
+          setRateLimit(info);
+        } else {
+          setRateLimit(null);
+        }
+      } catch {
         setRateLimit(null);
       }
     };

@@ -5,6 +5,19 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2026-06-03
+
+### Fixed
+
+- **Integration gap**: `useProgressData` hook now routes between local and GitHub data sources based on `PROGRESS_YAML_REPO` env var
+- **RateLimitBanner**: Fixed architecture — now uses server function `getRateLimitInfo()` instead of direct server import; rendered in root layout
+- **Adaptive polling**: Hook now uses 2s interval for local and 10s for remote sources
+- **Remote watch**: `fetchRemoteWatch` now called for GitHub sources via HEAD + ETag
+
+### Added
+
+- `server/routes/api/github-fetch.ts` — exported `getRateLimitInfo` server function
+
 ## [1.0.5] - 2026-06-03
 
 ### Added

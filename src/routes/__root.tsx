@@ -4,6 +4,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { useState } from 'react'
 import { SearchBar } from '../components/SearchBar'
+import { RateLimitBanner } from '../components/RateLimitBanner'
 
 import appCss from '../styles.css?url'
 
@@ -78,12 +79,13 @@ function RootLayout() {
             value={query}
             onChange={(v) => {
               setQuery(v)
-              // Navigation to /search is handled by the search page reading the URL
-              // Here we just keep local state for the bar value
             }}
             placeholder="Search milestones and tasks…"
           />
         </header>
+
+        {/* Rate limit warning (only visible when approaching GitHub limits) */}
+        <RateLimitBanner />
 
         {/* Page content */}
         <main className="flex-1 overflow-auto bg-gray-50">

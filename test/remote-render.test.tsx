@@ -14,7 +14,6 @@ import { OverallProgress } from '../src/components/OverallProgress';
 import { NextSteps } from '../src/components/NextSteps';
 import { SearchBar } from '../src/components/SearchBar';
 import { buildSearchIndex } from '../src/lib/search';
-import type { ProgressData } from '../src/lib/types';
 
 // ── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -69,7 +68,6 @@ describe('Remote data → component pipeline', () => {
   });
 
   it('renders FilterBar and filters milestones by status', async () => {
-    const user = userEvent.setup();
     const { rerender } = render(<div />);
 
     // Show all

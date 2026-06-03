@@ -17,9 +17,13 @@ export interface RateLimitInfo {
 
 let lastRateLimit: RateLimitInfo | null = null;
 
-export function getLastRateLimit(): RateLimitInfo | null {
-  return lastRateLimit;
-}
+/**
+ * Server function so the client can query rate limit state.
+ */
+export const getRateLimitInfo = createServerFn({ method: 'GET' })
+  .handler(async () => {
+    return lastRateLimit;
+  });
 
 // ── Server Function ────────────────────────────────────────────────────────
 

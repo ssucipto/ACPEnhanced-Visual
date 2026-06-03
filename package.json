@@ -1,7 +1,11 @@
 {
-  "name": "ACPEnhanced-Visual",
-  "private": true,
+  "name": "acp-visualizer",
+  "version": "1.1.1",
+  "private": false,
   "type": "module",
+  "bin": {
+    "acp-visualizer": "bin/acp-visualizer.mjs"
+  },
   "imports": {
     "#/*": "./src/*"
   },
@@ -11,13 +15,18 @@
     "visualize": "node scripts/find-port.mjs | xargs -I{} vite dev --port {} --open",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepublishOnly": "npm run build && npm test",
+    "publish:patch": "npm version patch && npm publish",
+    "publish:minor": "npm version minor && npm publish"
   },
   "files": [
     "dist/",
     "server/",
     "src/",
     "public/",
+    "bin/",
+    "scripts/",
     "package.json",
     "README.md",
     "vite.config.ts",

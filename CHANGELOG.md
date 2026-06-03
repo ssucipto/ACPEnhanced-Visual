@@ -5,6 +5,16 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-06-03
+
+### Added
+
+- **npx acp-visualizer Package (M31)**: Ship as npm package for zero-install usage
+- `bin/acp-visualizer.mjs` — CLI entry point with auto-detection, flags, and server spawn
+- `--path`, `--repo`, `--port`, `--no-open`, `--version`, `--help` CLI flags
+- Auto-detect ACP project by walking up from CWD looking for `agent/progress.yaml`
+- npm publish workflow: `prepublishOnly`, `publish:patch`, `publish:minor` scripts
+
 ## [1.1.1] - 2026-06-03
 
 ### Fixed

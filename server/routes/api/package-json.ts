@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { readFileSync, existsSync } from 'node:fs';
+import { dirname } from 'node:path';
 
 export interface NpmDependency {
   name: string;
@@ -14,12 +15,19 @@ export interface PackageJsonInfo {
   version: string;
 }
 
+/** Derive project root from PROGRESS_YAML_PATH (set by CLI), fall back to CWD. */
+function getProjectRoot(): string {
+  const yamlPath = process.env['PROGRESS_YAML_PATH'];
+  if (yamlPath) return dirname(dirname(yamlPath));
+  return process.cwd();
+}
+
 /**
  * Read package.json and return typed dependency lists.
  */
 export const fetchPackageJson = createServerFn({ method: 'GET' })
   .handler(async () => {
-    const pkgPath = process.cwd() + '/package.json';
+    const pkgPath = getProjectRoot() + '/package.json';
     if (!existsSync(pkgPath)) {
       return { deps: [], devDeps: [], name: '', version: '' };
     }

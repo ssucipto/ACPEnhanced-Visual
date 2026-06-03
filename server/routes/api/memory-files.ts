@@ -1,12 +1,19 @@
 import { createServerFn } from '@tanstack/react-start';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import yaml from 'js-yaml';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
+/** Derive project root from PROGRESS_YAML_PATH (set by CLI), fall back to CWD. */
+function getProjectRoot(): string {
+  const yamlPath = process.env['PROGRESS_YAML_PATH'];
+  if (yamlPath) return dirname(dirname(yamlPath));
+  return process.cwd();
+}
+
 function readAgentFile(relativePath: string): string | null {
-  const fullPath = join(process.cwd(), relativePath);
+  const fullPath = join(getProjectRoot(), relativePath);
   if (!existsSync(fullPath)) return null;
   return readFileSync(fullPath, 'utf-8');
 }
@@ -185,7 +192,7 @@ export interface AuditEntry {
 
 export const fetchAudits = createServerFn({ method: 'GET' })
   .handler(async () => {
-    const reportsDir = join(process.cwd(), 'agent/reports');
+    const reportsDir = join(getProjectRoot(), 'agent/reports');
     if (!existsSync(reportsDir)) return { entries: [] as AuditEntry[], error: null };
 
     const files = readdirSync(reportsDir)

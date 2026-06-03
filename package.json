@@ -11,6 +11,16 @@
     "preview": "vite preview",
     "test": "vitest run"
   },
+  "files": [
+    "dist/",
+    "server/",
+    "src/",
+    "public/",
+    "package.json",
+    "README.md",
+    "vite.config.ts",
+    "tsconfig.json"
+  ],
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
@@ -33,6 +43,7 @@
     "@tanstack/devtools-vite": "latest",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.0",

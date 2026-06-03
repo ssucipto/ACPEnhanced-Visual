@@ -1,0 +1,7 @@
+agent/
+test/
+.github/
+.opencode/
+scripts/
+*.log
+node_modules/

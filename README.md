@@ -33,11 +33,54 @@ git clone https://github.com/ssucipto/agent-context-protocol-visualizer
 cd agent-context-protocol-visualizer
 npm install
 
-# Point at your ACP Enhanced project:
-PROGRESS_YAML_PATH=../acp-enhanced/agent/progress.yaml npm run dev
+# Point at your ACP Enhanced project and open browser:
+PROGRESS_YAML_PATH=../acp-enhanced/agent/progress.yaml npm run visualize
 ```
 
-Open **http://localhost:3000** to see your project's dashboard.
+Or use the one-liner:
+```bash
+npm run visualize
+```
+(uses default `agent/progress.yaml` in the visualizer's own directory)
+
+---
+
+## 📦 Installation (Alongside ACP Enhanced)
+
+The visualizer works alongside any ACP Enhanced project. Two install options:
+
+### Option A: Global install (recommended)
+
+```bash
+git clone https://github.com/ssucipto/agent-context-protocol-visualizer ~/.acp/visualizer
+cd ~/.acp/visualizer && npm install
+```
+
+Then from any ACP Enhanced project:
+```bash
+PROGRESS_YAML_PATH=$(pwd)/agent/progress.yaml ~/.acp/visualizer/npm run visualize
+```
+
+### Option B: Sibling directory
+
+```bash
+# From your ACP Enhanced project:
+cd ..
+git clone https://github.com/ssucipto/agent-context-protocol-visualizer
+cd agent-context-protocol-visualizer && npm install
+
+# Then:
+PROGRESS_YAML_PATH=../acp-enhanced/agent/progress.yaml npm run visualize
+```
+
+### Via ACP Enhanced command
+
+If you have the visualizer installed at `~/.acp/visualizer/`, ACP Enhanced's `/acp-visualize` slash command auto-detects it:
+
+```
+/acp-visualize                    # Opens your current project
+/acp-visualize --path /other/project/agent/progress.yaml
+```
 
 ---
 

@@ -7,6 +7,8 @@
   },
   "scripts": {
     "dev": "vite dev --port 3000",
+    "start": "vite dev --port 3000 --open",
+    "visualize": "vite dev --port 3000 --open",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run"

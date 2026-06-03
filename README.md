@@ -82,6 +82,19 @@ If you have the visualizer installed at `~/.acp/visualizer/`, ACP Enhanced's `/a
 /acp-visualize --path /other/project/agent/progress.yaml
 ```
 
+### Multi-Project Support
+
+The visualizer auto-detects available ports starting from 3000. Run `/acp-visualize`
+in multiple VS Code windows and each project gets its own port:
+
+```
+Project A → :3000
+Project B → :3001
+Project C → :3002
+```
+
+No configuration needed — `npm run visualize` handles port resolution automatically.
+
 ---
 
 ## 📖 Usage

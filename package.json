@@ -7,8 +7,8 @@
   },
   "scripts": {
     "dev": "vite dev --port 3000",
-    "start": "vite dev --port 3000 --open",
-    "visualize": "vite dev --port 3000 --open",
+    "start": "node scripts/find-port.mjs | xargs -I{} vite dev --port {} --open",
+    "visualize": "node scripts/find-port.mjs | xargs -I{} vite dev --port {} --open",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run"

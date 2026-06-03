@@ -59,38 +59,34 @@ PROGRESS_YAML_PATH = <cwd>/agent/progress.yaml
 
 Verify the file exists before launching.
 
-### 3. Launch the dev server
+### 3. Launch with auto port detection
+
+The visualizer auto-detects available ports starting from 3000. Multiple projects
+can run simultaneously — each gets its own port (3000, 3001, 3002, etc.).
 
 ```bash
 cd <visualizer-path>
-PROGRESS_YAML_PATH=<cwd>/agent/progress.yaml npm run dev
+PROGRESS_YAML_PATH=<cwd>/agent/progress.yaml npm run visualize
 ```
 
-If the server is already running on port 3000, skip launch and go to step 4.
+The found port is written to `.visualizer-port` in the visualizer directory.
 
 ### 4. Open the browser
 
-```bash
-# macOS
-open http://localhost:3000
-
-# Linux
-xdg-open http://localhost:3000
-
-# Windows
-start http://localhost:3000
-```
+The `npm run visualize` script uses `vite --open` to auto-open the browser at
+the correct port. No manual port resolution needed.
 
 ### 5. Report
 
 Display:
 ```
 ✅ ACP Progress Visualizer launched
-   Dashboard: http://localhost:3000
+   Dashboard: http://localhost:<port>
    Data: <resolved progress.yaml path>
-   Auto-refresh: enabled (file watcher active)
+   Auto-refresh: enabled (2s polling)
+   Multi-project: supported (port auto-detection)
 
-   Press Ctrl+C in the visualizer terminal to stop.
+   Press Ctrl+C to stop.
 ```
 
 ---

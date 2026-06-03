@@ -1,7 +1,7 @@
 # Milestone 29: GitHub Remote Read Support
 
 **Goal**: Enable the visualizer to fetch progress.yaml from GitHub repositories via raw.githubusercontent.com, removing the local-clone requirement  
-**Duration**: ~5 hours  
+**Duration**: ~6 hours  
 **Design**: [local.github-remote-read](../design/local.github-remote-read.md)
 
 ---
@@ -44,6 +44,7 @@ Currently the visualizer only reads progress.yaml from the local filesystem. Thi
 | 161 | D4 | GITHUB_TOKEN auth support | 0.5h |
 | 162 | D5 | Remote polling via Last-Modified | 1h |
 | 163 | D6 | Error handling for remote sources | 1h |
+| 182 | D7 | Integration test — remote data renders through components | 1h |
 
 ## Success Criteria
 

@@ -1,7 +1,7 @@
 # Milestone 32: Extended Visualizations
 
 **Goal**: Visualize sessions, ADRs, lessons, patterns, packages, and audits — the full ACP project history beyond milestones and tasks  
-**Duration**: ~9.5 hours  
+**Duration**: ~11 hours  
 **Design**: [local.extended-visualizations](../design/local.extended-visualizations.md)
 
 ---
@@ -50,6 +50,7 @@ Extend the visualizer beyond progress.yaml to render the full ACP project histor
 | 179 | D4 | Pattern Library view | 1.5h |
 | 180 | D5 | Package Inventory view | 1h |
 | 181 | D6 | Audit Index view | 1.5h |
+| 183 | — | Sidebar redesign with collapsible sections | 1.5h |
 
 ## Success Criteria
 

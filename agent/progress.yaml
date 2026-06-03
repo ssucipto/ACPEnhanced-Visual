@@ -72,6 +72,81 @@ milestones:
       Document schema version pin, copy ACP Enhanced fixture, add sync test,
       document local usage and sync contract in README.
 
+  M29:
+    name: GitHub Remote Read Support
+    priority: 1
+    status: not_started
+    progress: 0
+    started: null
+    completed: null
+    estimated_weeks: '1'
+    tasks_completed: 0
+    tasks_total: 6
+    file: agent/milestones/milestone-29-github-remote-read.md
+    notes: |
+      Enable fetching progress.yaml from GitHub via raw.githubusercontent.com.
+      Dual data source (local + remote), GITHUB_TOKEN auth, remote polling.
+
+  M30:
+    name: Multi-Project View
+    priority: 1
+    status: not_started
+    progress: 0
+    started: null
+    completed: null
+    estimated_weeks: '1.5'
+    tasks_completed: 0
+    tasks_total: 6
+    file: agent/milestones/milestone-30-multi-project-view.md
+    notes: |
+      Tabbed multi-project dashboard with independent data sources.
+      URL-driven state, aggregate home tab, add/remove at runtime.
+
+  M31:
+    name: npx acp-visualizer Package
+    priority: 2
+    status: not_started
+    progress: 0
+    started: null
+    completed: null
+    estimated_weeks: "1"
+    tasks_completed: 0
+    tasks_total: 6
+    file: agent/milestones/milestone-31-npm-package.md
+    notes: |
+      Ship visualizer as npm package. npx acp-visualizer for zero-install usage.
+      CLI entry point, auto-detect project, flags, publish workflow.
+
+  M32:
+    name: Extended Visualizations
+    priority: 2
+    status: not_started
+    progress: 0
+    started: null
+    completed: null
+    estimated_weeks: "1.5"
+    tasks_completed: 0
+    tasks_total: 7
+    file: agent/milestones/milestone-32-extended-visualizations.md
+    notes: |
+      Visualize sessions, ADRs, lessons, patterns, packages, and audits.
+      Six new views beyond milestones and tasks.
+
+  M33:
+    name: Server Lifecycle & UX
+    priority: 1
+    status: not_started
+    progress: 0
+    started: null
+    completed: null
+    estimated_weeks: '0.5'
+    tasks_completed: 0
+    tasks_total: 4
+    file: agent/milestones/milestone-33-server-lifecycle-ux.md
+    notes: |
+      Shutdown endpoint, Stop Server button, port + source display,
+      auto-shutdown on tab close, port conflict report.
+
 tasks:
   M25:
     - id: task-137
@@ -252,6 +327,214 @@ tasks:
       file: agent/tasks/milestone-28-acp-sync-contract/task-158-sync-contract-docs.md
       estimated_hours: '0.5'
 
+  M29:
+    - id: task-159
+      name: Config parser for PROGRESS_YAML_REPO
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-29-github-remote-read/task-159-config-parser.md
+      estimated_hours: '1.5'
+
+    - id: task-160
+      name: GitHub fetch server function
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-29-github-remote-read/task-160-github-fetch.md
+      estimated_hours: '1.5'
+
+    - id: task-161
+      name: GITHUB_TOKEN auth support
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-29-github-remote-read/task-161-github-token-auth.md
+      estimated_hours: '0.5'
+
+    - id: task-162
+      name: Remote polling via Last-Modified
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-29-github-remote-read/task-162-remote-polling.md
+      estimated_hours: '1'
+
+    - id: task-163
+      name: Error handling for remote sources
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-29-github-remote-read/task-163-error-handling.md
+      estimated_hours: '1'
+
+    - id: task-182
+      name: Integration test — remote GitHub data renders through components
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-29-github-remote-read/task-182-integration-test-remote-render.md
+      estimated_hours: '1'
+
+  M30:
+    - id: task-164
+      name: Project config file + loader
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-30-multi-project-view/task-164-project-config.md
+      estimated_hours: '1.5'
+
+    - id: task-165
+      name: Tab bar component
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-30-multi-project-view/task-165-tab-bar.md
+      estimated_hours: '1'
+
+    - id: task-166
+      name: Per-tab data fetching
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-30-multi-project-view/task-166-per-tab-fetching.md
+      estimated_hours: '1.5'
+
+    - id: task-167
+      name: URL-driven tab state
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-30-multi-project-view/task-167-url-tab-state.md
+      estimated_hours: '1'
+
+    - id: task-168
+      name: Aggregate home tab
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-30-multi-project-view/task-168-aggregate-home.md
+      estimated_hours: '1.5'
+
+    - id: task-169
+      name: Add/remove project at runtime
+      priority: 3
+      status: not_started
+      file: agent/tasks/milestone-30-multi-project-view/task-169-add-remove-project.md
+      estimated_hours: '1.5'
+
+  M31:
+    - id: task-170
+      name: package.json npm packaging config
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-31-npm-package/task-170-package-json-npm.md
+      estimated_hours: '1'
+
+    - id: task-171
+      name: CLI entry point
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-31-npm-package/task-171-cli-entry-point.md
+      estimated_hours: '1.5'
+
+    - id: task-172
+      name: Auto-detect ACP project
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-31-npm-package/task-172-auto-detect-project.md
+      estimated_hours: '1'
+
+    - id: task-173
+      name: CLI flags for path/repo/port
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-31-npm-package/task-173-cli-flags.md
+      estimated_hours: '1'
+
+    - id: task-174
+      name: npm publish workflow
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-31-npm-package/task-174-publish-workflow.md
+      estimated_hours: '0.5'
+
+    - id: task-175
+      name: End-to-end test via npx
+      priority: 3
+      status: not_started
+      file: agent/tasks/milestone-31-npm-package/task-175-e2e-test.md
+      estimated_hours: '1'
+
+  M32:
+    - id: task-176
+      name: Session Timeline view
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-32-extended-visualizations/task-176-session-timeline.md
+      estimated_hours: '2'
+
+    - id: task-177
+      name: ADR Browser view
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-32-extended-visualizations/task-177-adr-browser.md
+      estimated_hours: '2'
+
+    - id: task-178
+      name: Lessons Feed view
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-32-extended-visualizations/task-178-lessons-feed.md
+      estimated_hours: '1.5'
+
+    - id: task-179
+      name: Pattern Library view
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-32-extended-visualizations/task-179-pattern-library.md
+      estimated_hours: '1.5'
+
+    - id: task-180
+      name: Package Inventory view
+      priority: 3
+      status: not_started
+      file: agent/tasks/milestone-32-extended-visualizations/task-180-package-inventory.md
+      estimated_hours: '1'
+
+    - id: task-181
+      name: Audit Index view
+      priority: 3
+      status: not_started
+      file: agent/tasks/milestone-32-extended-visualizations/task-181-audit-index.md
+      estimated_hours: '1.5'
+
+    - id: task-183
+      name: Sidebar redesign with collapsible sections
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-32-extended-visualizations/task-183-sidebar-redesign.md
+      estimated_hours: '1.5'
+
+  M33:
+    - id: task-184
+      name: Shutdown endpoint /api/shutdown
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-33-server-lifecycle-ux/task-184-shutdown-endpoint.md
+      estimated_hours: '0.5'
+
+    - id: task-185
+      name: Stop Server button in ProjectHeader
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-33-server-lifecycle-ux/task-185-stop-server-button.md
+      estimated_hours: '0.5'
+
+    - id: task-186
+      name: Port + data source display in header
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-33-server-lifecycle-ux/task-186-port-source-display.md
+      estimated_hours: '0.5'
+
+    - id: task-187
+      name: Auto-shutdown on tab close + port conflict report
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-33-server-lifecycle-ux/task-187-auto-shutdown-port-report.md
+      estimated_hours: '1'
+
 recent_work:
   - date: 2026-06-03
     description: |
@@ -286,9 +569,11 @@ recent_work:
       - "⚠️ ACP Enhanced fixture has YAML error at M5:148 — sync test handles gracefully"
 
 next_steps:
-  - "🔵 M29: GitHub remote read support (5 tasks, ~5h)"
+  - "🔵 M29: GitHub remote read support (6 tasks, ~6h)"
   - "🔵 M30: Multi-project view (6 tasks, ~8h)"
-  - "P2: npm package for npx acp-visualizer"
+  - "🔵 M31: npx acp-visualizer package (6 tasks, ~6h)"
+  - "🔵 M32: Extended visualizations (7 tasks, ~11h)"
+  - "🔵 M33: Server lifecycle & UX (4 tasks, ~3h)"
   - "Maintenance: monitor ACP Enhanced schema changes"
 
 notes:
@@ -301,63 +586,3 @@ notes:
   - 9 carryovers tracked
 
 current_blockers: []
-
-  M29:
-    name: GitHub Remote Read Support
-    priority: 1
-    status: not_started
-    progress: 0
-    started: null
-    completed: null
-    estimated_weeks: '1'
-    tasks_completed: 0
-    tasks_total: 5
-    file: agent/milestones/milestone-29-github-remote-read.md
-    notes: |
-      Enable fetching progress.yaml from GitHub via raw.githubusercontent.com.
-      Dual data source (local + remote), GITHUB_TOKEN auth, remote polling.
-
-  M30:
-    name: Multi-Project View
-    priority: 1
-    status: not_started
-    progress: 0
-    started: null
-    completed: null
-    estimated_weeks: '1.5'
-    tasks_completed: 0
-    tasks_total: 6
-    file: agent/milestones/milestone-30-multi-project-view.md
-    notes: |
-      Tabbed multi-project dashboard with independent data sources.
-      URL-driven state, aggregate home tab, add/remove at runtime.
-
-  M31:
-    name: npx acp-visualizer Package
-    priority: 2
-    status: not_started
-    progress: 0
-    started: null
-    completed: null
-    estimated_weeks: "1"
-    tasks_completed: 0
-    tasks_total: 6
-    file: agent/milestones/milestone-31-npm-package.md
-    notes: |
-      Ship visualizer as npm package. npx acp-visualizer for zero-install usage.
-      CLI entry point, auto-detect project, flags, publish workflow.
-
-  M32:
-    name: Extended Visualizations
-    priority: 2
-    status: not_started
-    progress: 0
-    started: null
-    completed: null
-    estimated_weeks: "1.5"
-    tasks_completed: 0
-    tasks_total: 6
-    file: agent/milestones/milestone-32-extended-visualizations.md
-    notes: |
-      Visualize sessions, ADRs, lessons, patterns, packages, and audits.
-      Six new views beyond milestones and tasks.

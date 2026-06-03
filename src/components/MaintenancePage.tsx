@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import type { ServerInstance, SystemInfo } from '../../server/routes/api/maintenance';
-import { scanServers, getSystemInfo } from '../../server/routes/api/maintenance';
+import { scanServers, getSystemInfo, killByPort } from '../../server/routes/api/maintenance';
 
 export function MaintenancePage() {
   const [instances, setInstances] = useState<ServerInstance[]>([]);
   const [sysInfo, setSysInfo] = useState<SystemInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [stoppingPorts, setStoppingPorts] = useState<Set<number>>(new Set());
 
   const refresh = async () => {
     setLoading(true);
@@ -18,13 +19,21 @@ export function MaintenancePage() {
   useEffect(() => { refresh(); }, []);
 
   const handleShutdown = async (port: number) => {
+    setStoppingPorts((prev) => new Set(prev).add(port));
     try {
-      await fetch(`http://localhost:${port}/api/shutdown`, { method: 'POST' });
-      refresh();
+      await killByPort({ data: { port } });
     } catch {
-      // Server may already be down
-      refresh();
+      // Process may already be gone
     }
+    // Wait for OS to release the port, then refresh
+    setTimeout(() => {
+      setStoppingPorts((prev) => {
+        const next = new Set(prev);
+        next.delete(port);
+        return next;
+      });
+      refresh();
+    }, 800);
   };
 
   return (
@@ -64,12 +73,16 @@ export function MaintenancePage() {
                   <td className="px-4 py-2 font-mono text-xs text-gray-500">{inst.pid}</td>
                   <td className="px-4 py-2 font-mono text-xs text-gray-600">{inst.process}</td>
                   <td className="px-4 py-2">
-                    <button
-                      onClick={() => handleShutdown(inst.port)}
-                      className="text-xs px-2 py-1 rounded border border-red-200 text-red-500 hover:bg-red-50 font-mono"
-                    >
-                      ⏹ Stop
-                    </button>
+                    {stoppingPorts.has(inst.port) ? (
+                      <span className="text-xs text-gray-400 italic font-mono">⏳ Stopping…</span>
+                    ) : (
+                      <button
+                        onClick={() => handleShutdown(inst.port)}
+                        className="text-xs px-2 py-1 rounded border border-red-200 text-red-500 hover:bg-red-50 font-mono"
+                      >
+                        ⏹ Stop
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

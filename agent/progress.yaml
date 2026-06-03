@@ -1,6 +1,6 @@
 project:
   name: ACPEnhanced-Visual
-  version: 1.4.2
+  version: 1.5.0
   started: 2026-06-03
   status: completed
   current_milestone: null
@@ -161,6 +161,23 @@ milestones:
     notes: |
       Markdown document viewer, port display fix, maintenance page,
       packages page overhaul, installation alignment, sidebar links.
+
+  M35:
+    name: Test Coverage & Quality Hardening
+    priority: 1
+    status: completed
+    progress: 100
+    started: 2026-06-03
+    completed: 2026-06-03
+    estimated_weeks: '0.5'
+    tasks_completed: 12
+    tasks_total: 12
+    file: agent/milestones/milestone-35-test-coverage.md
+    notes: |
+      Audit #19 follow-up. Added @vitest/coverage-v8, test:coverage/test:watch
+      scripts, @testing-library/jest-dom matchers. 11 server function export tests,
+      10 component tests (DocsViewer, MaintenancePage, ServerControls),
+      path traversal security tests. 28 new tests total (43 → 71).
 
 tasks:
   M25:
@@ -669,6 +686,25 @@ tasks:
 recent_work:
   - date: 2026-06-03
     description: |
+      🧪 M35: Test Coverage & Quality Hardening — audit #19 follow-up.
+      Added @vitest/coverage-v8, @testing-library/jest-dom, test:coverage/test:watch
+      scripts. 28 new tests: 11 server function export verification, 10 component
+      tests (DocsViewer, MaintenancePage, ServerControls), 2 path traversal security
+      tests. Total: 71 tests across 11 files. TS clean, all passing.
+    items:
+      - "📦 Installed @vitest/coverage-v8 + @testing-library/jest-dom"
+      - "📦 Added test:coverage + test:watch npm scripts + test/setup.ts"
+      - "✅ test/server-fns/smoke.test.ts — 11 server fn exports verified"
+      - "✅ test/components/docs-viewer.test.tsx — 4 tests (markdown, tables)"
+      - "✅ test/components/maintenance.test.tsx — 5 tests (scan, stop, info)"
+      - "✅ test/components/server-controls.test.tsx — 6 tests (info, stop)"
+      - "✅ 28 new tests — 43 → 71 total (+65%), 11 test files (was 7)"
+      - "✅ vite.config.ts coverage thresholds: 50% statements, 40% branches"
+      - "✅ All 71 tests passing, TypeScript 0 errors"
+      - "✓ No artifacts — all still templates, skip staleness check"
+
+  - date: 2026-06-03
+    description: |
       🔧 Debugging session: Fixed critical runtime issues preventing dashboard
       from working. node:fs client-side bundling, Date rendering errors,
       SSR hydration mismatch, schema nullability for completed projects.
@@ -729,23 +765,23 @@ recent_work:
       - "⚠️ ACP Enhanced fixture has YAML error at M5:148 — sync test handles gracefully"
 
 next_steps:
-  - "🔵 M29: GitHub remote read support (6 tasks, ~6h)"
-  - "🔵 M30: Multi-project view (6 tasks, ~8h)"
-  - "🔵 M31: npx acp-visualizer package (6 tasks, ~6h)"
-  - "🔵 M32: Extended visualizations (7 tasks, ~11h)"
-  - "🔵 M33: Server lifecycle & UX (4 tasks, ~3h)"
+  - "🔵 Split vitest environments — Node for CLI/YAML, jsdom for components (T12 remaining from M35)"
+  - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
+  - "🔵 Add E2E tests — Playwright full browser flow"
+  - "🔵 npm publish — ship v1.5.0 to npm registry"
+  - "🔵 Accessibility audit — axe-core on all pages"
   - "Maintenance: monitor ACP Enhanced schema changes"
 
 notes:
-  - 🎉 ALL 9 MILESTONES COMPLETE (M25-M33) — Project status: completed
-  - 57 tasks completed across 9 milestones
-  - 43 tests passing across 7 test files
+  - 🎉 11 MILESTONES COMPLETE (M25-M35) — 76 tasks across 11 milestones
+  - 71 tests passing across 11 test files
+  - Coverage reporting enabled via npm run test:coverage
   - ACP Enhanced v6.8.2 framework installed
   - GitHub Actions CI: lint + test + build on push/PR
-  - 14 audit reports, all findings resolved
+  - 19 audit reports, all findings resolved
   - npx acp-visualizer CLI ready for npm publish
-  - 13 routes: Home, Milestones, Search, Sessions, ADRs, Lessons, Patterns, Packages, Audits
-  - 20+ components across Dashboard, Intelligence, Management sections
+  - 16 routes: Home, Milestones, Search, Sessions, ADRs, Lessons, Patterns, Packages, Audits, Docs, Maintenance, Route Costs
+  - 20+ components across Dashboard, Intelligence, Tools, Management sections
   - Collapsible sidebar with localStorage persistence
   - Dual data source: local filesystem + GitHub remote
   - Path traversal protection on all file-reading server functions

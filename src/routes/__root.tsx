@@ -118,7 +118,7 @@ function CollapsibleSection({ section }: { section: typeof NAV_SECTIONS[0] }) {
             activeOptions={{ exact: to === '/' }}
             activeProps={{ className: 'bg-gray-700 text-white' }}
             inactiveProps={{ className: 'text-gray-400 hover:bg-gray-800 hover:text-white' }}
-            className="block pl-8 pr-4 py-1.5 text-sm transition-colors rounded-sm mx-1"
+            className="block pl-10 pr-4 py-1.5 text-sm transition-colors rounded-sm mx-1"
           >
             {label}
           </Link>

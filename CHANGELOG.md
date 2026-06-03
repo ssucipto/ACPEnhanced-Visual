@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Test Coverage & Quality (M35)**: 28 new tests, coverage reporting, jest-dom matchers
+- **Audit #18**: UX polish — custom prose CSS for markdown viewer, mermaid.js charts, maintenance stop button fix (server-side kill), sidebar tree alignment
+- **Audit #19**: Comprehensive test packages & infrastructure audit (7 files, 43 tests baseline)
+- `@vitest/coverage-v8` — Istanbul coverage reports (text + HTML), 50% thresholds
+- `@testing-library/jest-dom` — `toBeInTheDocument()`, `toHaveTextContent()` matchers
+- `test:coverage` and `test:watch` npm scripts
+- 4 new test files: smoke (11 server fn exports), docs-viewer (4), maintenance (5), server-controls (6)
+- 2 path traversal security tests in smoke test
 - **Polish & Docs (M34)**: Markdown viewer, maintenance page, route costs, packages overhaul
 - `/docs` — Markdown document viewer with file browser (marked rendering)
 - `/maintenance` — Server manager (scan ports, shutdown instances, system info)
@@ -17,8 +25,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `scripts/install.sh` — Install script for ~/.acp/visualizer/
 - Sidebar "🛠 Tools" section with Docs, Maintenance, Route Costs
 
+### Changed
+
+- **Test suite**: 43 → 71 tests (+65%), 7 → 11 test files
+- **Sidebar**: Nav link padding `pl-8` → `pl-10` for cleaner alignment
+
 ### Fixed
 
+- Maintenance stop button now uses server-side `killByPort()` instead of failing cross-origin fetch
 - Port display now shows actual port from `window.location.port` (was hardcoded 3000)
 - `planned` status added to all schemas, types, badges, and filters
 

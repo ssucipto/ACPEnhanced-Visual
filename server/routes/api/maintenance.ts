@@ -69,3 +69,30 @@ export const getSystemInfo = createServerFn({ method: 'GET' })
       freeMemMB: Math.round(freemem() / 1024 / 1024),
     } as SystemInfo;
   });
+
+/**
+ * Kill the process listening on a given port.
+ * Uses lsof to find the PID, then sends SIGTERM.
+ */
+export const killByPort = createServerFn({ method: 'POST' })
+  .inputValidator((input: { port: number }) => input)
+  .handler(async ({ data }) => {
+    const isWindows = platform() === 'win32';
+    try {
+      let pid: string;
+      if (isWindows) {
+        const out = execSync(`netstat -ano | findstr :${data.port}`, { encoding: 'utf8', timeout: 3000 });
+        const match = out.match(/:(\d+)\s+.*LISTENING\s+(\d+)/);
+        if (!match) return { ok: false, error: 'No listening process found' };
+        pid = match[2];
+        execSync(`taskkill /PID ${pid} /F`, { timeout: 3000 });
+      } else {
+        pid = execSync(`lsof -ti :${data.port}`, { encoding: 'utf8', timeout: 3000 }).trim();
+        if (!pid) return { ok: false, error: 'No listening process found' };
+        execSync(`kill ${pid}`, { timeout: 3000 });
+      }
+      return { ok: true, pid };
+    } catch (e: any) {
+      return { ok: false, error: e?.message || 'Failed to kill process' };
+    }
+  });

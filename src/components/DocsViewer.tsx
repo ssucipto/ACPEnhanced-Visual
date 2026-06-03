@@ -1,13 +1,27 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { marked } from 'marked';
 import type { DocFile } from '../../server/routes/api/docs';
 import { listDocs, readDoc } from '../../server/routes/api/docs';
+
+/** Wrap raw <table> elements in a scrollable container for responsive overflow */
+function wrapTables(html: string): string {
+  return html.replace(/<table>/g, '<div class="table-wrapper"><table>').replace(/<\/table>/g, '</table></div>');
+}
+
+/** Convert ```mermaid fences into <pre class="mermaid"> blocks that Mermaid.js renders */
+function extractMermaid(html: string): string {
+  return html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g, (_, code: string) => {
+    const decoded = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+    return `<div class="mermaid-container"><pre class="mermaid">${decoded}</pre></div>`;
+  });
+}
 
 export function DocsViewer() {
   const [files, setFiles] = useState<DocFile[]>([]);
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     listDocs().then((r) => {
@@ -25,8 +39,36 @@ export function DocsViewer() {
 
   const html = useMemo(() => {
     if (!content) return '';
-    return marked(content, { breaks: true }) as string;
+    const raw = marked(content, { breaks: true }) as string;
+    return wrapTables(extractMermaid(raw));
   }, [content]);
+
+  // Render mermaid diagrams after HTML is injected into DOM
+  const renderMermaid = useCallback(async () => {
+    const el = contentRef.current;
+    if (!el) return;
+    const blocks = el.querySelectorAll<HTMLElement>('pre.mermaid');
+    if (blocks.length === 0) return;
+    try {
+      const mermaid = (await import('mermaid')).default;
+      mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'sandbox' });
+      let id = 0;
+      for (const block of blocks) {
+        if (block.getAttribute('data-processed')) continue;
+        block.setAttribute('data-processed', 'true');
+        const graphId = `mermaid-${Date.now()}-${++id}`;
+        const { svg } = await mermaid.render(graphId, block.textContent || '');
+        block.innerHTML = svg;
+      }
+    } catch { /* mermaid rendering failed — show raw code */ }
+  }, []);
+
+  useEffect(() => {
+    if (!html) return;
+    // Small delay for DOM to update, then render mermaid
+    const timer = setTimeout(renderMermaid, 50);
+    return () => clearTimeout(timer);
+  }, [html, renderMermaid]);
 
   // Group files by directory
   const grouped = useMemo(() => {
@@ -78,7 +120,8 @@ export function DocsViewer() {
           </div>
         ) : (
           <article
-            className="prose prose-sm max-w-none prose-headings:text-gray-800 prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100"
+            ref={contentRef}
+            className="prose-doc max-w-none"
             dangerouslySetInnerHTML={{ __html: html }}
           />
         )}

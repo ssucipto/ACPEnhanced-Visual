@@ -85,3 +85,37 @@ carryovers:
     fix_applied_date: null
     verified_in_audit: null
     notes: "Upstream issue. Sync test handles gracefully. Not a visualizer bug."
+
+  - finding_id: audit-18-F4
+    finding: "Maintenance stop button used raw fetch() to TanStack Start RPC — wrong protocol, CORS issues, server dies before responding. Fixed with server-side killByPort()."
+    severity: high
+    status: fixed
+    audit_ref: audit-18-ux-polish
+    fix_applied_date: 2026-06-03
+    verified_in_audit: null
+
+  - finding_id: audit-18-F1
+    finding: "Markdown viewer lacks table/chart styling — @tailwindcss/typography v0.5.x is Tailwind v3 plugin. Fixed with custom prose CSS + mermaid.js."
+    severity: medium
+    status: fixed
+    audit_ref: audit-18-ux-polish
+    fix_applied_date: 2026-06-03
+    verified_in_audit: null
+
+  - finding_id: audit-19-F1
+    finding: "No code coverage reporting — no @vitest/coverage-v8, no coverage thresholds, no test:coverage script. 11 server functions and 6+ components untested."
+    severity: medium
+    status: pending
+    audit_ref: audit-19-test-packages
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "Quick win: install @vitest/coverage-v8, add test:coverage script."
+
+  - finding_id: audit-19-F2
+    finding: "All 11 server functions are untested — maintenance, shutdown, docs, github-fetch, memory-files, projects-config, progress, watch, remote-watch, route-costs, package-json"
+    severity: high
+    status: pending
+    audit_ref: audit-19-test-packages
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "Server functions handle file I/O, process management, network — untested regression risk."

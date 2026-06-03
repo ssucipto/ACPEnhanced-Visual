@@ -1,6 +1,6 @@
 ---
 created: 2026-06-03
-completed:
+completed: 2026-06-03
 ---
 
 # Task 160: GitHub Fetch with ETag Caching & Rate Limit Awareness

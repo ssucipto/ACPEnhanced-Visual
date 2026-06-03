@@ -342,9 +342,13 @@ tasks:
     - id: task-160
       name: GitHub fetch server function
       priority: 1
-      status: not_started
+      status: completed
+      started: 2026-06-03T00:30:00Z
       file: agent/tasks/milestone-29-github-remote-read/task-160-github-fetch.md
       estimated_hours: '1.5'
+      actual_hours: 0.5
+      completed_date: 2026-06-03T01:00:00Z
+      notes: ETag caching, rate limit detection, per-repo tokens, 304/401/403/404 handling.
 
     - id: task-161
       name: GITHUB_TOKEN auth support

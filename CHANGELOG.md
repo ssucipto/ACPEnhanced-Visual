@@ -5,6 +5,14 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2026-06-03
+
+### Added
+
+- `server/routes/api/github-fetch.ts` — fetch progress.yaml from raw.githubusercontent.com
+- ETag-based conditional requests (304 = no rate limit cost)
+- Rate limit detection via X-RateLimit-Remaining header
+
 ## [1.0.2] - 2026-06-03
 
 ### Added

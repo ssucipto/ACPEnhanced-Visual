@@ -3,51 +3,55 @@ created: 2026-06-03
 completed:
 ---
 
-# Task 162: Remote Polling via Last-Modified
+# Task 162: Adaptive Polling — 10s Remote, 2s Local + Shared Manager
 
 **Milestone**: [M29 - GitHub Remote Read](../../milestones/milestone-29-github-remote-read.md)  
 **Design**: [local.github-remote-read](../../design/local.github-remote-read.md) (D5)  
-**Estimated Time**: 1 hour  
+**Estimated Time**: 1.5 hours  
 **Depends on**: task-160
 
 ---
 
 ## Objective
 
-Add a server function that polls `raw.githubusercontent.com` via HEAD request to check `Last-Modified` header, enabling the existing 2s polling model to work with remote sources.
+Adaptive polling: 2s for local filesystem, 10s for GitHub remote (360 req/hr — safe within rate limits). HEAD requests with `If-None-Match` for remote. Shared PollManager for M30 multi-project support.
 
 ---
 
 ## Steps
 
-### 1. Create watch server function
+### 1. Adaptive intervals
 
-In `server/routes/api/github-watch.ts`:
 ```typescript
-export const fetchGitHubWatchToken = createServerFn({ method: 'GET' })
-  .inputValidator((input: { repo: string; ref?: string; path?: string }) => input)
-  .handler(async ({ data }) => {
-    const { repo, ref = 'main', path = 'agent/progress.yaml' } = data;
-    const url = `https://raw.githubusercontent.com/${repo}/${ref}/${path}`;
-    try {
-      const res = await fetch(url, { method: 'HEAD' });
-      const lastMod = res.headers.get('last-modified');
-      return { mtime: lastMod ? new Date(lastMod).getTime() : Date.now(), error: null };
-    } catch (err) {
-      return { mtime: null, error: formatParseError(err) };
-    }
-  });
+const POLL_LOCAL = 2000;   // 2s
+const POLL_REMOTE = 10000; // 10s (360 req/hr, safe with 5000 limit)
 ```
 
-### 2. Update data-source hook
+### 2. HEAD with ETag for remote
 
-Extend `useProgressData` to accept a `source` param and call the appropriate watch function (filesystem vs GitHub).
+```typescript
+// HEAD request with If-None-Match → 304 when unchanged
+const res = await fetch(url, { method: 'HEAD', headers: { 'If-None-Match': etag } });
+if (res.status === 304) return { unchanged: true };
+```
+
+### 3. Shared PollManager (M30)
+
+Single poll loop for all sources instead of per-tab loops:
+```typescript
+class PollManager {
+  private sources = new Map();
+  addSource(id, config, onChange) { ... }
+  removeSource(id) { ... }
+  private async pollAll() { /* iterate all sources */ }
+}
+```
 
 ---
 
 ## Verification
 
-- [ ] `server/routes/api/github-watch.ts` created
-- [ ] HEAD request returns Last-Modified timestamp
-- [ ] Polling re-fetches when Last-Modified changes
-- [ ] Filesystem polling still works (backward compatible)
+- [ ] Local: 2s interval (unchanged)
+- [ ] Remote: 10s interval (rate-limit safe)
+- [ ] HEAD + If-None-Match → 304 when unchanged
+- [ ] Shared PollManager design for M30

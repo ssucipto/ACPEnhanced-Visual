@@ -3,61 +3,52 @@ created: 2026-06-03
 completed:
 ---
 
-# Task 159: Config Parser for PROGRESS_YAML_REPO
+# Task 159: Config Parser with Per-Repo Token Support
 
 **Milestone**: [M29 - GitHub Remote Read](../../milestones/milestone-29-github-remote-read.md)  
 **Design**: [local.github-remote-read](../../design/local.github-remote-read.md) (D1, D2)  
-**Estimated Time**: 1 hour  
+**Estimated Time**: 1.5 hours  
 
 ---
 
 ## Objective
 
-Parse `PROGRESS_YAML_REPO=owner/repo:branch:path` into a structured config object that the data-source hook can use.
+Parse `PROGRESS_YAML_REPO=owner/repo:branch:path` into structured config. Support per-repo tokens via `token_env` and `.github-tokens.json` for multi-account GitHub setups.
 
 ---
 
 ## Steps
 
-### 1. Create config parser
+### 1. Config with token support
 
-In `src/lib/config.ts`:
 ```typescript
 export interface DataSourceConfig {
   type: 'local' | 'github';
-  path?: string;       // local file path
-  repo?: string;        // owner/repo
-  ref?: string;         // branch (default: main)
-  filePath?: string;    // path within repo (default: agent/progress.yaml)
-}
-
-export function parseDataSource(env: NodeJS.ProcessEnv): DataSourceConfig {
-  if (env.PROGRESS_YAML_REPO) {
-    const [repo, rest] = env.PROGRESS_YAML_REPO.split(':');
-    const [ref, filePath] = (rest || '').split('/') ;
-    return {
-      type: 'github',
-      repo,
-      ref: ref || 'main',
-      filePath: filePath || 'agent/progress.yaml',
-    };
-  }
-  return {
-    type: 'local',
-    path: env.PROGRESS_YAML_PATH || 'agent/progress.yaml',
-  };
+  path?: string;
+  repo?: string;
+  ref?: string;
+  filePath?: string;
+  tokenEnv?: string;  // env var for PAT (e.g. GITHUB_TOKEN_SSUCIPTO)
 }
 ```
 
-### 2. Add unit tests
+### 2. Load .github-tokens.json
 
-Test parsing: `ssucipto/acp-enhanced`, `ssucipto/acp-enhanced:develop`, `ssucipto/acp-enhanced:main/custom/path.yaml`.
+```json
+{ "ssucipto": "ghp_xxx", "rygandev01": "ghp_yyy" }
+```
+
+Map repo owner → token automatically. File is gitignored.
+
+### 3. Backward compatible
+
+If no token config, public repos work without auth. Private repos return 401 with clear message.
 
 ---
 
 ## Verification
 
-- [ ] `src/lib/config.ts` created with `parseDataSource()`
-- [ ] Local config returns type=local with path
-- [ ] GitHub config parses repo, ref, path correctly
-- [ ] Defaults: ref=main, path=agent/progress.yaml
+- [ ] `tokenEnv` field in DataSourceConfig
+- [ ] `.github-tokens.json` loaded and mapped to repo owners
+- [ ] Backward compatible: no token = public access only
+- [ ] Multi-account: different tokens for different repos

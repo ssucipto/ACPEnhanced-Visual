@@ -3,7 +3,9 @@ import type { ProgressData, Milestone, Task } from './types';
 import { progressDataSchema } from './schemas';
 
 export function parseProgressYaml(raw: string): ProgressData {
-  const rawDoc = yaml.load(raw);
+  // Use json:true to allow duplicate keys (progress.yaml is user-edited)
+  // Last value wins for duplicates — this is lenient but practical
+  const rawDoc = yaml.load(raw, { json: true });
 
   // Zod validates the raw structure
   const doc = progressDataSchema.parse(rawDoc);

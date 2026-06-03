@@ -1,7 +1,7 @@
 # 🚀 ACP Progress Visualizer
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.4.0-blue?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/version-1.4.1-blue?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/status-completed-success?style=flat-square" alt="Status">
   <img src="https://img.shields.io/badge/ACP%20Enhanced-v6.8.2-6e47ff?style=flat-square" alt="ACP Enhanced">
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License">
@@ -9,20 +9,44 @@
   <img src="https://img.shields.io/badge/tests-43%20passing-success?style=flat-square" alt="Tests">
 </p>
 
-> **Bring your ACP Enhanced progress.yaml to life.** A local web dashboard that turns structured YAML milestone data into an interactive, sortable, searchable UI.
+> **Bring your ACP Enhanced progress.yaml to life.** A web dashboard that turns structured YAML milestone data into an interactive, sortable, searchable UI. Supports local filesystem and GitHub remote sources, multi-project tabs, and extended ACP memory visualizations.
 
 ---
 
-## ✨ What It Does
+## ✨ Features
 
-ACP Progress Visualizer reads any ACP Enhanced project's `agent/progress.yaml` and renders it as a beautiful, interactive dashboard:
-
+### Core Dashboard
 - 📊 **Milestone Table** — sortable columns (ID, name, status, progress, tasks, priority)
 - 🌳 **Milestone Tree** — expandable milestone → task hierarchy with expand/collapse all
 - 🔍 **Fuzzy Search** — fuse.js instant search across all milestones and tasks
 - 🏷️ **Status Filtering** — filter by active, in progress, completed, not started
-- 🔄 **Auto-Refresh** — polls file mtime every 2s, re-renders on change — no WebSocket needed
+- 🔄 **Auto-Refresh** — adaptive polling (2s local, 10s remote) — no WebSocket needed
 - 📈 **Progress Bars** — per-milestone and overall project completion
+
+### Multi-Project
+- 📑 **Tabbed Dashboard** — monitor multiple projects simultaneously
+- 🏠 **Aggregate Home** — cross-project stats (total milestones, active projects)
+- ➕ **Add/Remove at Runtime** — no restart needed
+- 🔗 **URL-Driven State** — bookmarkable tabs (`?tab=name`)
+
+### Remote Sources
+- 🌐 **GitHub Remote Read** — fetch progress.yaml from any public/private repo
+- 🔐 **GITHUB_TOKEN** support for private repos
+- 📡 **ETag Caching** — 304 responses don't count toward rate limits
+- ⚠️ **Rate Limit Awareness** — warning banner when approaching limits
+
+### Extended Visualizations
+- 📅 **Session Timeline** — collapsible entries with key facts
+- 📋 **ADR Browser** — filterable by status, re-open trigger highlights
+- 📝 **Lessons Feed** — grouped by task_type with mistake/correction pairs
+- 🧩 **Pattern Library** — searchable catalog with code references
+- 📦 **Package Inventory** — installed ACP packages table
+- 📊 **Audit Index** — report table with finding counts + severity badges
+
+### Developer Experience
+- ⏹ **Stop Server Button** — one-click shutdown from the browser
+- 🚀 **npx acp-visualizer** — zero-install CLI with auto-detect
+- 📂 **Collapsible Sidebar** — organized into Dashboard, Intelligence, Management
 
 ---
 
@@ -166,15 +190,15 @@ PROGRESS_YAML_TOKEN_ENV=GITHUB_TOKEN_SSUCIPTO \
 | Layer | Technology |
 |-------|-----------|
 | **Framework** | [TanStack Start](https://tanstack.com/start) (React SSR) |
+| **Router** | [TanStack Router](https://tanstack.com/router) (file-based) |
 | **UI** | React 19 + [Tailwind CSS v4](https://tailwindcss.com) |
 | **Table** | [TanStack Table v8](https://tanstack.com/table) |
 | **Search** | [fuse.js v7](https://fusejs.io) |
 | **YAML** | [js-yaml](https://github.com/nodeca/js-yaml) |
-| **Validation** | [Zod](https://zod.dev) (planned — M26) |
+| **Validation** | [Zod](https://zod.dev) |
 | **Testing** | [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) |
-| **CI** | GitHub Actions (planned — M27) |
-
----
+| **CI** | GitHub Actions (lint + test + build) |
+| **Icons** | [Lucide React](https://lucide.dev) |
 
 ## 📐 Architecture
 
@@ -182,8 +206,18 @@ PROGRESS_YAML_TOKEN_ENV=GITHUB_TOKEN_SSUCIPTO \
 Browser (React SPA)
   │
   ├─ TanStack Start Server Functions (Node.js)
-  │   ├─ fetchProgress()   — readFileSync → js-yaml → typed JSON
-  │   └─ fetchWatchToken() — statSync → mtime for polling
+  │   ├─ progress.ts       — readFileSync → sanitizeDates → Zod → typed JSON
+  │   ├─ github-fetch.ts   — raw.githubusercontent.com with ETag caching
+  │   ├─ memory-files.ts   — Parse sessions, ADRs, lessons, patterns, packages, audits
+  │   ├─ shutdown.ts       — POST /api/shutdown + getServerInfo
+  │   └─ 4 more server functions
+  │
+  └─ Client (13 routes, 20+ components)
+      ├─ useProgressData()  — dual-source (local/GitHub), adaptive polling
+      ├─ fuse.js index      — fuzzy search across milestones + tasks
+      ├─ TabBar + Tabs      — multi-project dashboard (M30)
+      ├─ Memory Views       — SessionTimeline, ADRBrowser, LessonsFeed, etc.
+      └─ Server Controls    — Stop button, port display, rate limit banner
   │
   └─ Client Components
       ├─ useProgressData()  — hook: fetch + 2s poll loop

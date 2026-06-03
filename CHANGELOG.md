@@ -5,6 +5,23 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-06-03
+
+### Added
+
+- **Polish & Docs (M34)**: Markdown viewer, maintenance page, route costs, packages overhaul
+- `/docs` — Markdown document viewer with file browser (marked rendering)
+- `/maintenance` — Server manager (scan ports, shutdown instances, system info)
+- `/route-costs` — ACP Enhanced route cost reports from routing ledger
+- `/packages` — Redesigned with NPM tab (deps + devDeps) and ACP tab
+- `scripts/install.sh` — Install script for ~/.acp/visualizer/
+- Sidebar "🛠 Tools" section with Docs, Maintenance, Route Costs
+
+### Fixed
+
+- Port display now shows actual port from `window.location.port` (was hardcoded 3000)
+- `planned` status added to all schemas, types, badges, and filters
+
 ## [1.4.2] - 2026-06-03
 
 ### Changed

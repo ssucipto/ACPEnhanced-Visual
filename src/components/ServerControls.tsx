@@ -10,7 +10,10 @@ export function ServerInfoDisplay() {
   const [info, setInfo] = useState<{ port: string; dataSource: string; sourceType: string } | null>(null);
 
   useEffect(() => {
-    getServerInfo().then(setInfo).catch(() => {});
+    getServerInfo().then((data) => {
+      // Use actual browser port, not env var (Vite doesn't set PORT)
+      setInfo({ ...data, port: window.location.port || '3000' });
+    }).catch(() => {});
   }, []);
 
   if (!info) return null;

@@ -11,10 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SessionsRouteImport } from './routes/sessions'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as RouteCostsRouteImport } from './routes/route-costs'
 import { Route as PatternsRouteImport } from './routes/patterns'
 import { Route as PackagesRouteImport } from './routes/packages'
 import { Route as MilestonesRouteImport } from './routes/milestones'
+import { Route as MaintenanceRouteImport } from './routes/maintenance'
 import { Route as LessonsRouteImport } from './routes/lessons'
+import { Route as DocsRouteImport } from './routes/docs'
 import { Route as AuditsRouteImport } from './routes/audits'
 import { Route as AdrsRouteImport } from './routes/adrs'
 import { Route as IndexRouteImport } from './routes/index'
@@ -27,6 +30,11 @@ const SessionsRoute = SessionsRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RouteCostsRoute = RouteCostsRouteImport.update({
+  id: '/route-costs',
+  path: '/route-costs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatternsRoute = PatternsRouteImport.update({
@@ -44,9 +52,19 @@ const MilestonesRoute = MilestonesRouteImport.update({
   path: '/milestones',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MaintenanceRoute = MaintenanceRouteImport.update({
+  id: '/maintenance',
+  path: '/maintenance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LessonsRoute = LessonsRouteImport.update({
   id: '/lessons',
   path: '/lessons',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuditsRoute = AuditsRouteImport.update({
@@ -69,10 +87,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/adrs': typeof AdrsRoute
   '/audits': typeof AuditsRoute
+  '/docs': typeof DocsRoute
   '/lessons': typeof LessonsRoute
+  '/maintenance': typeof MaintenanceRoute
   '/milestones': typeof MilestonesRoute
   '/packages': typeof PackagesRoute
   '/patterns': typeof PatternsRoute
+  '/route-costs': typeof RouteCostsRoute
   '/search': typeof SearchRoute
   '/sessions': typeof SessionsRoute
 }
@@ -80,10 +101,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adrs': typeof AdrsRoute
   '/audits': typeof AuditsRoute
+  '/docs': typeof DocsRoute
   '/lessons': typeof LessonsRoute
+  '/maintenance': typeof MaintenanceRoute
   '/milestones': typeof MilestonesRoute
   '/packages': typeof PackagesRoute
   '/patterns': typeof PatternsRoute
+  '/route-costs': typeof RouteCostsRoute
   '/search': typeof SearchRoute
   '/sessions': typeof SessionsRoute
 }
@@ -92,10 +116,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/adrs': typeof AdrsRoute
   '/audits': typeof AuditsRoute
+  '/docs': typeof DocsRoute
   '/lessons': typeof LessonsRoute
+  '/maintenance': typeof MaintenanceRoute
   '/milestones': typeof MilestonesRoute
   '/packages': typeof PackagesRoute
   '/patterns': typeof PatternsRoute
+  '/route-costs': typeof RouteCostsRoute
   '/search': typeof SearchRoute
   '/sessions': typeof SessionsRoute
 }
@@ -105,10 +132,13 @@ export interface FileRouteTypes {
     | '/'
     | '/adrs'
     | '/audits'
+    | '/docs'
     | '/lessons'
+    | '/maintenance'
     | '/milestones'
     | '/packages'
     | '/patterns'
+    | '/route-costs'
     | '/search'
     | '/sessions'
   fileRoutesByTo: FileRoutesByTo
@@ -116,10 +146,13 @@ export interface FileRouteTypes {
     | '/'
     | '/adrs'
     | '/audits'
+    | '/docs'
     | '/lessons'
+    | '/maintenance'
     | '/milestones'
     | '/packages'
     | '/patterns'
+    | '/route-costs'
     | '/search'
     | '/sessions'
   id:
@@ -127,10 +160,13 @@ export interface FileRouteTypes {
     | '/'
     | '/adrs'
     | '/audits'
+    | '/docs'
     | '/lessons'
+    | '/maintenance'
     | '/milestones'
     | '/packages'
     | '/patterns'
+    | '/route-costs'
     | '/search'
     | '/sessions'
   fileRoutesById: FileRoutesById
@@ -139,10 +175,13 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdrsRoute: typeof AdrsRoute
   AuditsRoute: typeof AuditsRoute
+  DocsRoute: typeof DocsRoute
   LessonsRoute: typeof LessonsRoute
+  MaintenanceRoute: typeof MaintenanceRoute
   MilestonesRoute: typeof MilestonesRoute
   PackagesRoute: typeof PackagesRoute
   PatternsRoute: typeof PatternsRoute
+  RouteCostsRoute: typeof RouteCostsRoute
   SearchRoute: typeof SearchRoute
   SessionsRoute: typeof SessionsRoute
 }
@@ -161,6 +200,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/route-costs': {
+      id: '/route-costs'
+      path: '/route-costs'
+      fullPath: '/route-costs'
+      preLoaderRoute: typeof RouteCostsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patterns': {
@@ -184,11 +230,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MilestonesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/maintenance': {
+      id: '/maintenance'
+      path: '/maintenance'
+      fullPath: '/maintenance'
+      preLoaderRoute: typeof MaintenanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lessons': {
       id: '/lessons'
       path: '/lessons'
       fullPath: '/lessons'
       preLoaderRoute: typeof LessonsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/audits': {
@@ -219,10 +279,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdrsRoute: AdrsRoute,
   AuditsRoute: AuditsRoute,
+  DocsRoute: DocsRoute,
   LessonsRoute: LessonsRoute,
+  MaintenanceRoute: MaintenanceRoute,
   MilestonesRoute: MilestonesRoute,
   PackagesRoute: PackagesRoute,
   PatternsRoute: PatternsRoute,
+  RouteCostsRoute: RouteCostsRoute,
   SearchRoute: SearchRoute,
   SessionsRoute: SessionsRoute,
 }

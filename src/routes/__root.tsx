@@ -62,6 +62,14 @@ const NAV_SECTIONS = [
     ],
   },
   {
+    label: 'Tools', icon: '🛠', defaultOpen: false,
+    links: [
+      { to: '/docs' as const, label: 'Docs' },
+      { to: '/maintenance' as const, label: 'Maintenance' },
+      { to: '/route-costs' as const, label: 'Route Costs' },
+    ],
+  },
+  {
     label: 'Management', icon: '📦', defaultOpen: false,
     links: [
       { to: '/packages' as const, label: 'Packages' },

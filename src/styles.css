@@ -226,4 +226,33 @@ body {
 @media print {
   .prose-doc { color: #000; }
   .prose-doc pre { border: 1px solid #ccc; background: #f9f9f9; color: #000; }
+  aside, nav, .fixed { display: none !important; }
+  main { overflow: visible !important; }
 }
+
+/* ===== Skeleton loading animation ===== */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 0.375rem;
+}
+.dark .skeleton {
+  background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+  background-size: 200% 100%;
+}
+
+/* ===== Dark mode support for stat cards ===== */
+.dark .bg-white { background-color: #1f2937; }
+.dark .text-gray-800 { color: #f9fafb; }
+.dark .border-gray-200 { border-color: #374151; }
+.dark .hover\:bg-gray-50:hover { background-color: #1f2937; }
+.dark .bg-gray-50 { background-color: #111827; }
+
+/* ===== Outdated package row highlight ===== */
+.bg-amber-50 { background-color: #fffbeb; }
+.dark .bg-amber-50 { background-color: #451a03; }

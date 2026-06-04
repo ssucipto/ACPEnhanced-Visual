@@ -63,6 +63,9 @@ export interface SessionEntry {
   done: string[];
   deferred: string[];
   key_fact: string;
+  duration?: string | null;
+  start_time?: string | null;
+  end_time?: string | null;
 }
 
 export const fetchSessions = createServerFn({ method: 'GET' })
@@ -79,8 +82,10 @@ export interface ADREntry {
   id: string;
   title: string;
   status: string;
+  date?: string;
   context: string;
   decision: string;
+  consequences?: string;
   reopened?: string;
 }
 
@@ -102,15 +107,18 @@ export const fetchADRs = createServerFn({ method: 'GET' })
       const statusMatch = body.match(/\*\*Status:?\*\*\s*(.+)/i);
       const contextMatch = body.match(/\*\*Context:?\*\*\s*\n([\s\S]*?)(?=\n\*\*|$)/i);
       const decisionMatch = body.match(/\*\*Decision:?\*\*\s*\n([\s\S]*?)(?=\n\*\*|$)/i);
-      // Check for re-open trigger patterns
+      const consequencesMatch = body.match(/\*\*Consequences:?\*\*\s*\n([\s\S]*?)(?=\n\*\*|\n##|$)/i);
+      const dateMatch = body.match(/\*\*Date:?\*\*\s*(.+)/i);
       const reopenMatch = body.match(/(?:DO NOT re-open|Re-open trigger|Reopen unless)[:\s]*\n?([\s\S]*?)(?=\n\*\*|\n##|$)/i);
 
       entries.push({
         id: idMatch?.[1] || header.trim(),
         title: titleMatch?.[1]?.trim() || lines[0]?.trim() || header.trim(),
         status: statusMatch?.[1]?.trim() || 'Unknown',
+        date: dateMatch?.[1]?.trim() || undefined,
         context: contextMatch?.[1]?.trim() || '',
         decision: decisionMatch?.[1]?.trim() || '',
+        consequences: consequencesMatch?.[1]?.trim() || undefined,
         reopened: reopenMatch?.[1]?.trim(),
       });
     }
@@ -121,7 +129,8 @@ export const fetchADRs = createServerFn({ method: 'GET' })
 
 export interface LessonEntry {
   task_type: string;
-  mistakes: { mistake: string; correction: string; priority: string }[];
+  date?: string;
+  mistakes: { mistake: string; correction: string; priority: string; date?: string }[];
 }
 
 export const fetchLessons = createServerFn({ method: 'GET' })
@@ -139,6 +148,8 @@ export interface PatternEntry {
   description: string;
   code_ref: string;
   date: string;
+  tags?: string[];
+  usage_count?: number;
 }
 
 export const fetchPatterns = createServerFn({ method: 'GET' })
@@ -157,6 +168,7 @@ export interface PackageEntry {
   version: string;
   installed: string;
   updated: string;
+  license?: string;
 }
 
 export const fetchPackages = createServerFn({ method: 'GET' })
@@ -187,6 +199,7 @@ export interface AuditEntry {
   date: string;
   findings: number;
   highestSeverity: string;
+  status?: string;
   file: string;
 }
 
@@ -205,6 +218,7 @@ export const fetchAudits = createServerFn({ method: 'GET' })
       const numMatch = file.match(/audit-(\d+)/);
       const subjectMatch = raw.match(/\*\*Subject\*\*:\s*(.+)/);
       const dateMatch = raw.match(/\*\*Date\*\*:\s*(.+)/);
+      const statusMatch = raw.match(/\*\*Status\*\*:\s*(.+)/i);
 
       // Count findings
       const findingMatches = raw.match(/\| \d+ \|/g);
@@ -222,6 +236,7 @@ export const fetchAudits = createServerFn({ method: 'GET' })
         date: dateMatch?.[1]?.trim() || '',
         findings,
         highestSeverity,
+        status: statusMatch?.[1]?.trim()?.toLowerCase() || undefined,
         file,
       });
     }

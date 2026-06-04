@@ -2,6 +2,16 @@
 # Populated automatically by /acp-commit when patterns are identified
 # Format: date-stamped YAML entries, max 60 days active
 
+- date: 2026-06-05
+  name: shared-infra-before-views
+  summary: >
+    When upgrading multiple views with the same features (search, stats,
+    linking), build cross-cutting shared components first. In M38, StatsRow
+    and SourceLink were built before any view rewrites — all 6 views then
+    dropped them in with the same API. This avoids duplication and ensures
+    consistent UX across all views.
+  code_ref: src/components/StatsRow.tsx
+  tags: [architecture, components, reuse, dashboard, views, consistency]
 
 - date: 2026-06-03
   name: normalize-before-validate

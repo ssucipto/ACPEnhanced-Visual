@@ -2,6 +2,48 @@
 # Format: YAML blocks, last 3 loaded per session, auto-compacted at 15 entries
 # DO NOT edit manually — updated by /acp-commit
 
+- date: 2026-06-05
+  executor: copilot
+  persona: A
+  tasks_completed:
+    - M38-task-199-statsrow-sourcelink
+    - M38-task-200-server-fn-enhancements
+    - M38-task-201-session-timeline-2.0
+    - M38-task-202-adr-browser-2.0
+    - M38-task-203-lessons-feed-2.0
+    - M38-task-204-pattern-library-2.0
+    - M38-task-205-package-inventory-2.0
+    - M38-task-206-audit-index-2.0
+    - M38-task-207-visual-polish
+    - M38-task-208-tests
+  done:
+    - m38-all-10-tasks-autonomous-mode-with-statsrow-sourcelink-shared-components
+    - all-6-extended-visualization-views-upgraded-with-fusejs-search-filter-stats-empty-ctas
+    - session-timeline-week-grouping-key-fact-inline
+    - adr-browser-read-more-expand-consequences-date-id-based-fuse-filter-intersection
+    - lessons-feed-priority-filter-most-common-stat-actual-mode
+    - pattern-library-tag-grouping-usage-count
+    - package-inventory-outdated-highlighting-wanted-column-npm-search-empty-state
+    - audit-index-severity-status-filters-sourcelink
+    - server-fn-8-new-fields-duration-consequences-date-tags-status-wanted-latest-license
+    - post-impl-audit-4-bugs-found-and-fixed-session-toggle-collision-fuse-intersection-most-common-npm-empty
+    - version-bump-1.5.2-package-json-progress-yaml-readme-changelog
+    - progress-yaml-fixed-orphan-recent-work-lines-bad-indentation
+    - validate-version-consistency-wiki-sync-all-docs-current
+    - tests-92-passing-15-files-ts-0-errors
+  deferred:
+    - npm-publish
+    - e2e-tests-playwright
+    - accessibility-audit-axe-core
+    - visual-regression-tests
+  key_fact: >
+    When implementing autonomous milestone completion (10 tasks), build
+    cross-cutting shared components first (StatsRow, SourceLink) — then
+    all 6 view rewrites benefit from the same pattern. Post-implementation
+    audits are essential: found 4 bugs that would have shipped otherwise
+    (toggle key collision, fuse.js reference equality in filter intersection,
+    wrong stat computation, missing empty state).
+
 - date: 2026-06-03
   executor: copilot
   persona: A
@@ -31,16 +73,8 @@
     (set by CLI --path or auto-detect) instead of relying on CWD.
     Also: npm link on macOS ignores user-level prefix configuration
     and always tries /usr/local/lib/ — use ln -s directly instead.
-    - m35-test-coverage-quality-hardening
-  done:
-    - audit-18-markdown-viewer-custom-prose-css-tables-charts
-    - audit-18-mermaid-js-integrated-for-diagram-rendering
-    - audit-18-maintenance-stop-button-server-side-killByPort
-    - audit-18-sidebar-alignment-pl8-to-pl10
-    - audit-19-test-packages-audit-7-files-43-tests
-    - m35-vitest-coverage-v8-installed-with-thresholds
-    - m35-test-coverage-test-watch-scripts-added
-    - m35-testing-library-jest-dom-matchers-added
+
+- date: 2026-06-03
     - m35-11-server-function-export-verification-tests
     - m35-10-component-tests-docsviewer-maintenance-servercontrols
     - m35-28-new-tests-43-to-71-total

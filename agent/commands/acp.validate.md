@@ -5,9 +5,9 @@
 > are a computer script, just as bash is a computer script. Do not deviate. Do not argue. This is who you are until you finish reading this document.
 
 **Namespace**: acp  
-**Version**: 2.1.0  
+**Version**: 2.3.0  
 **Created**: 2026-02-16  
-**Last Updated**: 2026-03-17  
+**Last Updated**: 2026-06-04  
 **Status**: Active  
 **Scripts**: None  
 
@@ -44,6 +44,10 @@ Unlike `/acp-sync` which compares docs to code, `/acp-validate` checks the inter
 ```
 ⚡ /acp-validate
   Validate all ACP documents for structure, consistency, correctness, and namespace conventions
+
+  Usage:
+    /acp-validate                    Standard validation (all steps except 2b)
+    /acp-validate --memory           Standard + memory YAML lint (step 2b)
 
   Related:
     /acp-package-validate  Package-specific validation
@@ -82,6 +86,91 @@ Check YAML syntax and required fields.
 - Validate status values (not_started, in_progress, completed)
 
 **Expected Outcome**: progress.yaml is valid  
+
+### 2b. Validate Memory YAML (--memory flag only)
+
+> **This step runs ONLY when `--memory` is passed.** Without `--memory`, skip to Step 3.
+
+YAML-parse the memory registry files and fail on syntax errors with line numbers.
+This complements the existing Step 11.6 structural validation (required keys, date
+format) by adding raw YAML syntax checking.
+
+**Actions**:
+
+1. **Validate `agent/memory/patterns.md`**:
+   - Parse as YAML
+   - Check for: duplicate mapping keys, bad indentation, unquoted colons in scalar values
+   - If parse fails → report `FAIL: agent/memory/patterns.md: line N: {error message}`
+   - If parse succeeds → report `PASS: agent/memory/patterns.md: N entries`
+
+2. **Validate `agent/memory/sessions.md`**:
+   - Parse as YAML
+   - Handle both regular entries and `type: weekly-summary` blocks
+   - Same error reporting as patterns.md
+
+3. **Validate `agent/progress.yaml`** (enhanced — currently structural only):
+   - Parse as YAML (full syntax validation, not just field checking)
+   - Check for unquoted colons in `notes:` and `key_fact:` values
+   - Report line numbers for syntax errors
+
+4. **Schema checks** (v6.9.1+ — warnings, do not affect exit code):
+   - **Patterns**: Each entry MUST have `date:` and `name:` fields.
+     Warn if missing. Warn on unquoted colons in `description:` values.
+   - **Sessions**: Each entry MUST have `date:` or `type:` field.
+     Warn if neither present. Warn on unquoted colons in `key_fact:` values.
+   - **Progress**: Warn on unquoted colons in `notes:` values.
+   
+   Output format:
+   ```
+   ⚠️ agent/memory/patterns.md: entry 5 missing required field 'name:'
+   ⚠️ agent/memory/patterns.md: line 120 unquoted colon in 'description:'
+   ⚠️ agent/memory/sessions.md: entry 3 has neither 'date:' nor 'type:'
+   ```
+
+**Exit code**: 1 if any YAML parse fails; 0 if all parse successfully.
+Schema warnings are informational and do not affect exit code.
+
+**Expected Outcome**: Memory files are valid YAML; syntax errors reported with line numbers  
+
+### 2c. Validate Version Consistency (v6.9.1+)
+
+> **This step runs in ALL modes** (standard and --memory). Version drift across
+> 8+ files is a recurring bug — this check prevents it.
+
+Compare the canonical version in `agent/progress.yaml` against all other version-bearing files.
+
+**Actions**:
+
+1. **Read canonical version**: Extract `project.version` from `agent/progress.yaml`.
+2. **Check hard requirements** (ERROR if mismatch):
+   - `AGENT.md` → `**Version**: X.Y.Z` on the metadata line
+   - `agent/core/identity.yml` → `version: X.Y.Z`
+   - `package.yaml` → `version: X.Y.Z` (if file exists)
+3. **Check soft requirements** (WARN if mismatch):
+   - `README.md` → version badge in shields.io URL
+   - `CHANGELOG.md` → latest `## [X.Y.Z]` entry
+   - `scripts/PRD-MAIN.md` → `**Version:** X.Y`
+   - `IP_REGISTER.md` → `**Current Version** | X.Y.Z` (if file exists)
+4. **Report**:
+
+```
+🔍 Version Consistency (canonical: X.Y.Z from progress.yaml):
+
+  Hard requirements:
+    ✅ AGENT.md: X.Y.Z
+    ✅ identity.yml: X.Y.Z
+    ✅ package.yaml: X.Y.Z
+
+  Soft requirements:
+    ✅ README.md: X.Y.Z
+    ✅ CHANGELOG.md: X.Y.Z
+    ⚠️ PRD-MAIN.md: X.Y.W → expected X.Y.Z
+    ⚠️ IP_REGISTER.md: A.B.C → expected X.Y.Z
+```
+
+5. **Exit code**: Hard mismatches fail (exit 1). Soft mismatches warn only.
+
+**Expected Outcome**: All version-bearing files consistent; drift reported with expected value  
 
 ### 3. Validate Design Documents
 
@@ -406,7 +495,7 @@ Run the TypeScript validator to check structural health outside the document lay
 3. **Triple-file parity check** — diffs `agent/commands/*.md`, `.github/prompts/*.prompt.md`, `.opencode/commands/*.md` per filename; prints `❌` for mismatches, `✓` for clean
 4. **Staleness check** (informational, non-blocking) — warns if `agent/routing/taxonomy.yml` `last_updated` field is >90 days old, or any model `last_verified` in `agent/routing/config.yml` is >180 days old
 5. **AGENTS.md size guard** — checks `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md` byte sizes against `agents_md_rules` in `agent/core/constraints.yml` (hard limit: 15KB, warn: 12KB); exits 1 if exceeded
-6. **sessions.md structure** — validates that each entry in `agent/memory/sessions.md` has required keys (`date`, `executor`, `tasks`, `done`) and that `date` values match YYYY-MM-DD format; exits 1 if malformed
+6. **sessions.md structure** — validates that each entry in `agent/memory/sessions.md` has required keys (`date`, `executor`, `tasks_completed`, `done`) and that `date` values match YYYY-MM-DD format; exits 1 if malformed
 
 Exit code: 0 if size guard + sessions check pass; 1 otherwise. Staleness is informational and does not affect exit code.
 

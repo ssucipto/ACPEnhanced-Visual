@@ -684,6 +684,20 @@ tasks:
       notes: beforeunload sendBeacon in __root.tsx. find-port.mjs reports PID+process.
 
 recent_work:
+  - date: 2026-06-04
+    description: |
+      🐛 Fixed Node SIGABRT crash with external projects (FIFOZ). The residual
+      React 19 "Expected static flag" error from TanStack Start SSR streaming
+      accumulated ~60 times over 2 minutes of polling, causing Node abort (134).
+      Added inline script to filter this specific console.error in RootDocument.
+      Also added doc/ and docs/ directories to the Docs viewer for browsing
+      project documentation folders.
+    items:
+      - "🔧 RootDocument inline script — suppresses residual static flag error before Node terminal"
+      - "🔧 docs.ts — added doc/ + docs/ dirs to DOC_DIRS for project doc browsing"
+      - "📝 Docs sync — wiki, README updated to v1.5.1 (11 milestones, 71 tests, blocked status)"
+      - "✅ Verified: FIFOZ dev server runs cleanly with zero React errors"
+      - "✓ No artifacts — all templates, skip staleness check"
   - date: 2026-06-03
     description: |
       🌐 Multi-project YAML format normalization — the visualizer now handles

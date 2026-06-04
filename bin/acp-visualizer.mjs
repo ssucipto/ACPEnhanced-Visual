@@ -43,6 +43,7 @@ const flags = {
   repo: null,
   port: null,
   noOpen: false,
+  update: false,
   version: false,
   help: false,
 };
@@ -60,6 +61,9 @@ for (let i = 0; i < args.length; i++) {
       break;
     case '--no-open':
       flags.noOpen = true;
+      break;
+    case '--update':
+      flags.update = true;
       break;
     case '--version':
     case '-v':
@@ -92,6 +96,7 @@ Options:
   --repo <owner/repo>  GitHub repository (e.g. ssucipto/acp-enhanced)
   --port <N>        Port number (default: auto-detect 3000+)
   --no-open         Don't open browser automatically
+  --update          Update visualizer to latest version
   --version, -v     Show version number
   --help, -h        Show this help
 
@@ -103,6 +108,21 @@ Examples:
 
 Repository: https://github.com/ssucipto/ACPEnhanced-Visual`);
   process.exit(0);
+}
+
+// ── --update ────────────────────────────────────────────────────────────────
+
+if (flags.update) {
+  const { execSync } = await import('node:child_process');
+  const updateScript = resolve(visualizerRoot, 'scripts/update.sh');
+  try {
+    execSync(`bash "${updateScript}"`, { stdio: 'inherit', cwd: visualizerRoot });
+    process.exit(0);
+  } catch {
+    console.error('Update failed. Try running manually:');
+    console.error(`  bash ${updateScript}`);
+    process.exit(1);
+  }
 }
 
 // ── Resolve Data Source ────────────────────────────────────────────────────

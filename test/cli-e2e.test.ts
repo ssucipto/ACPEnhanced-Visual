@@ -33,6 +33,7 @@ describe('CLI E2E — npx acp-visualizer', () => {
     expect(out).toContain('--repo');
     expect(out).toContain('--port');
     expect(out).toContain('--no-open');
+    expect(out).toContain('--update');
     expect(out).toContain('--version');
     expect(out).toContain('--help');
   });

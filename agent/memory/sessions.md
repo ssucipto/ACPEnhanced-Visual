@@ -132,3 +132,32 @@
     (summary→description). The Zod schema stays strict; normalization
     handles the mess. Also: useSyncExternalStore provides a zero-render
     ClientOnly wrapper that avoids useState+useEffect hydration cycles.
+
+- date: 2026-06-04
+  executor: copilot
+  persona: A
+  tasks_completed:
+    - ssr-crash-fix-console-error-filter
+    - doc-dir-support-in-docs-viewer
+    - acp-enhanced-v6.9.1-update
+    - acp-visualizer-update-command
+    - audit-22-update-gaps-fixed
+    - audit-23-push-readiness
+  done:
+    - __root-tsx-inline-script-suppress-static-flag-error
+    - docs-ts-added-doc-dirs-to-DOC_DIRS
+    - acp-version-update-v6.8.2-to-v6.9.1
+    - scripts-update-sh-robust-update-with-pipefail-shallow-npx-guard
+    - bin-acp-visualizer-mjs-update-flag-and-help
+    - scripts-install-sh-mentions-update
+    - test-cli-e2e-ts-update-flag-assertion
+    - audit-22-7-findings-all-fixed
+    - audit-23-push-readiness-verified
+  deferred:
+    - npm-publish-v1.5.1
+  key_fact: >
+    set -euo pipefail is essential for update scripts. Without pipefail,
+    git fetch 2>&1 | head -1 silently swallows fetch failures and the
+    script continues as if it succeeded. Also: npx caches packages in
+    throwaway dirs — --update must detect this and redirect to the
+    persistent ~/.acp/visualizer install.

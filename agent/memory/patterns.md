@@ -22,3 +22,13 @@
     hydration — the component simply never renders during SSR.
   code_ref: src/routes/__root.tsx:ClientOnly
   tags: [react, ssr, hydration, useSyncExternalStore, client-only]
+
+- date: 2026-06-04
+  name: robust-update-script-pattern
+  summary: >
+    Update scripts need set -euo pipefail, shallow clone detection
+    (git rev-parse --is-shallow-repository), npx cache detection
+    (check paths for _npx/ or /tmp/), uncommitted change warnings,
+    and npm ci preferred over npm install for deterministic updates.
+  code_ref: scripts/update.sh
+  tags: [bash, update, robustness, pipefail, shallow-clone, npx]

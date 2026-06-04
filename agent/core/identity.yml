@@ -1,37 +1,39 @@
 # DO NOT add dynamic content to this file (no dates, no task IDs)
 # This file is prompt-cached by the LLM API after first call
 
-project: ACPEnhanced-Visual
-type: web-app                  # web dashboard / visualization tool
+project: agent-context-protocol
+type: ai-agent-tooling-protocol
 description: >
-  Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
-  interactive, sortable, searchable UI with milestone tables, task trees,
-  fuzzy search, status filtering, and auto-refresh via file watcher.
+  A documentation-first development methodology that gives AI agents
+  structured, persistent project memory across sessions. The protocol
+  defines command files, shell scripts, YAML schemas, and E2E tests.
 
 stack:
-  runtime: Node.js 22+
-  language: TypeScript 5.x (strict mode)
-  framework: TanStack Start (React 19 SSR)
-  ui: React 19 + Tailwind CSS 4
-  table: @tanstack/react-table 8
-  search: fuse.js 7
-  parsing: js-yaml 4 + Zod 4
-  router: @tanstack/react-router 1 (file-based)
-  testing: Vitest 4 + @testing-library/react 16 + jsdom 28
-  build: Vite 8 + @vitejs/plugin-react
-  icons: lucide-react
+  - primary: Bash Shell (agent/scripts/*.sh — cross-platform bash 4+)
+  - secondary: TypeScript (scripts/acp-dispatch.ts, scripts/acp-validate.ts)
+  - format: Markdown (agent/commands/*.md — command directive files)
+  - format: YAML (agent/schemas/*.yaml, agent/progress.yaml, package.yaml)
+
+platform_constraints:
+  - bash_compat: macOS (BSD sed, no date +%N) + Linux (GNU)
+  - no_external_deps: pure bash preferred; no jq, no yq, no python
+  - yaml_parser: tests/acp.yaml-parser.sh — custom pure-bash parser
 
 team: solo-developer
 priorities:
-  - code-quality
-  - correctness
-  - maintainability
-  - performance (fast fuzzy search, low-overhead polling)
+  - correctness: command docs must be unambiguous for any LLM
+  - shell_compat: every .sh must pass on macOS AND Linux
+  - token_efficiency: ACP itself must model what it preaches
+  - test_coverage: every command must have an E2E test file
 
-repo: github.com/ssucipto/ACPEnhanced-Visual
+fork_of: github.com/prmichaelsen/agent-context-protocol
+repo: github.com/ssucipto/acp-enhanced
+version: 6.9.1
 
-progress_yaml_target:
-  source: ssucipto/acp-enhanced
-  version: 6.8.2
-  verified_date: 2026-06-03
-  notes: "Schema verified against real ACP Enhanced progress.yaml (5354 lines, 45+ milestones)"
+# Optional: configure git branch awareness (uncomment to enable)
+# When set, Step 1b will warn if working on the production branch.
+# Uncomment git_workflow to enable branch safety checks in Step 1b.
+# git_workflow:
+#   default_working_branch: develop   # branch agent commits to by default
+#   production_branch: main           # never commit directly to this
+#   branch_model: gitflow-lite        # gitflow-lite | trunk | github-flow

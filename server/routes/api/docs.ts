@@ -27,6 +27,8 @@ function getProjectRoot(): string {
 
 const DOC_DIRS = [
   { dir: '.', label: 'Root', pattern: 'README.md' },
+  { dir: 'doc', label: 'Docs', pattern: '*.md' },
+  { dir: 'docs', label: 'Docs', pattern: '*.md' },
   { dir: 'agent/reports', label: 'Reports', pattern: '*.md' },
   { dir: 'agent/wiki', label: 'Wiki', pattern: '*.md' },
   { dir: 'agent/design', label: 'Design', pattern: '*.md' },

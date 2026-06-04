@@ -8,7 +8,7 @@
 **Created**: 2026-05-06  
 **Last Updated**: 2026-06-03  
 **Status**: Active  
-**Requires**: ACPEnhanced-Visual repository cloned locally
+**Requires**: agent-context-protocol-visualizer repository cloned locally
 
 ---
 
@@ -20,14 +20,14 @@
 
 ## What This Command Does
 
-Launches the TanStack Start development server for `ACPEenhanced-Visual`
+Launches the TanStack Start development server for `agent-context-protocol-visualizer`
 and opens the browser dashboard pointed at the current project's `progress.yaml`.
 
 ---
 
 ## Prerequisites
 
-- [ ] `ACPEenhanced-Visual` cloned locally
+- [ ] `agent-context-protocol-visualizer` cloned locally
 - [ ] Node.js 18+ installed
 - [ ] Dependencies installed (`npm install` in visualizer directory)
 
@@ -40,13 +40,13 @@ and opens the browser dashboard pointed at the current project's `progress.yaml`
 Check for the visualizer in these locations (in order):
 1. `VISUALIZER_PATH` environment variable (if set)
 2. `~/.acp/visualizer/` (default global install path)
-3. Sibling directory: `../ACPEenhanced-Visual/`
-4. Current user's `~/code/ACPEenhanced-Visual/`
+3. Sibling directory: `../agent-context-protocol-visualizer/`
+4. Current user's `~/code/agent-context-protocol-visualizer/`
 
 If not found, display:
 ```
 ⚠️  Visualizer not found. Install it:
-  git clone https://github.com/ssucipto/ACPEnhanced-Visual ~/.acp/visualizer
+  git clone https://github.com/ssucipto/agent-context-protocol-visualizer ~/.acp/visualizer
   cd ~/.acp/visualizer && npm install
 ```
 
@@ -59,34 +59,38 @@ PROGRESS_YAML_PATH = <cwd>/agent/progress.yaml
 
 Verify the file exists before launching.
 
-### 3. Launch with auto port detection
-
-The visualizer auto-detects available ports starting from 3000. Multiple projects
-can run simultaneously — each gets its own port (3000, 3001, 3002, etc.).
+### 3. Launch the dev server
 
 ```bash
 cd <visualizer-path>
-PROGRESS_YAML_PATH=<cwd>/agent/progress.yaml npm run visualize
+PROGRESS_YAML_PATH=<cwd>/agent/progress.yaml npm run dev
 ```
 
-The found port is written to `.visualizer-port` in the visualizer directory.
+If the server is already running on port 3000, skip launch and go to step 4.
 
 ### 4. Open the browser
 
-The `npm run visualize` script uses `vite --open` to auto-open the browser at
-the correct port. No manual port resolution needed.
+```bash
+# macOS
+open http://localhost:3000
+
+# Linux
+xdg-open http://localhost:3000
+
+# Windows
+start http://localhost:3000
+```
 
 ### 5. Report
 
 Display:
 ```
 ✅ ACP Progress Visualizer launched
-   Dashboard: http://localhost:<port>
+   Dashboard: http://localhost:3000
    Data: <resolved progress.yaml path>
-   Auto-refresh: enabled (2s polling)
-   Multi-project: supported (port auto-detection)
+   Auto-refresh: enabled (file watcher active)
 
-   Press Ctrl+C to stop.
+   Press Ctrl+C in the visualizer terminal to stop.
 ```
 
 ---

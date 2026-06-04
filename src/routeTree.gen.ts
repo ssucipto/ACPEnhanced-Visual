@@ -18,6 +18,7 @@ import { Route as MilestonesRouteImport } from './routes/milestones'
 import { Route as MaintenanceRouteImport } from './routes/maintenance'
 import { Route as LessonsRouteImport } from './routes/lessons'
 import { Route as DocsRouteImport } from './routes/docs'
+import { Route as CommandsRouteImport } from './routes/commands'
 import { Route as AuditsRouteImport } from './routes/audits'
 import { Route as AdrsRouteImport } from './routes/adrs'
 import { Route as IndexRouteImport } from './routes/index'
@@ -67,6 +68,11 @@ const DocsRoute = DocsRouteImport.update({
   path: '/docs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommandsRoute = CommandsRouteImport.update({
+  id: '/commands',
+  path: '/commands',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuditsRoute = AuditsRouteImport.update({
   id: '/audits',
   path: '/audits',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/adrs': typeof AdrsRoute
   '/audits': typeof AuditsRoute
+  '/commands': typeof CommandsRoute
   '/docs': typeof DocsRoute
   '/lessons': typeof LessonsRoute
   '/maintenance': typeof MaintenanceRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adrs': typeof AdrsRoute
   '/audits': typeof AuditsRoute
+  '/commands': typeof CommandsRoute
   '/docs': typeof DocsRoute
   '/lessons': typeof LessonsRoute
   '/maintenance': typeof MaintenanceRoute
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/adrs': typeof AdrsRoute
   '/audits': typeof AuditsRoute
+  '/commands': typeof CommandsRoute
   '/docs': typeof DocsRoute
   '/lessons': typeof LessonsRoute
   '/maintenance': typeof MaintenanceRoute
@@ -132,6 +141,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adrs'
     | '/audits'
+    | '/commands'
     | '/docs'
     | '/lessons'
     | '/maintenance'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adrs'
     | '/audits'
+    | '/commands'
     | '/docs'
     | '/lessons'
     | '/maintenance'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adrs'
     | '/audits'
+    | '/commands'
     | '/docs'
     | '/lessons'
     | '/maintenance'
@@ -175,6 +187,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdrsRoute: typeof AdrsRoute
   AuditsRoute: typeof AuditsRoute
+  CommandsRoute: typeof CommandsRoute
   DocsRoute: typeof DocsRoute
   LessonsRoute: typeof LessonsRoute
   MaintenanceRoute: typeof MaintenanceRoute
@@ -251,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/commands': {
+      id: '/commands'
+      path: '/commands'
+      fullPath: '/commands'
+      preLoaderRoute: typeof CommandsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/audits': {
       id: '/audits'
       path: '/audits'
@@ -279,6 +299,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdrsRoute: AdrsRoute,
   AuditsRoute: AuditsRoute,
+  CommandsRoute: CommandsRoute,
   DocsRoute: DocsRoute,
   LessonsRoute: LessonsRoute,
   MaintenanceRoute: MaintenanceRoute,

@@ -90,6 +90,12 @@ const NAV_SECTIONS = [
     ],
   },
   {
+    label: 'Reference', icon: '📖', defaultOpen: false,
+    links: [
+      { to: '/commands' as const, label: 'Commands' },
+    ],
+  },
+  {
     label: 'Management', icon: '📦', defaultOpen: false,
     links: [
       { to: '/packages' as const, label: 'Packages' },
@@ -98,7 +104,7 @@ const NAV_SECTIONS = [
   },
 ];
 
-function CollapsibleSection({ section }: { section: typeof NAV_SECTIONS[0] }) {
+function CollapsibleSection({ section, collapsed }: { section: typeof NAV_SECTIONS[0]; collapsed: boolean }) {
   const storageKey = `nav-${section.label}`;
   const [open, setOpen] = useState(section.defaultOpen);
 
@@ -116,6 +122,17 @@ function CollapsibleSection({ section }: { section: typeof NAV_SECTIONS[0] }) {
     setOpen(next);
     try { localStorage.setItem(storageKey, String(next)); } catch { /* ignore */ }
   };
+
+  // In collapsed mode: icon-only with tooltip, no expand/collapse
+  if (collapsed) {
+    return (
+      <div className="mb-1" title={section.label}>
+        <div className="flex justify-center py-2 text-gray-400 hover:text-white transition-colors cursor-default">
+          <span className="text-sm">{section.icon}</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mb-1">
@@ -153,6 +170,11 @@ function RootLayout() {
   const navigate = useNavigate()
   const search = useSearch({ strict: false }) as { tab?: string }
 
+  // Sidebar collapse state — persisted in localStorage
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try { return localStorage.getItem('sidebar-collapsed') === 'true'; } catch { return false; }
+  });
+
   // Load project configs via server function
   const [projects, setProjects] = useState<ProjectConfig[]>([])
   useEffect(() => {
@@ -186,13 +208,26 @@ function RootLayout() {
   return (
     <div className="flex h-screen overflow-hidden font-sans">
       {/* Sidebar */}
-      <aside className="w-48 shrink-0 bg-gray-900 text-gray-100 flex flex-col">
-        <div className="px-4 py-5 border-b border-gray-700">
-          <span className="text-sm font-semibold tracking-tight">ACP Visualizer</span>
+      <aside className={`shrink-0 bg-gray-900 text-gray-100 flex flex-col transition-all duration-200 ${sidebarCollapsed ? 'w-14' : 'w-48'}`}>
+        <div className="px-3 py-4 border-b border-gray-700 flex items-center gap-2">
+          <button
+            onClick={() => {
+              const next = !sidebarCollapsed;
+              setSidebarCollapsed(next);
+              try { localStorage.setItem('sidebar-collapsed', String(next)); } catch {}
+            }}
+            className="text-gray-400 hover:text-white transition-colors shrink-0"
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {sidebarCollapsed ? '☰' : '✕'}
+          </button>
+          {!sidebarCollapsed && (
+            <span className="text-sm font-semibold tracking-tight truncate">ACP Visualizer</span>
+          )}
         </div>
         <nav className="flex-1 py-3 overflow-y-auto">
           {NAV_SECTIONS.map((section) => (
-            <CollapsibleSection key={section.label} section={section} />
+            <CollapsibleSection key={section.label} section={section} collapsed={sidebarCollapsed} />
           ))}
         </nav>
       </aside>

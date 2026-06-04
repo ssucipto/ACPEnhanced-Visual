@@ -2,6 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+// Mock IntersectionObserver (not available in jsdom)
+const mockObserve = vi.fn();
+const mockDisconnect = vi.fn();
+class MockIntersectionObserver {
+  observe = mockObserve;
+  disconnect = mockDisconnect;
+  unobserve = vi.fn();
+  constructor() {}
+}
+vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
+
 // Mock the server functions used by DocsViewer
 vi.mock('../../server/routes/api/docs', () => ({
   listDocs: vi.fn().mockResolvedValue({
@@ -46,7 +57,7 @@ describe('DocsViewer component', () => {
     render(<DocsViewer />);
 
     expect(
-      await screen.findByText(/Select a document from the sidebar/),
+      await screen.findByText(/Select a document or drop a \.md file here/),
     ).toBeInTheDocument();
   });
 
@@ -58,8 +69,8 @@ describe('DocsViewer component', () => {
     const readmeBtn = await screen.findByText('README');
     await user.click(readmeBtn);
 
-    // Should render markdown as HTML
-    expect(await screen.findByText('Test Document')).toBeInTheDocument();
+    // Should render markdown as HTML (heading + TOC entry both have the text)
+    expect(await screen.findAllByText('Test Document')).toHaveLength(2);
   });
 
   it('renders tables in markdown content', async () => {

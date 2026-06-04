@@ -2,8 +2,8 @@ project:
   name: ACPEnhanced-Visual
   version: 1.5.1
   started: 2026-06-03
-  status: active
-  current_milestone: M38
+  status: completed
+  current_milestone: null
   description: >
     Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
     interactive, sortable, searchable UI with milestone tables, task trees,
@@ -215,12 +215,12 @@ milestones:
   M38:
     name: Extended Visualizations 2.0
     priority: 1
-    status: planned
-    progress: 0
-    started: null
-    completed: null
+    status: completed
+    progress: 100
+    started: 2026-06-04
+    completed: 2026-06-04
     estimated_weeks: '2'
-    tasks_completed: 0
+    tasks_completed: 10
     tasks_total: 10
     file: agent/milestones/milestone-38-extended-visualizations-2.0.md
     notes: |
@@ -1124,6 +1124,11 @@ recent_work:
       - "⚠️ ACP Enhanced fixture has YAML error at M5:148 — sync test handles gracefully"
 
 next_steps:
+  - "🔵 npm publish — ship v1.6.0 to npm registry"
+  - "🔵 Add E2E tests — Playwright full browser flow"
+  - "🔵 Accessibility audit — axe-core on all pages"
+  - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
+  - "📋 Plan M39 — next feature milestone"
   - "� M38: Extended Visualizations 2.0 — 10 tasks planned, 2-week estimate"
   - "🔵 npm publish — ship v1.5.1 to npm registry"
   - "🔵 Add E2E tests — Playwright full browser flow"
@@ -1131,8 +1136,7 @@ next_steps:
   - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
 
 notes:
-  - 🎉 13 MILESTONES COMPLETE (M25-M37) — 87 tasks across 13 milestones
-  - 🟢 M38 PLANNED: Extended Visualizations 2.0 (10 tasks, 2-week estimate)
+  - 🎉 14 MILESTONES COMPLETE (M25-M38) — 97 tasks across 14 milestones
   - 86 tests passing across 13 test files
   - Coverage reporting enabled via npm run test:coverage
   - ACP Enhanced v6.9.1 framework installed

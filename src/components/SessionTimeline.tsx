@@ -21,12 +21,6 @@ export function SessionTimeline() {
 
   const filtered = query.length >= 2 ? fuse.search(query).map((r) => r.item) : sessions;
 
-  if (loading) return (
-    <div className="p-6 max-w-3xl mx-auto space-y-4">
-      {[1,2,3].map((i) => <div key={i} className="h-16 bg-gray-100 animate-pulse rounded-lg" />)}
-    </div>
-  );
-
   const toggle = (key: string) => {
     setExpanded((prev) => { const next = new Set(prev); next.has(key) ? next.delete(key) : next.add(key); return next; });
   };
@@ -50,6 +44,12 @@ export function SessionTimeline() {
   }, [filtered]);
 
   const totalTasks = sessions.reduce((sum, s) => sum + (s.tasks_completed?.length || 0), 0);
+
+  if (loading) return (
+    <div className="p-6 max-w-3xl mx-auto space-y-4">
+      {[1,2,3].map((i) => <div key={i} className="h-16 bg-gray-100 animate-pulse rounded-lg" />)}
+    </div>
+  );
 
   return (
     <div className="p-6 max-w-3xl mx-auto">

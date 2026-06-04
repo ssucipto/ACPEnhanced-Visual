@@ -6,6 +6,35 @@
   executor: copilot
   persona: A
   tasks_completed:
+    - bugfix-ssr-sigabrt-console-error-filter
+    - bugfix-sessiontimeline-hooks-violation
+    - bugfix-node-fs-client-bundle-leak
+    - ux-docsviewer-visible-drop-zone
+    - audit-post-fix-verification
+  done:
+    - ssr-broadened-console-error-filter-from-1-to-4-patterns
+    - sessiontimeline-usememo-moved-above-conditional-return
+    - commands-ts-dynamic-node-imports-parsecommandcontent-split
+    - docsviewer-visible-drop-zone-card-with-icon-and-instructions
+    - post-fix-audit-29-components-0-hooks-violations-11-server-files-0-node-leaks
+    - all-routes-http-200-no-ssr-errors
+    - build-310ms-ts-0-errors-92-tests-passing
+    - progress-update-recent-work-entry
+  deferred:
+    - npm-publish
+    - e2e-tests-playwright
+  key_fact: >
+    Three classes of bugs slip through tests: (1) SSR streaming errors
+    that only manifest after ~50 poll cycles as SIGABRT, (2) React hooks
+    ordering violations that only error on client hydration, (3) Vite
+    bundle leaks where node:fs top-level imports get pulled into client
+    code. Each requires a different detection strategy — console.error
+    filtering, manual hooks-audit scanning, and build verification.
+
+- date: 2026-06-05
+  executor: copilot
+  persona: A
+  tasks_completed:
     - M38-task-199-statsrow-sourcelink
     - M38-task-200-server-fn-enhancements
     - M38-task-201-session-timeline-2.0

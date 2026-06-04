@@ -1,7 +1,4 @@
 import { createServerFn } from '@tanstack/react-start';
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { join, resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 export interface CommandMeta {
   name: string;
@@ -136,12 +133,11 @@ function sanitizeNamespace(raw: string, fileName: string): string {
   return 'acp';
 }
 
-/** Parse a single command .md file */
-export function parseCommandFile(filePath: string): CommandMeta | null {
+/** Parse a single command from its markdown content */
+export function parseCommandContent(content: string, fileName: string): CommandMeta | null {
   try {
-    const content = readFileSync(filePath, 'utf-8');
+    if (!content.trim()) return null;
     const lines = content.split('\n');
-    const fileName = filePath.split('/').pop() || '';
 
     const rawName = lines[0]?.replace(/^#\s*(Command|Directive):\s*/, '').trim() || fileName.replace(/\.md$/, '');
     const rawNamespace = firstMeta(lines, 'Namespace') || 'acp';
@@ -170,20 +166,14 @@ export function parseCommandFile(filePath: string): CommandMeta | null {
   }
 }
 
-/**
- * Get the visualizer's own repo root (NOT the target project's).
- * Always reads from the visualizer's agent/commands/, regardless of PROGRESS_YAML_PATH.
- */
-function getVisualizerRoot(): string {
-  // __dirname points to server/routes/api/ in the built output;
-  // walk up to the project root.
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  return resolve(__dirname, '..', '..', '..');
-}
-
 export const fetchCommands = createServerFn({ method: 'GET' })
   .handler(async () => {
-    const root = getVisualizerRoot();
+    const { readFileSync, readdirSync, existsSync } = await import('node:fs');
+    const { join, resolve, dirname } = await import('node:path');
+    const { fileURLToPath } = await import('node:url');
+
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const root = resolve(__dirname, '..', '..', '..');
     const commandsDir = join(root, 'agent/commands');
 
     const files: CommandMeta[] = [];
@@ -194,7 +184,9 @@ export const fetchCommands = createServerFn({ method: 'GET' })
       );
 
       for (const entry of entries) {
-        const cmd = parseCommandFile(join(commandsDir, entry));
+        const filePath = join(commandsDir, entry);
+        const content = readFileSync(filePath, 'utf-8');
+        const cmd = parseCommandContent(content, entry);
         if (cmd) files.push(cmd);
       }
     }

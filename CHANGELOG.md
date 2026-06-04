@@ -12,19 +12,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ACP Command Reference (M36)**: `/commands` route with searchable 70-command reference table. Parses 66 `agent/commands/*.md` files + 4 hardcoded visualizer CLI commands. Namespace badges (acp/git/visualizer), category filter, expandable rows with version/status/flags.
 - **Collapsible Sidebar (M37)**: Toggle button (☰/✕) with icon-only mode (w-14). State persisted in localStorage with 200ms CSS transition.
 - **Markdown Viewer 2.0 (M37)**: Full rewrite of DocsViewer with heading anchor links, floating TOC sidebar with IntersectionObserver scroll tracking, code block copy buttons + language badges, drag-and-drop .md file support, dark/light theme toggle, font size control (S/M/L), fullscreen mode, image lightbox, back-to-top button.
-- **DocsViewer visual polish (M37)**: Blockquote styling, responsive TOC collapse at 1024px, print styles, prose-invert dark mode, heading anchor `#` links on hover.
-- **Command Reference tests**: 11 component tests (CommandReference) + 4 parser unit tests (parseCommandFile).
-- **DocsViewer tests**: 4 tests with IntersectionObserver mock.
+- **Extended Visualizations 2.0 (M38)**: All 6 views upgraded with fuse.js search, stat summaries (StatsRow), source file linking (SourceLink), empty state CTAs, loading skeletons, and per-type filters. Session Timeline: week grouping + key_fact inline. ADR Browser: read-more expand + consequences. Lessons Feed: priority filter + most-common stats. Pattern Library: tag grouping. Package Inventory: outdated highlighting + wanted column. Audit Index: severity+status filters + SourceLink.
+- **Tests**: 92 tests across 15 test files (up from 71/11). 11 CommandReference tests, 4 parser tests, 4 DocsViewer tests, 5 StatsRow tests, 1 server fn test.
 
 ### Changed
 
-- **Sidebar**: Reorganized into 5 sections (Dashboard, Project Intelligence, Tools, Reference, Management). New "📖 Reference" section with Commands link.
-- **DocsViewer**: Now uses `lowlight` + `hast-util-to-html` for syntax highlighting (removed in 1.5.3 type fix; CSS-based highlighting via `.hljs-*` classes).
-- **Test suite**: 86 tests across 13 test files (up from 71/11).
+- **Sidebar**: Reorganized into 5 sections. New "📖 Reference" section with Commands link.
+- **Extended Visualizations**: Now called "Extended Visualizations (v2.0)" — all 6 views share consistent StatsRow + search + filter + empty CTA pattern.
+- **Version**: Bumped to 1.5.2 across package.json, progress.yaml, README.
 
 ### Fixed
 
-- TypeScript CI errors: removed unused `getHighlighter`, `problemLine`, `vi`, `beforeEach` imports.
+- TypeScript CI errors: removed unused imports and dead code.
+- SessionTimeline: toggle key collision across week groups (now uses date+executor).
+- ADRBrowser: fuse.js + status filter intersection (now uses id-based Set).
+- LessonsFeed: "Most Common" stat now computes actual mode.
+- PackageInventory: NPM search empty state.
 
 ## [1.5.1] - 2026-06-03
 

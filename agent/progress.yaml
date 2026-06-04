@@ -1,6 +1,6 @@
 project:
   name: ACPEnhanced-Visual
-  version: 1.5.1
+  version: 1.5.2
   started: 2026-06-03
   status: completed
   current_milestone: null
@@ -1003,6 +1003,9 @@ recent_work:
       - "🎨 CSS: skeleton animation, dark mode cards, print styles"
       - "🧪 92 tests (86 + 6 new), 15 test files"
       - "✓ No artifacts — all templates, skip staleness check"
+  - date: 2026-06-04
+    description: |
+      📋 M38 Planned: Extended Visualizations 2.0. Deep-dive audit of all 6
       Extended Visualization views (Session Timeline, ADR Browser, Lessons Feed,
       Pattern Library, Package Inventory, Audit Index). Found consistent gaps:
       no search/filter, no stat summaries, no source file linking, minimal

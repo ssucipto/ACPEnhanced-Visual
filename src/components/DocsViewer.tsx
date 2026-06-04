@@ -164,9 +164,11 @@ export function DocsViewer() {
     >
       {/* Drag overlay */}
       {dragOver && (
-        <div className="fixed inset-0 z-50 bg-blue-500/20 flex items-center justify-center pointer-events-none">
-          <div className="bg-white dark:bg-gray-800 rounded-xl px-8 py-6 shadow-2xl text-lg font-semibold">
-            📄 Drop .md file to view
+        <div className="fixed inset-0 z-50 bg-blue-500/15 flex items-center justify-center pointer-events-none backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl px-10 py-8 shadow-2xl text-center border-2 border-blue-400 border-dashed">
+            <div className="text-5xl mb-3">📄</div>
+            <div className="text-lg font-semibold text-gray-800 dark:text-gray-200">Drop .md file to view</div>
+            <div className="text-sm text-gray-400 mt-1">Release to render markdown</div>
           </div>
         </div>
       )}
@@ -204,8 +206,20 @@ export function DocsViewer() {
       <main className="flex-1 flex overflow-hidden">
         <div ref={contentRef} onClick={handleContentClick} className={`flex-1 overflow-y-auto p-6 ${fontSizeClass}`}>
           {!selectedPath ? (
-            <div className={`font-mono ${dark ? 'text-gray-500' : 'text-gray-400'}`}>
-              Select a document or drop a .md file here.
+            <div className="flex items-center justify-center h-full">
+              <div className={`text-center max-w-sm p-8 border-2 border-dashed rounded-xl transition-colors ${
+                dragOver
+                  ? 'border-blue-400 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/20'
+                  : dark ? 'border-gray-600 hover:border-gray-500' : 'border-gray-300 hover:border-gray-400'
+              }`}>
+                <div className="text-4xl mb-3">📄</div>
+                <p className={`text-sm font-medium mb-1 ${dark ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Drop a <code className="px-1 rounded bg-gray-100 dark:bg-gray-700 text-xs">.md</code> file here
+                </p>
+                <p className={`text-xs ${dark ? 'text-gray-500' : 'text-gray-400'}`}>
+                  or select a document from the sidebar →
+                </p>
+              </div>
             </div>
           ) : !html ? (
             <div className="animate-pulse text-gray-400">Rendering…</div>

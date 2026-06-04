@@ -53,12 +53,13 @@ describe('DocsViewer component', () => {
     expect(screen.getByText('Wiki (1)')).toBeInTheDocument();
   });
 
-  it('shows placeholder text when no document selected', async () => {
+  it('shows drop zone placeholder when no document selected', async () => {
     render(<DocsViewer />);
 
     expect(
-      await screen.findByText(/Select a document or drop a \.md file here/),
+      await screen.findByText(/Drop a/i),
     ).toBeInTheDocument();
+    expect(screen.getByText(/or select a document/i)).toBeInTheDocument();
   });
 
   it('renders markdown content when a document is selected', async () => {

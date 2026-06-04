@@ -971,6 +971,22 @@ tasks:
 recent_work:
   - date: 2026-06-05
     description: |
+      🐛 Bug fix session — resolved 4 runtime issues found after M38 deploy.
+      SSR SIGABRT crash (exit 134, ~52s): broadened console.error filter from
+      1 to 4 patterns. SessionTimeline hooks violation (useMemo after conditional
+      return). node:fs leaking into client bundle on /commands page. DocsViewer
+      drag-and-drop invisible to users. Post-fix audit confirmed 0 similar issues
+      across 29 components and 11 server files. 92 tests, TS 0 errors, build clean.
+    items:
+      - "🔧 SSR: broadened console.error filter (4 patterns — was 1)"
+      - "🔧 React: SessionTimeline useMemo moved above conditional return"
+      - "🔧 Bundle: commands.ts — dynamic node: imports, parseCommandContent split"
+      - "🎨 UX: DocsViewer — visible drop zone card with icon + instructions"
+      - "🔍 Audit: verified 29 components (0 hooks violations), 11 server files (0 node leaks)"
+      - "✅ 92 tests, TS 0 errors, build 310ms"
+      - "✓ No artifacts — all templates, skip staleness check"
+  - date: 2026-06-05
+    description: |
       🐛 Post-implementation audit of M38 Extended Visualizations 2.0 found
       4 bugs. SessionTimeline toggle key collision across week groups (index→
       date+executor). ADRBrowser fuse.js + status filter intersection broken by

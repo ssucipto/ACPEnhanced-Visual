@@ -1,6 +1,6 @@
 # Domain Entity Model — ACP Protocol project
 # Load ONE section at a time — never load the entire file
-# last_verified: 2026-06-04
+# last_verified: 2026-06-05
 
 commands:
   count: 64  # 64 total: 61 acp.* + 2 git.* + 1 command.template.md (verified 2026-06-03)

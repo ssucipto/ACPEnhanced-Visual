@@ -1,5 +1,5 @@
 # Service Integrations — XML-tagged sections, load one section at a time
-# last_verified: 2026-06-03
+# last_verified: 2026-06-05
 
 <filesystem>
   type: Local filesystem (Node.js fs)
@@ -18,8 +18,8 @@
 <testing>
   framework: Vitest + @testing-library/react + @testing-library/jest-dom + jsdom
   coverage: @vitest/coverage-v8 (50% thresholds)
-  files: 13 test files, 86 tests
-  breakdown: yaml-loader (10), integration (3), sync (2), data-source (4), components (5), remote-render (14), cli-e2e (4), docs-viewer (4), maintenance (5), server-controls (6), smoke (14), command-reference (11), commands (4)
+  files: 15 test files, 92 tests
+  breakdown: yaml-loader (10), integration (3), sync (2), data-source (4), components (5), remote-render (14), cli-e2e (4), docs-viewer (4), maintenance (5), server-controls (6), smoke (14), command-reference (11), commands (4), stats-row (5), memory-files (1)
 </testing>
 
 <deployment>

@@ -2,8 +2,8 @@ project:
   name: ACPEnhanced-Visual
   version: 1.5.1
   started: 2026-06-03
-  status: completed
-  current_milestone: null
+  status: active
+  current_milestone: M38
   description: >
     Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
     interactive, sortable, searchable UI with milestone tables, task trees,
@@ -211,6 +211,24 @@ milestones:
       lowlight syntax highlighting, heading anchors, code copy buttons, TOC with
       IntersectionObserver, drag-and-drop, dark/light theme, font size, fullscreen,
       image lightbox. Audit fixed 3 gaps (fullscreen, lightbox, tests).
+
+  M38:
+    name: Extended Visualizations 2.0
+    priority: 1
+    status: planned
+    progress: 0
+    started: null
+    completed: null
+    estimated_weeks: '2'
+    tasks_completed: 0
+    tasks_total: 10
+    file: agent/milestones/milestone-38-extended-visualizations-2.0.md
+    notes: |
+      Upgrade 6 Extended Visualization views with search, filtering, stat
+      summaries, source file linking, and consistent design. Cross-cutting
+      StatsRow + SourceLink components. Per-view: fuse.js search, filters,
+      empty state CTAs, loading skeletons. 2 infrastructure tasks + 6 view
+      upgrades + polish + tests.
 
 tasks:
   M25:
@@ -839,7 +857,106 @@ tasks:
       completed_date: 2026-06-04T01:30:00Z
       notes: 4 DocsViewer component tests with IntersectionObserver mock
 
+  M38:
+    - id: task-199
+      name: StatsRow + SourceLink shared components
+      priority: 1
+      status: planned
+      file: agent/tasks/milestone-38-extended-visualizations-2.0/task-199-statsrow-sourcelink.md
+      estimated_hours: '2'
+      notes: Reusable stat cards (icon/label/value/trend) + file-to-DocsViewer link component
+
+    - id: task-200
+      name: Server function data enhancements
+      priority: 1
+      status: planned
+      file: agent/tasks/milestone-38-extended-visualizations-2.0/task-200-server-fn-enhancements.md
+      estimated_hours: '1.5'
+      notes: Parse key_fact, duration, consequences, date, tags, license, status from memory files
+
+    - id: task-201
+      name: Session Timeline 2.0
+      priority: 1
+      status: planned
+      file: agent/tasks/milestone-38-extended-visualizations-2.0/task-201-session-timeline.md
+      estimated_hours: '2'
+      notes: Stats, fuse.js search, key_fact inline, week grouping, empty CTA
+
+    - id: task-202
+      name: ADR Browser 2.0
+      priority: 1
+      status: planned
+      file: agent/tasks/milestone-38-extended-visualizations-2.0/task-202-adr-browser.md
+      estimated_hours: '1.5'
+      notes: Stats, search, read-more expand, consequences, date, SourceLink to decisions.md
+
+    - id: task-203
+      name: Lessons Feed 2.0
+      priority: 2
+      status: planned
+      file: agent/tasks/milestone-38-extended-visualizations-2.0/task-203-lessons-feed.md
+      estimated_hours: '1.5'
+      notes: Stats, search, priority filter, date, frequency indicator, empty CTA
+
+    - id: task-204
+      name: Pattern Library 2.0
+      priority: 2
+      status: planned
+      file: agent/tasks/milestone-38-extended-visualizations-2.0/task-204-pattern-library.md
+      estimated_hours: '1.5'
+      notes: Stats, category grouping, clickable code refs, copy button, empty CTA
+
+    - id: task-205
+      name: Package Inventory 2.0
+      priority: 2
+      status: planned
+      file: agent/tasks/milestone-38-extended-visualizations-2.0/task-205-package-inventory.md
+      estimated_hours: '1.5'
+      notes: Stats, search, outdated highlighting, license column, refresh button, empty CTA
+
+    - id: task-206
+      name: Audit Index 2.0
+      priority: 1
+      status: planned
+      file: agent/tasks/milestone-38-extended-visualizations-2.0/task-206-audit-index.md
+      estimated_hours: '2'
+      notes: Stats, search, severity filter, status column, SourceLink to reports, empty CTA
+
+    - id: task-207
+      name: Visual polish — consistent design
+      priority: 3
+      status: planned
+      file: agent/tasks/milestone-38-extended-visualizations-2.0/task-207-visual-polish.md
+      estimated_hours: '1.5'
+      notes: Unified layout, loading skeletons, empty states, responsive, dark mode, print
+
+    - id: task-208
+      name: Tests
+      priority: 2
+      status: planned
+      file: agent/tasks/milestone-38-extended-visualizations-2.0/task-208-tests.md
+      estimated_hours: '2'
+      notes: 12+ component tests, server fn tests, verify 86 existing still pass
+
 recent_work:
+  - date: 2026-06-04
+    description: |
+      📋 M38 Planned: Extended Visualizations 2.0. Deep-dive audit of all 6
+      Extended Visualization views (Session Timeline, ADR Browser, Lessons Feed,
+      Pattern Library, Package Inventory, Audit Index). Found consistent gaps:
+      no search/filter, no stat summaries, no source file linking, minimal
+      interactivity. Created comprehensive 10-task milestone with StatsRow +
+      SourceLink cross-cutting components, per-view fuse.js search + filters +
+      empty state CTAs, visual polish, and tests. Total estimated ~17h.
+    items:
+      - "📋 Audited all 6 views: found 18 gaps across search, filter, stats, linking"
+      - "📝 Created milestone-38-extended-visualizations-2.0.md with 10 tasks"
+      - "📊 StatsRow component: reusable stat cards (icon/label/value/trend, responsive)"
+      - "🔗 SourceLink component: file+anchor → DocsViewer deep linking"
+      - "🔍 Per-view: fuse.js search, status/priority/severity filters, empty state CTAs"
+      - "🎨 Visual polish: loading skeletons, dark mode, print styles, responsive"
+      - "🧪 task-208: 12+ new component tests + server fn parser tests"
+      - "✓ No artifacts — all templates, skip staleness check"
   - date: 2026-06-04
     description: |
       📖 M36 ACP Command Reference + M37 Collapsible Sidebar & Markdown Viewer 2.0
@@ -1007,14 +1124,15 @@ recent_work:
       - "⚠️ ACP Enhanced fixture has YAML error at M5:148 — sync test handles gracefully"
 
 next_steps:
+  - "� M38: Extended Visualizations 2.0 — 10 tasks planned, 2-week estimate"
   - "🔵 npm publish — ship v1.5.1 to npm registry"
   - "🔵 Add E2E tests — Playwright full browser flow"
   - "🔵 Accessibility audit — axe-core on all pages"
   - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
-  - "📋 Plan M38 — next feature milestone (user feedback driven)"
 
 notes:
   - 🎉 13 MILESTONES COMPLETE (M25-M37) — 87 tasks across 13 milestones
+  - 🟢 M38 PLANNED: Extended Visualizations 2.0 (10 tasks, 2-week estimate)
   - 86 tests passing across 13 test files
   - Coverage reporting enabled via npm run test:coverage
   - ACP Enhanced v6.9.1 framework installed

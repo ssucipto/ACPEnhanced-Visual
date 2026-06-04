@@ -41,6 +41,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {/* Suppress the known React 19 + TanStack Start SSR streaming quirk.
+            Without this, ~60 poll cycles × 1 error each = Node SIGABRT at 2 min. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var e=console.error;console.error=function(){for(var i=0;i<arguments.length;i++){if(typeof arguments[i]==='string'&&arguments[i].indexOf('Expected static flag was missing')!==-1)return}e.apply(console,arguments)}})();`,
+          }}
+        />
       </head>
       <body>
         {children}

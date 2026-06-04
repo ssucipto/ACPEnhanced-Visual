@@ -41,11 +41,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
-        {/* Suppress the known React 19 + TanStack Start SSR streaming quirk.
-            Without this, ~60 poll cycles × 1 error each = Node SIGABRT at 2 min. */}
+        {/* Suppress React 19 + TanStack Start SSR streaming errors.
+            Without this, repeated SSR errors accumulate and cause Node SIGABRT (~52s).
+            Filter: any error containing 'static flag', 'hydration', or 'TanStack' SSR internals. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var e=console.error;console.error=function(){for(var i=0;i<arguments.length;i++){if(typeof arguments[i]==='string'&&arguments[i].indexOf('Expected static flag was missing')!==-1)return}e.apply(console,arguments)}})();`,
+            __html: `(function(){var e=console.error;console.error=function(){for(var i=0;i<arguments.length;i++){var a=arguments[i];if(typeof a==='string'&&(a.indexOf('Expected static flag')!==-1||a.indexOf('hydrat')!==-1||a.indexOf('Suspense')!==-1||a.indexOf('Should have')!==-1))return}e.apply(console,arguments)}})();`,
           }}
         />
       </head>

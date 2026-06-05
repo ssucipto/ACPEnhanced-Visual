@@ -11,7 +11,12 @@ function wrapTables(html: string): string {
 
 function extractMermaid(html: string): string {
   return html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g, (_, code: string) => {
-    const decoded = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+    const decoded = code
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
     return `<div class="mermaid-container"><pre class="mermaid">${decoded}</pre></div>`;
   });
 }
@@ -121,9 +126,9 @@ export function DocsViewer() {
     const blocks = el.querySelectorAll<HTMLElement>('pre.mermaid');
     if (!blocks.length) return;
 
-    // Loading indicator on each block
+    // Loading indicator on unprocessed blocks
     for (const block of blocks) {
-      if (block.getAttribute('data-processed')) continue;
+      if (block.getAttribute('data-processed') || block.getAttribute('data-loading')) continue;
       block.setAttribute('data-loading', 'true');
       block.innerHTML = '<div class="mermaid-loading">🔄 Rendering diagram…</div>';
     }
@@ -146,6 +151,7 @@ export function DocsViewer() {
             svgEl.addEventListener('click', () => setMermaidZoom(svgEl.outerHTML));
           }
         } catch {
+          block.setAttribute('data-processed', 'true');
           const code = block.textContent || '';
           block.innerHTML = `<div class="mermaid-error"><span>⚠️ Diagram rendering failed</span><pre><code>${code.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</code></pre></div>`;
         }
@@ -155,6 +161,7 @@ export function DocsViewer() {
       for (const block of blocks) {
         if (block.getAttribute('data-processed')) continue;
         block.removeAttribute('data-loading');
+        block.setAttribute('data-processed', 'true');
         const code = block.textContent || '';
         block.innerHTML = `<div class="mermaid-error"><span>⚠️ Mermaid library failed to load</span><pre><code>${code.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</code></pre></div>`;
       }

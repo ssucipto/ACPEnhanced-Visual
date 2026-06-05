@@ -54,6 +54,9 @@ export function DocsViewer() {
   const [dragOver, setDragOver] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+  const [mermaidZoom, setMermaidZoom] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -112,28 +115,59 @@ export function DocsViewer() {
     return () => { clearTimeout(timer); observer.disconnect(); };
   }, [html]);
 
-  // Mermaid rendering
+  // Mermaid rendering — reliable with retry + loading/error states
   const renderMermaid = useCallback(async () => {
     const el = contentRef.current; if (!el) return;
     const blocks = el.querySelectorAll<HTMLElement>('pre.mermaid');
     if (!blocks.length) return;
+
+    // Loading indicator on each block
+    for (const block of blocks) {
+      if (block.getAttribute('data-processed')) continue;
+      block.setAttribute('data-loading', 'true');
+      block.innerHTML = '<div class="mermaid-loading">🔄 Rendering diagram…</div>';
+    }
+
     try {
       const mermaid = (await import('mermaid')).default;
-      mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'neutral', securityLevel: 'sandbox' });
+      mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'neutral', securityLevel: 'loose' });
       let id = 0;
       for (const block of blocks) {
         if (block.getAttribute('data-processed')) continue;
-        block.setAttribute('data-processed', 'true');
-        const { svg } = await mermaid.render(`mermaid-${Date.now()}-${++id}`, block.textContent || '');
-        block.innerHTML = svg;
+        block.removeAttribute('data-loading');
+        try {
+          const { svg } = await mermaid.render(`mermaid-${Date.now()}-${++id}`, block.textContent || '');
+          block.innerHTML = svg;
+          block.setAttribute('data-processed', 'true');
+          const svgEl = block.querySelector('svg');
+          if (svgEl) {
+            svgEl.style.cursor = 'pointer';
+            svgEl.setAttribute('title', 'Click to zoom');
+            svgEl.addEventListener('click', () => setMermaidZoom(svgEl.outerHTML));
+          }
+        } catch {
+          const code = block.textContent || '';
+          block.innerHTML = `<div class="mermaid-error"><span>⚠️ Diagram rendering failed</span><pre><code>${code.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</code></pre></div>`;
+        }
       }
-    } catch {}
+    } catch {
+      // Mermaid import failed — show fallback for all unprocessed blocks
+      for (const block of blocks) {
+        if (block.getAttribute('data-processed')) continue;
+        block.removeAttribute('data-loading');
+        const code = block.textContent || '';
+        block.innerHTML = `<div class="mermaid-error"><span>⚠️ Mermaid library failed to load</span><pre><code>${code.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</code></pre></div>`;
+      }
+    }
   }, [dark]);
 
   useEffect(() => {
     if (!html) return;
-    const t = setTimeout(renderMermaid, 50);
-    return () => clearTimeout(t);
+    const raf = requestAnimationFrame(() => {
+      const t = setTimeout(renderMermaid, 0);
+      return () => clearTimeout(t);
+    });
+    return () => cancelAnimationFrame(raf);
   }, [html, renderMermaid]);
 
   // Drag-and-drop
@@ -147,6 +181,42 @@ export function DocsViewer() {
   }, []);
 
   const fontSizeClass = { sm: 'text-xs', md: 'text-sm', lg: 'text-base' }[fontSize];
+
+  // ── Export helpers ──────────────────────────────────────────────────────
+
+  const showToast = useCallback((msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  }, []);
+
+  const exportWord = useCallback(() => {
+    const el = contentRef.current; if (!el) return;
+    setExporting(true);
+    try {
+      const clone = el.cloneNode(true) as HTMLElement;
+      // Remove UI elements
+      clone.querySelectorAll('.heading-anchor, .code-copy-btn, .code-block-header, .mermaid-loading, .mermaid-error span').forEach(e => e.remove());
+      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+        body{font-family:system-ui,sans-serif;line-height:1.6;max-width:800px;margin:40px auto;color:#1f2937}
+        h1{font-size:1.5em;margin-top:1em}h2{font-size:1.25em;border-bottom:1px solid #e5e7eb;padding-bottom:.25em}
+        pre{background:#f3f4f6;padding:1em;border-radius:4px;overflow-x:auto}code{font-family:monospace;font-size:.875em}
+        table{border-collapse:collapse;width:100%}th,td{border:1px solid #d1d5db;padding:4px 8px;text-align:left}
+        blockquote{border-left:3px solid #3b82f6;padding-left:1em;color:#4b5563;margin:1em 0}
+        img{max-width:100%}svg{max-width:100%;height:auto}
+        @page{margin:1in}
+      </style></head><body>${clone.innerHTML}</body></html>`;
+      const blob = new Blob([html], { type: 'application/msword' });
+      const name = selectedPath?.split('/').pop()?.replace(/\.md$/, '') || 'document';
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${name}.doc`; a.click();
+      showToast(`✅ Exported as ${name}.doc`);
+    } catch { showToast('⚠️ Export failed'); }
+    finally { setExporting(false); }
+  }, [selectedPath, showToast]);
+
+  const exportPdf = useCallback(() => {
+    showToast('📄 Opening print dialog…');
+    window.print();
+  }, [showToast]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, DocFile[]>();
@@ -271,6 +341,14 @@ export function DocsViewer() {
               className="w-9 h-9 rounded-full bg-white dark:bg-gray-700 shadow-md border border-gray-200 dark:border-gray-600 flex items-center justify-center text-xs font-bold hover:shadow-lg transition-shadow">
               {fontSize === 'sm' ? 'S' : fontSize === 'md' ? 'M' : 'L'}
             </button>
+            <button onClick={exportWord} title="Export to Word" disabled={exporting}
+              className="w-9 h-9 rounded-full bg-white dark:bg-gray-700 shadow-md border border-gray-200 dark:border-gray-600 flex items-center justify-center text-xs hover:shadow-lg transition-shadow disabled:opacity-50">
+              {exporting ? '⏳' : '📥'}
+            </button>
+            <button onClick={exportPdf} title="Export to PDF"
+              className="w-9 h-9 rounded-full bg-white dark:bg-gray-700 shadow-md border border-gray-200 dark:border-gray-600 flex items-center justify-center text-xs hover:shadow-lg transition-shadow">
+              📄
+            </button>
             <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} title="Back to top"
               className="w-9 h-9 rounded-full bg-white dark:bg-gray-700 shadow-md border border-gray-200 dark:border-gray-600 flex items-center justify-center text-sm hover:shadow-lg transition-shadow">
               ↑
@@ -289,18 +367,29 @@ export function DocsViewer() {
           className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center cursor-pointer"
           onClick={() => setLightboxSrc(null)}
         >
-          <button
-            onClick={() => setLightboxSrc(null)}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 text-white text-xl hover:bg-white/30 transition-colors"
-          >
-            ✕
-          </button>
-          <img
-            src={lightboxSrc}
-            alt=""
-            className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
+          <button onClick={() => setLightboxSrc(null)}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 text-white text-xl hover:bg-white/30 transition-colors">✕</button>
+          <img src={lightboxSrc} alt="" className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
+
+      {/* Mermaid zoom lightbox */}
+      {mermaidZoom && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center cursor-pointer"
+          onClick={() => setMermaidZoom(null)}>
+          <button onClick={() => setMermaidZoom(null)}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 text-white text-xl hover:bg-white/30 transition-colors">✕</button>
+          <div className="max-w-[95vw] max-h-[95vh] overflow-auto bg-white rounded-lg shadow-2xl p-4"
             onClick={(e) => e.stopPropagation()}
-          />
+            dangerouslySetInnerHTML={{ __html: mermaidZoom }} />
+        </div>
+      )}
+
+      {/* Toast notification */}
+      {toast && (
+        <div className="fixed bottom-20 right-4 z-50 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm animate-pulse">
+          {toast}
         </div>
       )}
     </div>

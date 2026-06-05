@@ -298,7 +298,16 @@ body {
   overflow-x: auto;
   text-align: center;
 }
-.prose-doc .mermaid-container pre.mermaid { background: transparent; padding: 0; margin: 0; border: none; }
+.prose-doc .mermaid-container pre.mermaid {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  border: none;
+  color: #374151;     /* override .prose-doc pre { color: #e2e8f0 } */
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  opacity: 0.6;        /* muted until SVG replaces it */
+}
 .prose-doc .mermaid-container svg { max-width: 100%; cursor: pointer; }
 
 /* ===== Outdated package row highlight ===== */

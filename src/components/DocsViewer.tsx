@@ -126,6 +126,12 @@ export function DocsViewer() {
     const blocks = el.querySelectorAll<HTMLElement>('pre.mermaid');
     if (!blocks.length) return;
 
+    // Diagnostics: log if we have containers but found no blocks (shouldn't happen)
+    const containers = el.querySelectorAll('.mermaid-container');
+    if (containers.length > 0 && blocks.length === 0) {
+      console.warn('[DocsViewer] mermaid containers present but no pre.mermaid found');
+    }
+
     // Loading indicator on unprocessed blocks
     for (const block of blocks) {
       if (block.getAttribute('data-processed') || block.getAttribute('data-loading')) continue;
@@ -134,7 +140,12 @@ export function DocsViewer() {
     }
 
     try {
-      const mermaid = (await import('mermaid')).default;
+      // Import with 10s timeout
+      const mermaidMod = await Promise.race([
+        import('mermaid'),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000)),
+      ]);
+      const mermaid = mermaidMod.default;
       mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'neutral', securityLevel: 'loose' });
       let id = 0;
       for (const block of blocks) {
@@ -157,8 +168,22 @@ export function DocsViewer() {
           block.innerHTML = `<div class="mermaid-error"><span>⚠️ Diagram rendering failed</span><pre><code>${code.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</code></pre></div>`;
         }
       }
-    } catch {
-      // Mermaid import failed — show fallback for all unprocessed blocks
+
+      // Post-render audit: if any container has no SVG, retry once
+      const stillUnrendered = el.querySelectorAll<HTMLElement>('pre.mermaid:not([data-processed])');
+      if (stillUnrendered.length > 0) {
+        console.warn(`[DocsViewer] ${stillUnrendered.length} mermaid blocks still unrendered — retrying in 500ms`);
+        setTimeout(renderMermaid, 500);
+      }
+
+      // Diagnostics: count containers vs SVGs
+      const svgCount = el.querySelectorAll('.mermaid-container svg').length;
+      if (containers.length > svgCount) {
+        console.warn(`[DocsViewer] mermaid containers: ${containers.length}, SVGs: ${svgCount} — ${containers.length - svgCount} missing`);
+      }
+    } catch (err) {
+      // Mermaid import failed or timed out — show fallback for all unprocessed blocks
+      console.warn('[DocsViewer] Mermaid import failed:', err instanceof Error ? err.message : err);
       for (const block of blocks) {
         if (block.getAttribute('data-processed')) continue;
         block.removeAttribute('data-loading');
@@ -177,6 +202,21 @@ export function DocsViewer() {
     });
     return () => { cancelAnimationFrame(raf); if (t!) clearTimeout(t); };
   }, [html, renderMermaid]);
+
+  // Theme change → clear mermaid state and re-render
+  useEffect(() => {
+    const el = contentRef.current; if (!el || !html) return;
+    const blocks = el.querySelectorAll<HTMLElement>('pre.mermaid[data-processed]');
+    if (!blocks.length) return;
+    for (const block of blocks) {
+      block.removeAttribute('data-processed');
+      block.removeAttribute('data-zoom-bound');
+    }
+    // Re-render with new theme
+    const raf = requestAnimationFrame(() => { setTimeout(renderMermaid, 0); });
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dark]);
 
   // Drag-and-drop
   const handleDrop = useCallback((e: React.DragEvent) => {

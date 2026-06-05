@@ -1053,6 +1053,24 @@ tasks:
 recent_work:
   - date: 2026-06-05
     description: |
+      🌊 M39 Mermaid Flowcharts + Document Export — all 8 tasks complete.
+      Fixed rendering pipeline (securityLevel→loose, rAF+setTimeout(0),
+      loading/error fallbacks per diagram). Click-to-zoom SVG lightbox.
+      Export to Word (.doc with inline CSS + embedded SVGs) and PDF
+      (window.print with enhanced @media print CSS). Post-audit found 4 bugs
+      (&quot; &#39; decoding, retry loop, timeout cleanup leak, SVG event dup).
+      Added 5 mermaid+export tests. 97 tests, 15 files, TS 0 errors, build clean.
+    items:
+      - "🌊 Mermaid: securityLevel→loose, rAF+setTimeout, loading/error fallbacks"
+      - "🔍 Mermaid click-to-zoom SVG lightbox"
+      - "📥 Export to Word: clone DOM, inline CSS, Blob as .doc"
+      - "📄 Export to PDF: window.print() with @media print CSS"
+      - "🔧 Fix: &quot; &#39; decoding + retry loop + timeout leak + event dup"
+      - "🧪 5 new mermaid+export tests (92→97)"
+      - "✅ 97 tests, 15 files, TS 0 errors"
+      - "✓ No artifacts — all templates, skip staleness check"
+  - date: 2026-06-05
+    description: |
       🐛 Bug fix session — resolved 4 runtime issues found after M38 deploy.
       SSR SIGABRT crash (exit 134, ~52s): broadened console.error filter from
       1 to 4 patterns. SessionTimeline hooks violation (useMemo after conditional
@@ -1298,7 +1316,7 @@ next_steps:
 
 notes:
   - 🎉 15 MILESTONES COMPLETE (M25-M39) — 105 tasks across 15 milestones
-  - 92 tests passing across 15 test files
+  - 97 tests passing across 15 test files
   - Coverage reporting enabled via npm run test:coverage
   - ACP Enhanced v6.9.1 framework installed
   - GitHub Actions CI: lint + test + build on push/PR

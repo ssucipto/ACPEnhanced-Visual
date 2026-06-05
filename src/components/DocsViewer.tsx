@@ -269,14 +269,18 @@ export function DocsViewer() {
         const svg = container.querySelector('svg');
         if (svg) {
           // SVG rendered — clean up for Word compatibility
+          // Strip only our zoom handler attributes; keep mermaid's own styles
+          svg.removeAttribute('title');
+          svg.removeAttribute('data-zoom-bound');
+          // Remove cursor:pointer (mermaid SVGs don't set it, we do)
+          if (svg.style.cursor === 'pointer') svg.style.cursor = '';
+
           const pre = container.querySelector('pre.mermaid');
           if (pre) {
-            // Move SVG out of <pre> so Word doesn't apply monospace styling
-            pre.replaceWith(svg.cloneNode(true));
+            // Clone SVG OUT of <pre> — Word applies monospace to <pre> content
+            const svgClone = svg.cloneNode(true) as Element;
+            pre.replaceWith(svgClone);
           }
-          // Remove inline cursor/title added by our zoom handler
-          svg.removeAttribute('style');
-          svg.removeAttribute('title');
         } else {
           // No SVG — mermaid didn't render. Show source code readably.
           const pre = container.querySelector('pre.mermaid');

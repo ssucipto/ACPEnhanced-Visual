@@ -27,7 +27,7 @@ Current Mermaid integration is unreliable — diagrams sometimes don't render, t
 
 ### Current Problems
 
-1. `extractMermaid()` regex runs BEFORE `enhanceCodeBlocks()` — but mermaid blocks are `<pre><code class="language-mermaid">` which `enhanceCodeBlocks` also matches. The ordering means mermaid blocks are extracted first (correct), but `enhanceCodeBlocks` may still match the extracted `<div class="mermaid-container"><pre class="mermaid">` blocks since they contain `<pre>` tags.
+1. `extractMermaid()` regex runs BEFORE `enhanceCodeBlocks()` — this is actually the correct order. Mermaid blocks (`language-mermaid`) are converted to `<div class="mermaid-container"><pre class="mermaid">` first, so `enhanceCodeBlocks` (which matches `language-*`) won't double-process them. No ordering change needed — just verify the regex is robust.
 
 2. `securityLevel: 'sandbox'` blocks many common diagram types (sequence, class, state).
 
@@ -43,12 +43,13 @@ Current Mermaid integration is unreliable — diagrams sometimes don't render, t
 
 **Implementation**:
 
-- Fix `extractMermaid` to run AFTER `enhanceCodeBlocks` — mermaid code blocks get the standard code wrapper first, then are converted to mermaid containers. This ensures consistent processing order.
+- **Verify current ordering is correct**: `extractMermaid` → `enhanceCodeBlocks` (mermaid first avoids double-wrapping). No ordering change needed.
 - Change `securityLevel` from `'sandbox'` to `'loose'` for full diagram type support
-- Replace 50ms timeout with `requestAnimationFrame` + `MutationObserver` pattern for reliable DOM-ready detection
-- Add retry: if mermaid import fails, retry once after 2s, then show fallback
+- Replace 50ms timeout with `requestAnimationFrame(() => setTimeout(renderMermaid, 0))` for reliable post-paint execution
+- Add retry: if `import('mermaid')` fails, retry once after 2s, then show fallback
 - Add loading spinner overlay on mermaid containers: "🔄 Rendering diagram…"
 - Add error fallback for each diagram: show the raw mermaid code in a styled `<pre>` block with "⚠️ Diagram rendering failed" header
+- **Large diagram guard**: if SVG output exceeds 500KB, wrap in scrollable container with zoom controls instead of inline rendering
 
 **Files**: `src/components/DocsViewer.tsx`
 
@@ -99,7 +100,7 @@ Word (.docx) doesn't natively support inline SVG in its HTML import. Two approac
 
 **Chosen: Option A** — minimal dependency, works in all modern Word versions, SVGs stay as vectors.
 
-### task-211: Export to Word (.docx)
+### task-211: Export to Word (.doc)
 
 **Objective**: One-click export of the rendered document to a Word-compatible file with all diagrams preserved.
 
@@ -108,13 +109,14 @@ Word (.docx) doesn't natively support inline SVG in its HTML import. Two approac
 - Add "📥 Word" button to DocsViewer floating controls (visible when content is loaded)
 - On click:
   1. Clone the content area DOM
-  2. Remove UI elements (TOC sidebar, code copy buttons, heading anchors)
-  3. Convert relative links to absolute
-  4. Wrap in Word-compatible HTML template with `@page` directive
-  5. Create Blob with `application/msword` MIME type
-  6. Trigger download as `{document-name}.doc`
-- Preserve: headings, paragraphs, tables, code blocks (with monospace), blockquotes, mermaid SVGs, images
-- Word-compatible styling: embedded `<style>` block with print-friendly typography
+  2. Remove UI elements (TOC sidebar, code copy buttons, heading anchors, floating controls)
+  3. **Inline all CSS styles** into the cloned DOM (Word ignores external stylesheets — must use inline `style=""` attributes or embedded `<style>`)
+  4. Convert relative links to absolute
+  5. Wrap in Word-compatible HTML template: `<!DOCTYPE html>` with `@page` directive for margins
+  6. Create Blob with `application/msword` MIME type
+  7. Trigger download as `{document-name}.doc` (filename from sidebar selection or "document")
+- Preserve: headings, paragraphs, tables, code blocks (monospace), blockquotes, mermaid SVGs (inline), images
+- Word-compatible styling: embedded `<style>` block with Word-supported CSS properties (margin, padding, font-size, border, color, background)
 
 **Files**: `src/components/DocsViewer.tsx`, new `src/lib/export-word.ts`
 

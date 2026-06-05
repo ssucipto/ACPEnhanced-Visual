@@ -305,10 +305,13 @@ body {
   padding: 0;
   margin: 0;
   border: none;
-  color: #374151;     /* override .prose-doc pre { color: #e2e8f0 } */
+}
+/* Unrendered mermaid blocks – muted until SVG replaces them */
+.prose-doc .mermaid-container pre.mermaid:not(:has(svg)) {
+  color: #374151;
   font-size: 0.75rem;
   white-space: pre-wrap;
-  opacity: 0.6;        /* muted until SVG replaces it */
+  opacity: 0.6;
 }
 .prose-doc .mermaid-container svg { max-width: 100%; cursor: pointer; }
 

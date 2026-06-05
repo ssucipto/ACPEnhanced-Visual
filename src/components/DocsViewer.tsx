@@ -263,13 +263,43 @@ export function DocsViewer() {
       const clone = el.cloneNode(true) as HTMLElement;
       // Remove UI elements
       clone.querySelectorAll('.heading-anchor, .code-copy-btn, .code-block-header, .mermaid-loading, .mermaid-error span').forEach(e => e.remove());
+
+      // Fix mermaid containers for Word export
+      clone.querySelectorAll('.mermaid-container').forEach(container => {
+        const svg = container.querySelector('svg');
+        if (svg) {
+          // SVG rendered — clean up for Word compatibility
+          const pre = container.querySelector('pre.mermaid');
+          if (pre) {
+            // Move SVG out of <pre> so Word doesn't apply monospace styling
+            pre.replaceWith(svg.cloneNode(true));
+          }
+          // Remove inline cursor/title added by our zoom handler
+          svg.removeAttribute('style');
+          svg.removeAttribute('title');
+        } else {
+          // No SVG — mermaid didn't render. Show source code readably.
+          const pre = container.querySelector('pre.mermaid');
+          if (pre) {
+            const code = pre.textContent || '';
+            const codeBlock = document.createElement('pre');
+            codeBlock.style.cssText = 'background:#f3f4f6;padding:8px;border:1px solid #d1d5db;font-size:11px;overflow-x:auto;white-space:pre-wrap;color:#374151;';
+            codeBlock.textContent = code;
+            pre.replaceWith(codeBlock);
+          }
+        }
+        // Strip container background that may hide content in Word
+        (container as HTMLElement).style.background = 'transparent';
+        (container as HTMLElement).style.border = '1px solid #d1d5db';
+      });
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
         body{font-family:system-ui,sans-serif;line-height:1.6;max-width:800px;margin:40px auto;color:#1f2937}
         h1{font-size:1.5em;margin-top:1em}h2{font-size:1.25em;border-bottom:1px solid #e5e7eb;padding-bottom:.25em}
         pre{background:#f3f4f6;padding:1em;border-radius:4px;overflow-x:auto}code{font-family:monospace;font-size:.875em}
         table{border-collapse:collapse;width:100%}th,td{border:1px solid #d1d5db;padding:4px 8px;text-align:left}
         blockquote{border-left:3px solid #3b82f6;padding-left:1em;color:#4b5563;margin:1em 0}
-        img{max-width:100%}svg{max-width:100%;height:auto}
+        img{max-width:100%}svg{max-width:100%;height:auto;display:block;margin:1em 0}
+        .mermaid-container{text-align:center;padding:1em;margin:1em 0;border:1px solid #d1d5db;border-radius:4px}
         @page{margin:1in}
       </style></head><body>${clone.innerHTML}</body></html>`;
       const blob = new Blob([html], { type: 'application/msword' });

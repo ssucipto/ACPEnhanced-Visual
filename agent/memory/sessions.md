@@ -6,30 +6,41 @@
   executor: copilot
   persona: A
   tasks_completed:
-    - bugfix-ssr-sigabrt-console-error-filter
-    - bugfix-sessiontimeline-hooks-violation
-    - bugfix-node-fs-client-bundle-leak
-    - ux-docsviewer-visible-drop-zone
-    - audit-post-fix-verification
+    - M39-task-209-fix-mermaid-pipeline
+    - M39-task-210-mermaid-interactive-ux
+    - M39-task-211-export-to-word
+    - M39-task-212-export-to-pdf
+    - M39-task-213-tests
+    - M39-task-214-visual-polish
   done:
-    - ssr-broadened-console-error-filter-from-1-to-4-patterns
-    - sessiontimeline-usememo-moved-above-conditional-return
-    - commands-ts-dynamic-node-imports-parsecommandcontent-split
-    - docsviewer-visible-drop-zone-card-with-icon-and-instructions
-    - post-fix-audit-29-components-0-hooks-violations-11-server-files-0-node-leaks
-    - all-routes-http-200-no-ssr-errors
-    - build-310ms-ts-0-errors-92-tests-passing
-    - progress-update-recent-work-entry
+    - mermaid-securitylevel-sandbox-to-loose-all-diagram-types
+    - mermaid-raf-settimeout-replaces-50ms-timeout-race
+    - mermaid-loading-spinner-per-diagram-rendering-diagram
+    - mermaid-error-fallback-raw-code-with-warning-header
+    - mermaid-click-to-zoom-svg-lightbox-scrollable
+    - mermaid-extract-decode-quot-entity-quotes-in-diagram-labels
+    - mermaid-data-processed-guard-prevents-retry-loop
+    - mermaid-data-zoom-bound-guard-prevents-event-listener-dup
+    - mermaid-useeffect-cleanup-fix-timeout-scoped-outside-raf
+    - export-word-clone-dom-strip-ui-inline-css-blob-doc
+    - export-pdf-window-print-enhanced-media-print-css
+    - export-buttons-in-floating-controls-word-pdf
+    - export-toast-notification-on-success-failure
+    - css-merge-duplicate-media-print-blocks
+    - tests-5-new-mermaid-render-loading-error-export-print
+    - tests-97-total-15-files-ts-0-errors
+    - progress-update-m39-recent-work
   deferred:
     - npm-publish
     - e2e-tests-playwright
   key_fact: >
-    Three classes of bugs slip through tests: (1) SSR streaming errors
-    that only manifest after ~50 poll cycles as SIGABRT, (2) React hooks
-    ordering violations that only error on client hydration, (3) Vite
-    bundle leaks where node:fs top-level imports get pulled into client
-    code. Each requires a different detection strategy — console.error
-    filtering, manual hooks-audit scanning, and build verification.
+    Mermaid rendering has four failure modes that need independent guards:
+    (1) HTML entity decoding (marked escapes quotes as &quot;),
+    (2) DOM ready timing (50ms timeout vs rAF+setTimeout),
+    (3) retry loops (failed blocks need data-processed marker),
+    (4) event listener accumulation (data-zoom-bound guard).
+    Also: Word export via HTML blob works in modern Word but CSS must
+    be inlined — external stylesheets are silently dropped.
 
 - date: 2026-06-05
   executor: copilot

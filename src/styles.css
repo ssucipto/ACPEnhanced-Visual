@@ -228,6 +228,12 @@ body {
   .prose-doc pre { border: 1px solid #ccc; background: #f9f9f9; color: #000; }
   aside, nav, .fixed { display: none !important; }
   main { overflow: visible !important; }
+  .prose-doc .mermaid-container svg { max-width: 100%; page-break-inside: avoid; }
+  .prose-doc h1 { page-break-before: always; }
+  .prose-doc h1:first-child { page-break-before: avoid; }
+  .prose-doc table { page-break-inside: avoid; }
+  .prose-doc .code-block-header { display: none; }
+  @page { margin: 1in; }
 }
 
 /* ===== Skeleton loading animation ===== */
@@ -294,20 +300,6 @@ body {
 }
 .prose-doc .mermaid-container pre.mermaid { background: transparent; padding: 0; margin: 0; border: none; }
 .prose-doc .mermaid-container svg { max-width: 100%; cursor: pointer; }
-
-/* ===== Enhanced print styles ===== */
-@media print {
-  .prose-doc { color: #000; }
-  .prose-doc pre { border: 1px solid #ccc; background: #f9f9f9; color: #000; }
-  aside, nav, .fixed { display: none !important; }
-  main { overflow: visible !important; }
-  .prose-doc .mermaid-container svg { max-width: 100%; page-break-inside: avoid; }
-  .prose-doc h1 { page-break-before: always; }
-  .prose-doc h1:first-child { page-break-before: avoid; }
-  .prose-doc table { page-break-inside: avoid; }
-  .prose-doc .code-block-header { display: none; }
-  @page { margin: 1in; }
-}
 
 /* ===== Outdated package row highlight ===== */
 .bg-amber-50 { background-color: #fffbeb; }

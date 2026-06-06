@@ -2,6 +2,58 @@
 # Format: YAML blocks, last 3 loaded per session, auto-compacted at 15 entries
 # DO NOT edit manually — updated by /acp-commit
 
+- date: 2026-06-06
+  executor: copilot
+  persona: A
+  tasks_completed:
+    - M40-task-217-canvas-svg-png-utility
+    - M40-task-218-fix-word-export-png
+    - M40-task-219-fix-pdf-export-png
+    - M40-task-220-replace-unescape
+    - M40-task-221-fix-bg-gray-750
+    - M40-task-222-cleartimeout-toast
+    - M40-task-223-react-error-boundary
+    - M40-task-224-print-color-adjust
+    - M40-task-225-server-function-tests
+    - M40-task-226-coverage-reporting
+    - feedback-004-lessonsfeed-duplicate-keys
+    - feedback-004-vite-customlogger-echo-loop
+    - audit-31-m40-post-impl-fixes
+    - audit-32-feedback-004-cross-ref
+    - audit-33-m40-comprehensive
+  done:
+    - canvas-svg-to-png-with-css-inlining-10-properties
+    - word-export-png-replaces-svg-base64-unsupported-in-word
+    - pdf-export-png-with-promise-allsettled-5s-timeout
+    - unescape-removed-obsoleted-by-png-rasterization
+    - bg-gray-750-fixed-to-bg-gray-800
+    - toast-cleanup-useref-cleartimeout-useeffect-unmount
+    - error-boundary-class-component-role-alert-a11y
+    - print-color-adjust-standard-css-property
+    - server-tests-13-new-path-sanitization-yaml-parsing
+    - coverage-thresholds-calibrated-40-30-35-44
+    - lessonsfeed-composite-key-task-type-date-index
+    - vite-customlogger-6-patterns-breaks-echo-loop
+    - devtools-opt-in-vite-enable-devtools-env-var
+    - css-semicolon-separator-fix-existing-style-concat
+    - print-window-close-deferred-500ms-safari-race
+    - carryovers-audit-19-29-30-all-marked-fixed
+    - progress-yaml-m40-tasks-completed-dates
+    - readme-sync-version-1-5-3-milestones-16-tests-110
+    - package-json-version-1-5-3
+  deferred:
+    - remaining-8-server-function-tests
+    - playwright-e2e-tests
+    - word-export-manual-verification-in-microsoft-word
+  key_fact: >
+    Three critical patterns for client-side image export:
+    (1) Canvas SVG-to-PNG requires CSS inlining via getComputedStyle —
+    mermaid theme colors are in document stylesheets, not the SVG.
+    (2) data:image/svg+xml;base64 works in browsers but NOT Word —
+    PNG data URIs are universally supported.
+    (3) Vite 8 relays browser console.error to terminal, creating
+    exponential feedback loop (SIGABRT 134). customLogger breaks it.
+
 - date: 2026-06-05
   executor: copilot
   persona: A
@@ -115,10 +167,19 @@
     and always tries /usr/local/lib/ — use ln -s directly instead.
 
 - date: 2026-06-03
+  executor: copilot
+  persona: A
+  tasks_completed:
     - m35-11-server-function-export-verification-tests
     - m35-10-component-tests-docsviewer-maintenance-servercontrols
     - m35-28-new-tests-43-to-71-total
     - acp-update-progress-yaml-v1.5.0-11-milestones-71-tests
+  done:
+    - domain-yml-cleaned-removed-leaked-command-listings
+    - identity-yml-fixed-removed-parent-repo-duplicates
+    - identity-yml-stack-expanded-to-key-value-pairs
+    - integrations-md-verified-accurate-no-changes-needed
+    - acp-update-progress-yaml-synced-with-recent-work
   deferred:
     - m35-t12-split-vitest-environments-node-vs-jsdom
   key_fact: >
@@ -128,11 +189,16 @@
     integration tests with vi.mock. Also: @tailwindcss/typography v0.5.x is
     a Tailwind v3 PostCSS plugin and does not work with Tailwind v4's
     @tailwindcss/vite — custom CSS is the reliable fallback.
-    - domain-yml-cleaned-removed-leaked-command-listings
-    - identity-yml-fixed-removed-parent-repo-duplicates
-    - identity-yml-stack-expanded-to-key-value-pairs
-    - integrations-md-verified-accurate-no-changes-needed
-    - acp-update-progress-yaml-synced-with-recent-work
+
+- date: 2026-06-05
+  executor: copilot
+  persona: A
+  tasks_completed:
+    - wiki-hygiene-cleanup
+  done:
+    - domain-yml-cleaned-leaked-command-entries
+    - identity-yml-fixed-parent-repo-duplicates
+    - integrations-md-verified-accurate
   deferred: []
   key_fact: >
     Wiki hygiene matters. The existing domain.yml had 30+ leaked acp.* command

@@ -1,12 +1,12 @@
 # 🚀 ACP Progress Visualizer
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.5.2-blue?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/version-1.5.3-blue?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/status-completed-success?style=flat-square" alt="Status">
   <img src="https://img.shields.io/badge/ACP%20Enhanced-v6.9.1-6e47ff?style=flat-square" alt="ACP Enhanced">
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/milestones-14%20complete-blueviolet?style=flat-square" alt="Milestones">
-  <img src="https://img.shields.io/badge/tests-92%20passing-success?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/milestones-16%20complete-blueviolet?style=flat-square" alt="Milestones">
+  <img src="https://img.shields.io/badge/tests-110%20passing-success?style=flat-square" alt="Tests">
 </p>
 
 > **Bring your ACP Enhanced progress.yaml to life.** A web dashboard that turns structured YAML milestone data into an interactive, sortable, searchable UI. Supports local filesystem and GitHub remote sources, multi-project tabs, and extended ACP memory visualizations.
@@ -49,6 +49,10 @@
 - 📂 **Collapsible Sidebar** — icon-only mode (w-14) saves space, organized into 5 sections
 - 📖 **Command Reference** — searchable /commands page with 70 ACP + visualizer commands
 - 📄 **Markdown Viewer 2.0** — syntax highlighting, TOC, dark mode, fullscreen, drag-and-drop
+- 🌊 **Mermaid Flowcharts** — render diagrams (flowchart, sequence, class, state), click-to-zoom SVG lightbox
+- 📥 **Export to Word (.doc)** — one-click export with embedded mermaid diagrams as PNG images
+- 📄 **Export to PDF** — print-optimized with mermaid PNG rasterization, cross-browser compatible
+- 🛡️ **React Error Boundary** — graceful fallback UI instead of blank page on render crash
 - ⚠️ **Error Card** — amber warnings for YAML parse/Zod errors with fix steps
 - 🌐 **Multi-Project Normalization** — supports ACP format variants (array milestones, alt statuses)
 

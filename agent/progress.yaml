@@ -2,8 +2,8 @@ project:
   name: ACPEnhanced-Visual
   version: 1.5.2
   started: 2026-06-03
-  status: completed
-  current_milestone: null
+  status: in_progress
+  current_milestone: M40
   description: >
     Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
     interactive, sortable, searchable UI with milestone tables, task trees,
@@ -246,6 +246,24 @@ milestones:
       add interactive zoom/pan/copy/download for diagrams, one-click export
       to Word (.doc) with embedded SVGs, PDF via print with @media print CSS.
       8 tasks: 2 mermaid + 2 export + pre-impl audit + implementation.
+
+  M40:
+    name: Audit Carryover Resolution & Export Hardening
+    priority: 1
+    status: planned
+    progress: 0
+    started: null
+    completed: null
+    estimated_weeks: '1.5'
+    tasks_completed: 0
+    tasks_total: 10
+    file: agent/milestones/milestone-40-audit-carryover-resolution.md
+    notes: |
+      Resolve all pending actionable audit carryovers from audits #19, #29, #30.
+      Canvas SVG→PNG rasterization for Word/PDF export (F1 critical fix).
+      Replace deprecated unescape(), fix bg-gray-750, showToast cleanup,
+      React error boundary, print-color-adjust CSS, server function tests,
+      code coverage reporting. 10 tasks across export hardening and code quality.
 
 tasks:
   M25:
@@ -1050,7 +1068,103 @@ tasks:
       estimated_hours: '6'
       notes: Execute tasks 209-214 via autonomous mode
 
+  M40:
+    - id: task-217
+      name: Canvas SVG→PNG rasterization utility
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-40-audit-carryover-resolution/task-217-canvas-svg-png-utility.md
+      estimated_hours: '2'
+      notes: Create svgToPngDataUri() using Canvas API. Universal PNG output for Word + PDF export.
+
+    - id: task-218
+      name: Fix Word export — mermaid diagrams as PNG
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-40-audit-carryover-resolution/task-218-fix-word-export-png.md
+      estimated_hours: '2'
+      notes: Replace data:image/svg+xml;base64 with PNG rasterization in exportWord. Depends on task-217.
+
+    - id: task-219
+      name: Fix PDF export — mermaid diagrams as PNG
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-40-audit-carryover-resolution/task-219-fix-pdf-export-png.md
+      estimated_hours: '1.5'
+      notes: Add SVG→PNG conversion before print window write. Depends on task-217.
+
+    - id: task-220
+      name: Replace deprecated unescape() with TextEncoder
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-40-audit-carryover-resolution/task-220-replace-unescape.md
+      estimated_hours: '0.5'
+      notes: Remove unescape() from base64 encoding. Use TextEncoder for UTF-8 safe encoding.
+
+    - id: task-221
+      name: Fix non-existent Tailwind class bg-gray-750
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-40-audit-carryover-resolution/task-221-fix-bg-gray-750.md
+      estimated_hours: '0.25'
+      notes: bg-gray-750 → bg-gray-700 in DocsViewer dark mode sidebar header.
+
+    - id: task-222
+      name: Add clearTimeout cleanup to showToast
+      priority: 3
+      status: not_started
+      file: agent/tasks/milestone-40-audit-carryover-resolution/task-222-cleartimeout-toast.md
+      estimated_hours: '0.25'
+      notes: Prevent setState on unmounted component warning. useRef timer + useEffect cleanup.
+
+    - id: task-223
+      name: Add React error boundary
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-40-audit-carryover-resolution/task-223-react-error-boundary.md
+      estimated_hours: '1'
+      notes: ErrorBoundary component wrapping Outlet in __root.tsx. Fallback UI with reload button.
+
+    - id: task-224
+      name: Add standard print-color-adjust CSS
+      priority: 3
+      status: not_started
+      file: agent/tasks/milestone-40-audit-carryover-resolution/task-224-print-color-adjust.md
+      estimated_hours: '0.25'
+      notes: Add print-color-adjust: exact alongside vendor-prefixed versions.
+
+    - id: task-225
+      name: Server function test coverage
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-40-audit-carryover-resolution/task-225-server-function-tests.md
+      estimated_hours: '3'
+      notes: Tests for 11 untested server functions. Prioritize progress, github-fetch, memory-files.
+
+    - id: task-226
+      name: Code coverage reporting setup
+      priority: 3
+      status: not_started
+      file: agent/tasks/milestone-40-audit-carryover-resolution/task-226-coverage-reporting.md
+      estimated_hours: '1'
+      notes: Verify vitest coverage config, adjust thresholds, ensure test:coverage works.
+
 recent_work:
+  - date: 2026-06-06
+    description: |
+      📋 M40 Planned — Audit Carryover Resolution & Export Hardening.
+      10 tasks planned from audits #19, #29, #30 carryovers. Canvas SVG→PNG
+      rasterization (critical F1: Word export mermaid fix), PDF export PNG fix,
+      replace deprecated unescape(), bg-gray-750 fix, showToast cleanup,
+      React error boundary, print-color-adjust CSS, server function tests,
+      code coverage setup. Estimated 1.5 weeks.
+    items:
+      - "📋 M40: 10 tasks — 4 P0/P1 export fixes, 4 P2 bug fixes, 2 P3 quality"
+      - "🔴 Critical: Word export mermaid diagrams (Canvas→PNG rasterization)"
+      - "🟠 High: PDF export PNG + Canvas utility + server function tests"
+      - "🟡 Medium: unescape(), bg-gray-750, error boundary, coverage"
+      - "🔵 Low: showToast cleanup, print-color-adjust CSS"
+      - "✓ No artifacts — all templates, skip staleness check"
   - date: 2026-06-05
     description: |
       🌊 M39 Mermaid Flowcharts + Document Export — all 8 tasks complete.

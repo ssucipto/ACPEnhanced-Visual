@@ -2,8 +2,8 @@ project:
   name: ACPEnhanced-Visual
   version: 1.5.3
   started: 2026-06-03
-  status: completed
-  current_milestone: null
+  status: active
+  current_milestone: M41
   description: >
     Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
     interactive, sortable, searchable UI with milestone tables, task trees,
@@ -264,6 +264,26 @@ milestones:
       Replace deprecated unescape(), fix bg-gray-750, showToast cleanup,
       React error boundary, print-color-adjust CSS, server function tests,
       code coverage reporting. 10 tasks across export hardening and code quality.
+
+  M41:
+    name: Multi-Instance Server Detection & Open Project Folder
+    priority: 1
+    status: planned
+    progress: 0
+    started: null
+    completed: null
+    estimated_weeks: '1'
+    tasks_completed: 0
+    tasks_total: 8
+    file: agent/milestones/milestone-41-multi-instance-server-detection.md
+    notes: |
+      Smart CLI: detect running instance via ~/.acp-visualizer/port + health
+      endpoint, attach new projects via POST /api/projects instead of spawning
+      new servers. Folder scanner API for auto-discovering ACP projects from
+      directories. UI folder picker in AddProjectDialog. Server Manager
+      enhancements showing live port, PID, uptime. Keep Stop Server button.
+      8 tasks: health endpoint, port file, add-project API, CLI attach flow,
+      folder scanner, UI picker, server manager, integration tests + docs.
 
 tasks:
   M25:
@@ -1179,10 +1199,84 @@ tasks:
       completed_date: 2026-06-06T14:00:00Z
       notes: Coverage thresholds calibrated (40/30/35/44). coverage/ in .gitignore. npm run test:coverage works.
 
+  M41:
+    - id: task-227
+      name: Health Endpoint (GET /api/health)
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-41-multi-instance-server-detection/task-227-health-endpoint.md
+      estimated_hours: '1'
+
+    - id: task-228
+      name: Port File Management (~/.acp-visualizer/port)
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-41-multi-instance-server-detection/task-228-port-file-management.md
+      estimated_hours: '1'
+
+    - id: task-229
+      name: Add-Project API (POST /api/projects)
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-41-multi-instance-server-detection/task-229-add-project-api.md
+      estimated_hours: '1.5'
+
+    - id: task-230
+      name: CLI Detect-and-Attach Flow
+      priority: 1
+      status: not_started
+      file: agent/tasks/milestone-41-multi-instance-server-detection/task-230-cli-detect-and-attach.md
+      estimated_hours: '2'
+
+    - id: task-231
+      name: Folder Scanner API (POST /api/scan-folder)
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-41-multi-instance-server-detection/task-231-folder-scanner-api.md
+      estimated_hours: '1.5'
+
+    - id: task-232
+      name: UI Folder Picker in AddProjectDialog
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-41-multi-instance-server-detection/task-232-ui-folder-picker.md
+      estimated_hours: '1.5'
+
+    - id: task-233
+      name: Server Manager Enhancements (live port, PID, uptime)
+      priority: 2
+      status: not_started
+      file: agent/tasks/milestone-41-multi-instance-server-detection/task-233-server-manager-enhancements.md
+      estimated_hours: '1.5'
+
+    - id: task-234
+      name: Integration Tests & Documentation
+      priority: 3
+      status: not_started
+      file: agent/tasks/milestone-41-multi-instance-server-detection/task-234-integration-tests-docs.md
+      estimated_hours: '2'
+
 recent_work:
-  - date: 2026-06-06
+  - date: 2026-06-07
     description: |
-      🐛 Export reliability fixes — 7 commits resolving mermaid PNG rendering issues.
+      📋 M41 Planned — Multi-Instance Server Detection & Open Project Folder.
+      Smart CLI: detect running instance via ~/.acp-visualizer/port + health
+      endpoint, attach new projects via POST /api/projects. Folder scanner API
+      for auto-discovering ACP projects. UI folder picker in AddProjectDialog.
+      Server Manager enhancements (live port, PID, uptime). Keep Stop Server.
+      8 tasks: health endpoint, port file, add-project API, CLI detect-and-attach,
+      folder scanner, UI picker, server manager, integration tests + docs.
+    items:
+      - "📋 M41: 8 tasks — 4 P1 foundation, 3 P2 UI/API, 1 P3 tests"
+      - "🏥 Health endpoint (GET /api/health) — port, pid, projectCount, uptime"
+      - "📁 Port file (~/.acp-visualizer/port) — server writes/removes on lifecycle"
+      - "📎 Add-project API (POST /api/projects) — CLI registers projects on running instance"
+      - "🔗 CLI detect-and-attach — npx acp-visualizer attaches to existing server"
+      - "🔍 Folder scanner API — walks up directory tree, discovers ACP projects"
+      - "🖱️ UI folder picker — Browse folder… in AddProjectDialog with auto-fill"
+      - "🛠️ Server Manager enhancements — live port, PID, uptime, Stop Server"
+      - "🧪 Integration tests + docs — health, add-project, scan-folder, CLI"
+      - "✓ No artifacts — all templates, skip staleness check"
       Root cause chain: (1) tainted canvas from foreignObject/use elements in SVG →
       uncaught SecurityError on toDataURL. (2) Blank canvas detection falsely
       triggered on every diagram (single-pixel check at 0,0). (3) dangerouslySetInnerHTML
@@ -1473,19 +1567,15 @@ recent_work:
       - "⚠️ ACP Enhanced fixture has YAML error at M5:148 — sync test handles gracefully"
 
 next_steps:
-  - "�🔵 npm publish — ship v1.6.0 to npm registry"
-  - "🔵 Add E2E tests — Playwright full browser flow"
-  - "🔵 Accessibility audit — axe-core on all pages"
-  - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
-  - "� M38: Extended Visualizations 2.0 — 10 tasks planned, 2-week estimate"
-  - "🔵 npm publish — ship v1.5.1 to npm registry"
+  - "🚀 M41: Implement Multi-Instance Server Detection — start with task-227 (health endpoint)"
+  - "🔵 npm publish — ship v1.6.0 to npm registry"
   - "🔵 Add E2E tests — Playwright full browser flow"
   - "🔵 Accessibility audit — axe-core on all pages"
   - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
 
 notes:
-  - 🎉 15 MILESTONES COMPLETE (M25-M39) — 105 tasks across 15 milestones
-  - 97 tests passing across 15 test files
+  - 🎉 16 MILESTONES (M25-M40 complete, M41 planned) — 113 tasks across 16 milestones
+  - 110 tests passing across 15 test files
   - Coverage reporting enabled via npm run test:coverage
   - ACP Enhanced v6.9.1 framework installed
   - GitHub Actions CI: lint + test + build on push/PR

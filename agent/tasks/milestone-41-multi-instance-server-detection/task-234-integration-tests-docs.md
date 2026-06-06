@@ -15,19 +15,24 @@ updated: 2026-06-07
 
 **Milestone**: [M41 - Multi-Instance Server Detection & Open Project Folder](../milestones/milestone-41-multi-instance-server-detection.md)  
 **Design Reference**: None  
-**Estimated Time**: 2 hours  
+**Estimated Time**: 2.5 hours  
+**Audit Fixes**: Cross-platform test cases, health endpoint alignment, CLI cross-platform open
 
 ---
 
 ## Objective
 
-Write integration tests for the new server endpoints and CLI behavior. Update the README with the new `npx acp-visualizer` attach workflow and folder picker feature.
+Write integration tests for the new server endpoints and CLI behavior, including **cross-platform path handling**. Update the README with the new `npx acp-visualizer` attach workflow, folder picker feature, and cross-platform support notes.
 
 ---
 
 ## Context
 
-The new features span CLI, server API, and UI. Integration tests ensure the pieces work together: health endpoint returns correct data, add-project API validates and persists, folder scanner discovers ACP projects, and the CLI correctly detects and attaches to running instances.
+The new features span CLI, server API, and UI. Integration tests ensure the pieces work together: health endpoint returns correct data (aligned with getServerInfo), add-project API validates and persists, folder scanner discovers ACP projects on all platforms, and the CLI correctly detects and attaches to running instances with cross-platform browser opening.
+
+**Cross-platform testing**: The folder scanner's path validation must work on Windows paths (C:\, \\wsl$\). Test with both Unix-style and Windows-style paths using `path.isAbsolute()`.
+
+**Health endpoint alignment**: Verify that `GET /api/health` returns the same port, pid, projectCount as `getServerInfo()`.
 
 ---
 
@@ -42,15 +47,19 @@ Add to `test/server-fns/` or create `test/server/health.test.ts`, `test/server/s
 ```typescript
 import { describe, it, expect } from 'vitest';
 
-// Import the handler directly for unit-style testing
 describe('GET /api/health', () => {
   it('returns ok status with server info', async () => {
-    // Test the handler function directly
     // Verify shape: { status, port, pid, projectCount, uptime, version }
   });
 
   it('returns increasing uptime on subsequent calls', async () => {
     // Two calls spaced apart → uptime increases
+  });
+
+  it('aligns with getServerInfo data', async () => {
+    // health.port === getServerInfo.port
+    // health.pid === getServerInfo.pid
+    // health.projectCount === getServerInfo.projectCount
   });
 });
 ```
@@ -58,6 +67,9 @@ describe('GET /api/health', () => {
 **Scan folder test** (`test/server/scan-folder.test.ts`):
 
 ```typescript
+import { describe, it, expect } from 'vitest';
+import { isAbsolute, join } from 'node:path';
+
 describe('POST /api/scan-folder', () => {
   it('finds ACP project from project root', async () => {
     // Point to this project's own directory → found: true
@@ -71,8 +83,29 @@ describe('POST /api/scan-folder', () => {
     // Point to /tmp → found: false
   });
 
-  it('rejects system directories', async () => {
-    // Point to /etc → found: false with error
+  it('rejects system directories on Unix', async () => {
+    if (process.platform !== 'win32') {
+      // /etc, /sys, /proc, /dev → found: false with error
+    }
+  });
+
+  it('rejects system directories on Windows', async () => {
+    if (process.platform === 'win32') {
+      // C:\\Windows, C:\\Program Files → found: false with error
+    }
+  });
+
+  it('accepts absolute Windows paths', () => {
+    // path.isAbsolute('C:\\Users\\me\\project') → true
+    expect(isAbsolute('C:\\Users\\me\\project')).toBe(true);
+  });
+
+  it('accepts absolute Unix paths', () => {
+    expect(isAbsolute('/Users/me/project')).toBe(true);
+  });
+
+  it('caps walk-up at 10 levels', async () => {
+    // Point 11 levels deep → found: false with depth error
   });
 });
 ```

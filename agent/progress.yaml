@@ -272,18 +272,19 @@ milestones:
     progress: 0
     started: null
     completed: null
-    estimated_weeks: '1'
+    estimated_weeks: '1.5'
     tasks_completed: 0
     tasks_total: 8
     file: agent/milestones/milestone-41-multi-instance-server-detection.md
     notes: |
-      Smart CLI: detect running instance via ~/.acp-visualizer/port + health
-      endpoint, attach new projects via POST /api/projects instead of spawning
-      new servers. Folder scanner API for auto-discovering ACP projects from
-      directories. UI folder picker in AddProjectDialog. Server Manager
-      enhancements showing live port, PID, uptime. Keep Stop Server button.
-      8 tasks: health endpoint, port file, add-project API, CLI attach flow,
-      folder scanner, UI picker, server manager, integration tests + docs.
+      Smart CLI: detect running instance via ~/.acp-visualizer/port (JSON: port,
+      pid, started) with PID liveness check, attach new projects via POST
+      /api/projects (with path validation). Folder scanner API with cross-platform
+      path handling (Windows + Unix), 10-level depth cap, system dir blocking.
+      UI folder picker with showDirectoryPicker progressive enhancement.
+      Health endpoint extends existing getServerInfo. Server Manager integrates
+      with existing MaintenancePage. Cross-platform browser open (macOS/Linux/Windows).
+      --status CLI flag. 8 tasks, 17h total. Refined per audit-34 findings.
 
 tasks:
   M25:
@@ -1201,60 +1202,60 @@ tasks:
 
   M41:
     - id: task-227
-      name: Health Endpoint (GET /api/health)
+      name: Health Endpoint (GET /api/health) — extend getServerInfo
       priority: 1
       status: not_started
       file: agent/tasks/milestone-41-multi-instance-server-detection/task-227-health-endpoint.md
-      estimated_hours: '1'
+      estimated_hours: '1.5'
 
     - id: task-228
-      name: Port File Management (~/.acp-visualizer/port)
+      name: Port File Management (~/.acp-visualizer/port) — JSON + PID
       priority: 1
       status: not_started
       file: agent/tasks/milestone-41-multi-instance-server-detection/task-228-port-file-management.md
-      estimated_hours: '1'
+      estimated_hours: '1.5'
 
     - id: task-229
-      name: Add-Project API (POST /api/projects)
+      name: Add-Project API (POST /api/projects) — path validation
       priority: 1
       status: not_started
       file: agent/tasks/milestone-41-multi-instance-server-detection/task-229-add-project-api.md
-      estimated_hours: '1.5'
+      estimated_hours: '2'
 
     - id: task-230
-      name: CLI Detect-and-Attach Flow
+      name: CLI Detect-and-Attach Flow — cross-platform + --status
       priority: 1
       status: not_started
       file: agent/tasks/milestone-41-multi-instance-server-detection/task-230-cli-detect-and-attach.md
-      estimated_hours: '2'
+      estimated_hours: '3'
 
     - id: task-231
-      name: Folder Scanner API (POST /api/scan-folder)
+      name: Folder Scanner API — cross-platform + depth cap
       priority: 2
       status: not_started
       file: agent/tasks/milestone-41-multi-instance-server-detection/task-231-folder-scanner-api.md
-      estimated_hours: '1.5'
+      estimated_hours: '2.5'
 
     - id: task-232
-      name: UI Folder Picker in AddProjectDialog
+      name: UI Folder Picker — showDirectoryPicker enhancement
       priority: 2
       status: not_started
       file: agent/tasks/milestone-41-multi-instance-server-detection/task-232-ui-folder-picker.md
-      estimated_hours: '1.5'
+      estimated_hours: '2'
 
     - id: task-233
-      name: Server Manager Enhancements (live port, PID, uptime)
+      name: Server Manager — integrate health with MaintenancePage
       priority: 2
       status: not_started
       file: agent/tasks/milestone-41-multi-instance-server-detection/task-233-server-manager-enhancements.md
-      estimated_hours: '1.5'
+      estimated_hours: '2'
 
     - id: task-234
-      name: Integration Tests & Documentation
+      name: Integration Tests & Docs — cross-platform coverage
       priority: 3
       status: not_started
       file: agent/tasks/milestone-41-multi-instance-server-detection/task-234-integration-tests-docs.md
-      estimated_hours: '2'
+      estimated_hours: '2.5'
 
 recent_work:
   - date: 2026-06-07

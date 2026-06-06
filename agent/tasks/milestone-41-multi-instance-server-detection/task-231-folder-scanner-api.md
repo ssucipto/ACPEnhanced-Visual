@@ -15,13 +15,14 @@ updated: 2026-06-07
 
 **Milestone**: [M41 - Multi-Instance Server Detection & Open Project Folder](../milestones/milestone-41-multi-instance-server-detection.md)  
 **Design Reference**: None  
-**Estimated Time**: 1.5 hours  
+**Estimated Time**: 2.5 hours  
+**Audit Fixes**: audit-34-F1 (depth limit on walk-up), audit-34-F2 (Windows path.isAbsolute), audit-34-F3 (Windows forbidden dirs)
 
 ---
 
 ## Objective
 
-Create a `POST /api/scan-folder` server function that accepts a directory path, walks up from it looking for `agent/progress.yaml` (and other ACP files), and returns what it found — including an inferred project name.
+Create a `POST /api/scan-folder` server function that accepts a directory path, walks up from it (capped at 10 levels) looking for `agent/progress.yaml` (and other ACP files), and returns what it found. Works on **macOS, Linux, and Windows**.
 
 ---
 
@@ -29,7 +30,11 @@ Create a `POST /api/scan-folder` server function that accepts a directory path, 
 
 The `AddProjectDialog` currently requires users to manually type the full path to `agent/progress.yaml`. This is error-prone and unfriendly. A folder scanner API lets the UI offer a "Browse folder…" experience: user picks a project folder, the server scans it, auto-discovers the ACP project structure, and auto-fills the form.
 
-The scanner walks **up** from the given path (mimicking the CLI's `findProgressYaml` logic) because users might point to a subdirectory within an ACP project.
+**Audit-34 finding (H1)**: The walk-up loop had no depth limit. An attacker could scan to the filesystem root. Cap at 10 directory levels.
+
+**Audit-34 finding (H2)**: `!resolvedPath.startsWith('/')` rejects all Windows paths (C:\, \\wsl$\). Use `path.isAbsolute()` instead.
+
+**Audit-34 finding (H3)**: Forbidden directories list was Linux-only. Add Windows system dirs and use an allowlist approach where possible.
 
 ---
 
@@ -91,11 +96,13 @@ export const scanFolder = createServerFn({ method: 'POST' })
       return { found: false, error: `Directory not found: ${data.path}` };
     }
 
-    // Walk up looking for agent/progress.yaml
+    // Walk up looking for agent/progress.yaml (capped at 10 levels — audit-34-F1)
+    const MAX_DEPTH = 10;
     let foundDir: string | null = null;
     let currentDir = dir;
+    let depth = 0;
 
-    while (!isRoot(currentDir)) {
+    while (depth < MAX_DEPTH && !isRoot(currentDir)) {
       const progressYaml = resolve(currentDir, 'agent/progress.yaml');
       if (existsSync(progressYaml)) {
         try {
@@ -107,6 +114,14 @@ export const scanFolder = createServerFn({ method: 'POST' })
       const parent = resolve(currentDir, '..');
       if (parent === currentDir) break;
       currentDir = parent;
+      depth++;
+    }
+
+    if (!foundDir && depth >= MAX_DEPTH) {
+      return {
+        found: false,
+        error: `Reached maximum scan depth (${MAX_DEPTH} levels). No ACP project found.`,
+      };
     }
 
     if (!foundDir) {
@@ -139,22 +154,63 @@ export const scanFolder = createServerFn({ method: 'POST' })
   });
 ```
 
-### 2. Add security: path traversal prevention
+### 2. Add cross-platform security validation
 
-Ensure the path doesn't escape reasonable bounds:
+Replace the Linux-only check with cross-platform path validation (audit-34-F2, F3):
 
 ```typescript
-// Validate the resolved path is absolute and sane
-if (!resolvedPath.startsWith('/')) {
-  return { found: false, error: 'Absolute path required.' };
-}
+import { isAbsolute } from 'node:path';
+import { homedir } from 'node:os';
 
-// Prevent scanning system directories
-const forbidden = ['/etc', '/sys', '/proc', '/dev'];
-if (forbidden.some(f => resolvedPath.startsWith(f))) {
-  return { found: false, error: 'Cannot scan system directories.' };
+function validateScanPath(resolvedPath: string): string | null {
+  // Must be an absolute path (works on Windows: C:\, \\wsl$\; macOS/Linux: /)
+  if (!isAbsolute(resolvedPath)) {
+    return 'Absolute path required.';
+  }
+
+  // Block system directories (cross-platform)
+  const platform = process.platform;
+  const forbiddenPrefixes: string[] = [];
+
+  if (platform === 'win32') {
+    forbiddenPrefixes.push(
+      'C:\\Windows',
+      'C:\\Windows\\System32',
+      'C:\\Program Files',
+      'C:\\Program Files (x86)',
+    );
+  } else {
+    forbiddenPrefixes.push(
+      '/etc',
+      '/sys',
+      '/proc',
+      '/dev',
+      '/bin',
+      '/sbin',
+      '/usr/bin',
+      '/usr/sbin',
+      '/System',
+      '/Library/System',
+    );
+  }
+
+  const normalized = resolvedPath.toLowerCase();
+  if (forbiddenPrefixes.some(prefix => normalized.startsWith(prefix.toLowerCase()))) {
+    return 'Cannot scan system directories.';
+  }
+
+  // Recommend scanning within home directory for safety
+  const home = homedir();
+  if (!normalized.startsWith(home.toLowerCase())) {
+    // Not blocking — just a soft warning in the response
+    // User may have projects on external drives, etc.
+  }
+
+  return null; // Path is valid
 }
 ```
+
+Use `validateScanPath(resolvedPath)` early in the handler — if it returns an error string, return `{ found: false, error }`.
 
 ### 3. Test manually
 

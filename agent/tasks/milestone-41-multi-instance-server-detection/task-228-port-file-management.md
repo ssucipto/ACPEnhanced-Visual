@@ -15,27 +15,30 @@ updated: 2026-06-07
 
 **Milestone**: [M41 - Multi-Instance Server Detection & Open Project Folder](../milestones/milestone-41-multi-instance-server-detection.md)  
 **Design Reference**: None  
-**Estimated Time**: 1 hour  
+**Estimated Time**: 1.5 hours  
+**Audit Fixes**: audit-34-F10 (PID + timestamp in port file for stale detection without health ping)
 
 ---
 
 ## Objective
 
-The server writes its port number to a well-known file (`~/.acp-visualizer/port`) on startup and removes it on graceful shutdown. The CLI reads this file to find the running instance without port scanning.
+The server writes its port, PID, and start timestamp as JSON to `~/.acp-visualizer/port` on startup and removes it on graceful shutdown. The CLI reads this file to find the running instance and can detect stale files by checking if the PID is still alive (`process.kill(pid, 0)`) without needing a health ping.
 
 ---
 
 ## Context
 
-Port scanning (trying 3000, 3001, 3002…) is slow, noisy, and unreliable. A port file in a predictable location is a standard Unix pattern (like `.pid` files). The file lives at `~/.acp-visualizer/port` and contains just the port number.
+Port scanning (trying 3000, 3001, 3002…) is slow, noisy, and unreliable. A port file in a predictable location is a standard Unix pattern (like `.pid` files). The file lives at `~/.acp-visualizer/port`.
 
-The server must clean up this file on shutdown — both graceful (Stop Server button → `/api/shutdown`) and on process exit (SIGTERM, SIGINT).
+**Audit-34 finding (L3)**: The original plan stored only a port number. Including PID and timestamp enables the CLI to detect stale files instantly by checking `process.kill(pid, 0)` — no HTTP health ping needed for the common case of a crashed server. On Windows, `process.kill(pid, 0)` also works (sends no signal, just checks existence).
+
+The server must clean up this file on shutdown — both graceful (Stop Server button → `/api/shutdown`) and on process exit (SIGTERM, SIGINT). On Windows, listen for `exit` event as SIGTERM is not supported.
 
 ---
 
 ## Steps
 
-### 1. Create port file utility
+### 1. Create port file utility with JSON format
 
 Create `server/lib/port-file.ts`:
 
@@ -48,11 +51,22 @@ import { writeFileSync, unlinkSync, existsSync, mkdirSync, readFileSync } from '
 const PORT_DIR = join(homedir(), '.acp-visualizer');
 const PORT_FILE = join(PORT_DIR, 'port');
 
+interface PortData {
+  port: number;
+  pid: number;
+  started: string; // ISO 8601
+}
+
 export function writePortFile(port: number): void {
   if (!existsSync(PORT_DIR)) {
     mkdirSync(PORT_DIR, { recursive: true });
   }
-  writeFileSync(PORT_FILE, String(port), 'utf-8');
+  const data: PortData = {
+    port,
+    pid: process.pid,
+    started: new Date().toISOString(),
+  };
+  writeFileSync(PORT_FILE, JSON.stringify(data) + '\n', 'utf-8');
 }
 
 export function removePortFile(): void {
@@ -65,17 +79,29 @@ export function removePortFile(): void {
   }
 }
 
-export function readPortFile(): number | null {
+export function readPortFile(): PortData | null {
   try {
     if (existsSync(PORT_FILE)) {
-      const content = readFileSync(PORT_FILE, 'utf-8').trim();
-      const port = parseInt(content, 10);
-      return Number.isNaN(port) ? null : port;
+      const raw = readFileSync(PORT_FILE, 'utf-8').trim();
+      const data = JSON.parse(raw) as PortData;
+      if (typeof data.port === 'number' && typeof data.pid === 'number') {
+        return data;
+      }
     }
   } catch {
-    // Ignore read errors
+    // Ignore parse/read errors
   }
   return null;
+}
+
+/** Check if a PID is alive without a health ping. Works on Windows too. */
+export function isPidAlive(pid: number): boolean {
+  try {
+    process.kill(pid, 0); // signal 0 = just check existence, no signal sent
+    return true;
+  } catch {
+    return false;
+  }
 }
 ```
 

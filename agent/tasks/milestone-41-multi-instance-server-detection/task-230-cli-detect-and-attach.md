@@ -15,118 +15,139 @@ updated: 2026-06-07
 
 **Milestone**: [M41 - Multi-Instance Server Detection & Open Project Folder](../milestones/milestone-41-multi-instance-server-detection.md)  
 **Design Reference**: None  
-**Estimated Time**: 2 hours  
+**Estimated Time**: 3 hours  
+**Audit Fixes**: audit-34-F3 (cross-platform browser open), audit-34-F7 (project name from progress.yaml), audit-34-F9 (--status flag)
 
 ---
 
 ## Objective
 
-Enhance `bin/acp-visualizer.mjs` so that when invoked, it first checks for a running instance. If found, it attaches the new project via the add-project API and opens the browser to that tab. If no instance is running, it starts a new server as before.
+Enhance `bin/acp-visualizer.mjs` so that when invoked, it first checks for a running instance via the port file. If found (PID alive check first, then health ping), it attaches the new project via the add-project API and opens the browser to that tab. If no instance is running, it starts a new server as before. Works on **macOS, Linux, and Windows**.
 
 ---
 
 ## Context
 
-The current CLI always spawns `npx vite dev`. With the health endpoint (task-227), port file (task-228), and add-project API (task-229) in place, the CLI can now be smart:
+The current CLI always spawns `npx vite dev`. With the health endpoint (task-227), port file with PID (task-228), and add-project API (task-229) in place, the CLI can now be smart:
 
-1. Read `~/.acp-visualizer/port`
-2. Ping `GET http://localhost:{port}/api/health`
-3. If alive → `POST http://localhost:{port}/api/projects` with the project config → open browser to the returned `tabUrl`
-4. If not alive or no port file → start new server (existing flow)
+1. Read `~/.acp-visualizer/port` → get `{port, pid, started}`
+2. Check `isPidAlive(pid)` — instant, no network
+3. If PID alive → `POST /api/projects` → open browser to `tabUrl`
+4. If PID dead → clean up stale port file → start new server
+5. If no port file → start new server (existing flow)
 
-This makes `npx acp-visualizer` feel instant when a server is already running.
+**Audit-34 finding (H4)**: The original plan used `execSync('open "..."')` which is macOS-only. Must detect `process.platform` and use `open` (macOS), `xdg-open` (Linux), or `start` (Windows).
+
+**Audit-34 finding (M4)**: Project name should be read from the target progress.yaml's `project.name` field, not inferred from directory structure. Fall back to directory name if YAML is unreadable.
+
+**Audit-34 finding (L2)**: Add `--status` flag so users can see what's running without opening a browser.
 
 ---
 
 ## Steps
 
-### 1. Add health-check helper
-
-In `bin/acp-visualizer.mjs`, add:
+### 1. Add cross-platform browser open helper
 
 ```javascript
-import { readPortFile } from '../server/lib/port-file.js';
+import { execSync } from 'node:child_process';
 
-async function checkHealth(port) {
+function openBrowser(url) {
+  const platform = process.platform;
   try {
-    const res = await fetch(`http://localhost:${port}/api/health`);
-    if (!res.ok) return null;
-    return await res.json();
+    if (platform === 'darwin') {
+      execSync(`open "${url}"`, { stdio: 'ignore' });
+    } else if (platform === 'win32') {
+      execSync(`start "" "${url}"`, { stdio: 'ignore', shell: true });
+    } else {
+      execSync(`xdg-open "${url}"`, { stdio: 'ignore' });
+    }
   } catch {
-    return null;
-  }
-}
-
-async function attachProject(port, config) {
-  try {
-    const res = await fetch(`http://localhost:${port}/api/projects`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(config),
-    });
-    return await res.json();
-  } catch (err) {
-    return { success: false, message: err.message };
+    console.error(`⚠ Could not open browser. Visit: ${url}`);
   }
 }
 ```
 
-### 2. Resolve project config for attach
-
-From the CLI flags (`--path`, `--repo`, or auto-detected), build a project config object:
+### 2. Add project name resolver from progress.yaml
 
 ```javascript
-function buildProjectConfig(flags, detectedPath) {
-  const name = flags.repo
-    ? flags.repo.split('/').pop()
-    : (detectedPath ? path.basename(path.dirname(path.dirname(detectedPath))) : 'unnamed');
+import { readFileSync, existsSync } from 'node:fs';
+import { basename, dirname } from 'node:path';
 
-  return {
-    name,
-    source: flags.repo ? 'github' : 'local',
-    path: flags.repo ? undefined : (flags.path || detectedPath),
-    repo: flags.repo || undefined,
-  };
+function resolveProjectName(progressYamlPath) {
+  // Try reading project.name from progress.yaml
+  try {
+    if (existsSync(progressYamlPath)) {
+      const content = readFileSync(progressYamlPath, 'utf-8');
+      const match = content.match(/^\s*name:\s*(.+)$/m);
+      if (match) return match[1].trim().replace(/['"]/g, '');
+    }
+  } catch { /* fall through */ }
+  // Fallback: directory name of project root (2 levels up from agent/progress.yaml)
+  return basename(dirname(dirname(progressYamlPath)));
 }
 ```
 
-### 3. Rewrite main flow
+### 3. Add --status flag
 
-Replace the current "always spawn vite" logic with detect-then-attach-or-spawn:
+```javascript
+// Parse --status flag
+case '--status':
+  flags.status = true;
+  break;
+```
+
+### 4. Rewrite main flow with PID check + cross-platform open
 
 ```javascript
 // ── Main: Detect → Attach or Spawn ──────────────────────────────
 
-const portFile = readPortFile();
+import { readPortFile, isPidAlive, removePortFile } from '../server/lib/port-file.js';
 
-if (portFile) {
-  const health = await checkHealth(portFile);
+// --status: show running instance info without attaching
+if (flags.status) {
+  const portData = readPortFile();
+  if (portData && isPidAlive(portData.pid)) {
+    const health = await checkHealth(portData.port);
+    if (health && health.status === 'ok') {
+      console.log(`✅ Visualizer server running on port ${portData.port}`);
+      console.log(`   PID: ${portData.pid}`);
+      console.log(`   Started: ${portData.started}`);
+      console.log(`   Projects: ${health.projectCount}`);
+      console.log(`   Uptime: ${Math.floor(health.uptime / 60)}m ${health.uptime % 60}s`);
+      process.exit(0);
+    }
+  }
+  console.log('No visualizer server running.');
+  process.exit(0);
+}
+
+const portData = readPortFile();
+
+if (portData && isPidAlive(portData.pid)) {
+  const health = await checkHealth(portData.port);
   if (health && health.status === 'ok') {
-    // Server is alive — attach project
     const projectConfig = buildProjectConfig(flags, detectedProgressYaml);
-    const result = await attachProject(portFile, projectConfig);
+    const result = await attachProject(portData.port, projectConfig);
 
     if (result.success) {
-      console.log(`📎 Attached to running instance on port ${portFile}`);
+      console.log(`📎 Attached to running instance on port ${portData.port}`);
       console.log(`   Project: ${projectConfig.name}`);
-      // Open browser to the new project's tab
-      const tabUrl = `http://localhost:${portFile}${result.tabUrl || '/'}`;
-      const { execSync } = await import('node:child_process');
       if (!flags.noOpen) {
-        execSync(`open "${tabUrl}"`, { stdio: 'ignore' });
+        const tabUrl = `http://localhost:${portData.port}${result.tabUrl || '/'}`;
+        openBrowser(tabUrl);
       }
       process.exit(0);
     } else {
       console.error(`❌ Failed to attach: ${result.message}`);
-      console.error(`   Server is running on port ${portFile} but rejected the project.`);
       process.exit(1);
     }
-  } else {
-    // Port file exists but server is dead — clean up and start fresh
-    console.log('⚠ Stale port file found, starting new server...');
-    const { removePortFile } = await import('../server/lib/port-file.js');
-    removePortFile();
   }
+  // PID alive but health failed — server may be starting up. Clean up and start fresh.
+  console.log('⚠ Server PID exists but health check failed, cleaning up stale port file...');
+  removePortFile();
+} else if (portData && !isPidAlive(portData.pid)) {
+  console.log('⚠ Stale port file found (PID not running), starting new server...');
+  removePortFile();
 }
 
 // No running instance — start new server (existing flow)

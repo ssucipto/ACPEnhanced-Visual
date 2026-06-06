@@ -15,19 +15,22 @@ updated: 2026-06-07
 
 **Milestone**: [M41 - Multi-Instance Server Detection & Open Project Folder](../milestones/milestone-41-multi-instance-server-detection.md)  
 **Design Reference**: None  
-**Estimated Time**: 1.5 hours  
+**Estimated Time**: 2 hours  
+**Audit Fixes**: audit-34-F11 (showDirectoryPicker progressive enhancement for Chrome)
 
 ---
 
 ## Objective
 
-Enhance the `AddProjectDialog` component with a "Browse folder…" option. When the user selects a folder, the UI calls `POST /api/scan-folder`, and if an ACP project is found, auto-fills the project name, source type, and path fields.
+Enhance the `AddProjectDialog` component with a "Browse folder…" option. When the user selects a folder, the UI calls `POST /api/scan-folder`, and if an ACP project is found, auto-fills the project name, source type, and path fields. As a progressive enhancement, use the File System Access API (`showDirectoryPicker()`) for Chrome/Edge users.
 
 ---
 
 ## Context
 
-The current dialog has only text inputs. Users must know and type the exact path to `agent/progress.yaml`. With the folder scanner API (task-231), we can offer a much friendlier flow:
+The current dialog has only text inputs. Users must know and type the exact path to `agent/progress.yaml`. With the folder scanner API (task-231), we can offer a much friendlier flow.
+
+**Audit-34 finding (L1)**: Chrome and Edge support `window.showDirectoryPicker()` which provides a native folder picker. Use this as a progressive enhancement — detect the API, offer a "Choose folder…" button when available, fall back to the text+scan input otherwise.
 
 1. User clicks "Browse folder…"
 2. A folder selection dialog opens (via a server-mediated picker or a text input with autocomplete)
@@ -41,7 +44,33 @@ Since browsers can't access the filesystem directly (outside of the File System 
 
 ## Steps
 
-### 1. Add scan state and handler
+### 1. Progressive enhancement: native folder picker (Chrome/Edge)
+
+For browsers supporting the File System Access API:
+
+```typescript
+// Check if showDirectoryPicker is available (Chrome 86+, Edge 86+)
+const hasNativePicker = typeof window !== 'undefined' && 'showDirectoryPicker' in window;
+
+async function handleNativePick() {
+  try {
+    const dirHandle = await (window as any).showDirectoryPicker();
+    // We can't get the full path from the File System Access API directly,
+    // but we can get the directory name and pass it to the text input
+    // for the user to confirm or adjust. The actual scan still happens server-side.
+    setScanPath(dirHandle.name);
+    // Trigger scan
+    handleScanWithPath(dirHandle.name);
+  } catch (err: any) {
+    if (err.name === 'AbortError') return; // user cancelled
+    console.error('Folder picker error:', err);
+  }
+}
+```
+
+Note: `showDirectoryPicker()` doesn't expose the full filesystem path for security reasons. The user still needs to provide the full path in the text input for server-side scanning. The native picker serves as a convenience for selecting the folder name. Full path auto-detection is only possible with the text+scan approach.
+
+### 2. Add scan state and handler
 
 In `src/components/AddProjectDialog.tsx`:
 

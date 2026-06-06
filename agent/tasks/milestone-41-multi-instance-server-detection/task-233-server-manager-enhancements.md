@@ -15,120 +15,96 @@ updated: 2026-06-07
 
 **Milestone**: [M41 - Multi-Instance Server Detection & Open Project Folder](../milestones/milestone-41-multi-instance-server-detection.md)  
 **Design Reference**: None  
-**Estimated Time**: 1.5 hours  
+**Estimated Time**: 2 hours  
+**Audit Fixes**: audit-34-F5 (integrate with existing MaintenancePage, do not create parallel component)
 
 ---
 
 ## Objective
 
-Update the Maintenance page's Server Manager section to display real-time server info (port, PID, uptime, project count) from the `GET /api/health` endpoint. Keep the Stop Server button functional. Also show a note if multiple instances are somehow detected (edge case visibility).
+Enhance the **existing** Maintenance page's Server Manager section (`src/components/MaintenancePage.tsx`) to display real-time server health data (port, PID, uptime, project count) from the `GET /api/health` endpoint. Keep the Stop Server button and port scanning table. Do NOT create a parallel component.
 
 ---
 
 ## Context
 
-The current Maintenance page (`/maintenance`) has a Server Manager section but it shows static or limited info. With the new health endpoint (task-227), we can display live data that updates on page load and on a manual refresh button.
+The current Maintenance page (`/maintenance`) already has a Server Manager section with:
+- Port scanning table (ports 3000-3020) via `scanServers()` from `server/routes/api/maintenance.ts`
+- PID and process display per instance
+- Stop buttons per instance via `killByPort()`
+- System Info section (node version, platform, etc.)
+- Refresh button
 
-This also serves as a debugging aid — if users report issues, they can check the Maintenance page to see the server's state.
+**Audit-34 finding (M5)**: The original task-233 proposed a parallel `ServerManagerCard` component with its own `useHealth` hook, ignoring the existing `MaintenancePage`. Instead, we should enhance the existing page by:
+
+1. Adding an "uptime" column to the port scanning table (sourced from health endpoint for the current process)
+2. Showing the health endpoint data at the top as a "Current Instance" card
+3. Keeping the existing multi-instance port scanning (useful for edge cases where other instances are running)
+4. Integrating `StopServerButton` from `ServerControls` into the existing Stop column
 
 ---
 
 ## Steps
 
-### 1. Create a health hook
+### 1. Add health data to existing MaintenancePage
 
-Add to `src/lib/data-source.ts` or create `src/lib/use-health.ts`:
+In `src/components/MaintenancePage.tsx`, add a "Current Instance" card at the top using the health endpoint:
 
 ```typescript
-// src/lib/use-health.ts
-import { useState, useEffect } from 'react';
-import type { HealthResponse } from '../../server/routes/api/health';
+import { fetchHealth } from '../../server/routes/api/health';
 
-export function useHealth() {
-  const [health, setHealth] = useState<HealthResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+// Inside MaintenancePage component:
+const [health, setHealth] = useState<HealthResponse | null>(null);
 
-  const fetch = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await window.fetch('/api/health');
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      setHealth(data as HealthResponse);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch health');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetch(); }, []);
-
-  return { health, error, loading, refresh: fetch };
-}
+useEffect(() => {
+  fetchHealth({ data: {} }).then(setHealth).catch(() => {});
+}, []);
 ```
 
-### 2. Enhance the Server Manager section
+### 2. Add Current Instance card
 
-In `src/routes/maintenance.tsx`, add/update the Server Manager card:
+Add above the existing port scanning table:
 
 ```tsx
-import { useHealth } from '../lib/use-health';
-import { StopServerButton, ServerInfoDisplay } from '../components/ServerControls';
-
-function ServerManagerCard() {
-  const { health, error, loading, refresh } = useHealth();
-
-  return (
-    <div className="bg-white rounded-lg shadow p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Server Manager</h3>
-        <button
-          onClick={refresh}
-          className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
-        >
-          Refresh
-        </button>
+{/* Current Instance (from health endpoint) */}
+{health && (
+  <div className="border border-blue-200 rounded-lg overflow-hidden mb-6">
+    <div className="px-4 py-3 bg-blue-50 border-b border-blue-200">
+      <h2 className="text-sm font-semibold text-blue-700">Current Instance</h2>
+    </div>
+    <div className="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+      <div>
+        <span className="text-gray-500">Port:</span>{' '}
+        <span className="font-mono font-medium">{health.port}</span>
       </div>
-
-      {loading && <div className="text-gray-400 animate-pulse">Loading server info…</div>}
-
-      {error && <div className="text-red-500 text-sm">⚠ {error}</div>}
-
-      {health && (
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div>
-            <span className="text-gray-500">Port:</span>{' '}
-            <span className="font-mono font-medium">{health.port}</span>
-          </div>
-          <div>
-            <span className="text-gray-500">PID:</span>{' '}
-            <span className="font-mono font-medium">{health.pid}</span>
-          </div>
-          <div>
-            <span className="text-gray-500">Uptime:</span>{' '}
-            <span className="font-medium">{formatUptime(health.uptime)}</span>
-          </div>
-          <div>
-            <span className="text-gray-500">Projects:</span>{' '}
-            <span className="font-medium">{health.projectCount}</span>
-          </div>
-          <div>
-            <span className="text-gray-500">Version:</span>{' '}
-            <span className="font-mono text-xs">{health.version}</span>
-          </div>
-        </div>
-      )}
-
-      <div className="pt-3 border-t border-gray-200">
-        <StopServerButton />
+      <div>
+        <span className="text-gray-500">PID:</span>{' '}
+        <span className="font-mono font-medium">{health.pid}</span>
+      </div>
+      <div>
+        <span className="text-gray-500">Uptime:</span>{' '}
+        <span className="font-medium">{formatUptime(health.uptime)}</span>
+      </div>
+      <div>
+        <span className="text-gray-500">Projects:</span>{' '}
+        <span className="font-medium">{health.projectCount}</span>
       </div>
     </div>
-  );
-}
+  </div>
+)}
+```
 
+### 3. Add uptime column to existing port table
+
+In the existing port scanning table (the one from `scanServers()`), add an "Uptime" column. For the current instance (matching PID), show uptime from the health endpoint. For other instances, show "unknown" (since we can't query their health endpoint from this server).
+
+### 4. Keep existing Stop button + Refresh
+
+The existing Stop button column and the Refresh button are preserved as-is. The `StopServerButton` from `ServerControls` continues to work independently in the header.
+
+### 5. Format helper
+
+```typescript
 function formatUptime(seconds: number): string {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
@@ -137,25 +113,6 @@ function formatUptime(seconds: number): string {
   if (m > 0) return `${m}m ${s}s`;
   return `${s}s`;
 }
-```
-
-### 3. Keep existing controls
-
-Ensure `ServerInfoDisplay` and `StopServerButton` from `src/components/ServerControls.tsx` are still rendered and functional. These were built in M33.
-
-### 4. Edge case: multi-instance note
-
-Add a subtle note if somehow multiple instances are detected (e.g., if another port file exists):
-
-```tsx
-{/* Optional: multi-instance warning */}
-{health && (
-  <p className="text-xs text-gray-400 mt-2">
-    Only one server instance is expected. If you have multiple terminals running
-    <code className="text-xs">npx acp-visualizer</code>, the first one started
-    serves all projects.
-  </p>
-)}
 ```
 
 ---

@@ -15,13 +15,14 @@ updated: 2026-06-07
 
 **Milestone**: [M41 - Multi-Instance Server Detection & Open Project Folder](../milestones/milestone-41-multi-instance-server-detection.md)  
 **Design Reference**: None  
-**Estimated Time**: 1.5 hours  
+**Estimated Time**: 2 hours  
+**Audit Fixes**: audit-34-F6 (validate path existence), audit-34-F8 (standardize on .validator() API)
 
 ---
 
 ## Objective
 
-Create a `POST /api/projects` server function that accepts a `ProjectConfig` payload and registers it with the running server's project list — persisted via the existing `projects-config` store. The CLI calls this when it detects a running instance, instead of spawning a new server.
+Create a `POST /api/projects` server function that accepts a `ProjectConfig` payload, validates it (including path existence for local sources), and registers it with the running server's project list — persisted via the existing `projects-config` store. The CLI calls this when it detects a running instance, instead of spawning a new server.
 
 ---
 
@@ -31,7 +32,9 @@ Currently, adding a project is only possible through the web UI's `AddProjectDia
 
 This endpoint bridges that gap. The CLI sends a POST with the project details, and the server adds it to its persistent project list. The CLI then opens the browser to the new project's tab.
 
-The existing `projects-config.ts` server function handles persistence (reading/writing a JSON file or env-based config). This new endpoint wraps that with HTTP validation.
+**Audit-34 finding (M3)**: The server must validate that local paths actually exist before accepting the project. A non-existent path leads to silent failures when the user switches to that tab.
+
+**Audit-34 finding (M5)**: Use `.validator()` (newer TanStack Start API) consistently across all M41 server functions. The existing `projects-config.ts` uses `.inputValidator()` which will be migrated in a follow-up.
 
 ---
 
@@ -75,6 +78,17 @@ export const addProject = createServerFn({ method: 'POST' })
   })
   .handler(async ({ data }) => {
     const { loadProjectConfigs, saveProjectConfigs } = await import('./projects-config');
+
+    // Validate local path exists (audit-34-F6)
+    if (data.source === 'local' && data.path) {
+      const { existsSync } = await import('node:fs');
+      if (!existsSync(data.path)) {
+        return {
+          success: false,
+          message: `File not found: ${data.path}. Verify the path points to an existing agent/progress.yaml.`,
+        } as AddProjectResponse;
+      }
+    }
 
     // Load existing projects
     const { projects } = await loadProjectConfigs({ data: {} });

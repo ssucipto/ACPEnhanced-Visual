@@ -15,81 +15,105 @@ updated: 2026-06-07
 
 **Milestone**: [M41 - Multi-Instance Server Detection & Open Project Folder](../milestones/milestone-41-multi-instance-server-detection.md)  
 **Design Reference**: None  
-**Estimated Time**: 1 hour  
+**Estimated Time**: 1.5 hours  
 
 ---
 
 ## Objective
 
-Add a lightweight `GET /api/health` endpoint that returns server status information. This endpoint serves two purposes: (1) the CLI uses it to discover whether a visualizer server is already running, and (2) the Maintenance UI uses it to display live server info (port, PID, uptime).
+Extend the existing `getServerInfo()` in `server/routes/api/shutdown.ts` to return full health data (PID, uptime, projectCount) and expose it as `GET /api/health`. Do NOT create a parallel API — extend what already exists.
 
 ---
 
 ## Context
 
-Currently there is no way for the CLI (`bin/acp-visualizer.mjs`) to know if a server is already running on a port. The CLI always spawns a new Vite dev server. By adding a health endpoint, the CLI can ping `http://localhost:{port}/api/health` to determine if a server is alive before deciding whether to attach or start fresh.
+The codebase already has `getServerInfo()` (`server/routes/api/shutdown.ts:19`) which returns `{ port, dataSource, sourceType }`. Instead of creating a separate health endpoint that duplicates this, extend `getServerInfo()` to include PID, uptime, projectCount, and version. The new `fetchHealth()` server function in a `health.ts` file delegates to the extended `getServerInfo()` so the CLI and Maintenance UI have a single source of truth for server status.
 
-The endpoint should be lightweight — no heavy computation, no disk I/O beyond reading the current project count.
+This avoids the API fragmentation identified in audit-34 (finding M1).
 
 ---
 
 ## Steps
 
-### 1. Create the health server function
+### 1. Extend existing `getServerInfo()` with health fields
 
-Create `server/routes/api/health.ts` with a TanStack Start server function:
+In `server/routes/api/shutdown.ts`, extend the `getServerInfo` handler to return additional health fields:
+
+```typescript
+// Add to server/routes/api/shutdown.ts — extend getServerInfo:
+
+const SERVER_START_TIME = Date.now();
+
+export const getServerInfo = createServerFn({ method: 'GET' })
+  .handler(async () => {
+    const dataSource = process.env['PROGRESS_YAML_PATH'] || process.env['PROGRESS_YAML_REPO'] || 'unknown';
+    const sourceType = process.env['PROGRESS_YAML_REPO'] ? 'github' : 'local';
+    
+    // Load project count from config store
+    let projectCount = 0;
+    try {
+      const { loadProjectConfigs } = await import('./projects-config');
+      const { projects } = await loadProjectConfigs({ data: {} });
+      projectCount = projects.length;
+    } catch { /* default 0 */ }
+
+    return {
+      port: process.env['PORT'] || '3000',
+      dataSource,
+      sourceType: sourceType as 'local' | 'github',
+      // NEW health fields:
+      pid: process.pid,
+      uptime: Math.floor((Date.now() - SERVER_START_TIME) / 1000),
+      projectCount,
+      version: '1.5.3', // or read from package.json
+    };
+  });
+```
+
+### 2. Create thin health endpoint delegating to getServerInfo
+
+Create `server/routes/api/health.ts`:
 
 ```typescript
 // server/routes/api/health.ts
-import { createServerFn } from '@tanstack/react-start'
+import { createServerFn } from '@tanstack/react-start';
 
 export interface HealthResponse {
   status: 'ok';
   port: number;
   pid: number;
   projectCount: number;
-  uptime: number; // seconds since server start
+  uptime: number;
   version: string;
 }
 
-const SERVER_START_TIME = Date.now();
-
 export const fetchHealth = createServerFn({ method: 'GET' })
-  .validator((data: unknown) => data as {})
   .handler(async () => {
-    const health: HealthResponse = {
-      status: 'ok',
-      port: parseInt(process.env.PORT || '3000', 10),
-      pid: process.pid,
-      projectCount: 0, // populated from projects-config
-      uptime: Math.floor((Date.now() - SERVER_START_TIME) / 1000),
-      version: '1.5.3', // read from package.json or hardcoded
+    // Delegate to the extended getServerInfo
+    const { getServerInfo } = await import('./shutdown');
+    const info = await getServerInfo({ data: {} });
+    
+    return {
+      status: 'ok' as const,
+      port: parseInt(info.port || '3000', 10),
+      pid: info.pid,
+      projectCount: info.projectCount,
+      uptime: info.uptime,
+      version: info.version,
     };
-
-    // Load current project count from config store
-    try {
-      const { loadProjectConfigs } = await import('./projects-config');
-      const { projects } = await loadProjectConfigs({ data: {} });
-      health.projectCount = projects.length;
-    } catch {
-      // If projects-config isn't available yet, default to 0
-    }
-
-    return health;
   });
 ```
 
-### 2. Register as a route
-
-Ensure the file is under `server/routes/api/` so TanStack Start picks it up automatically as an API route, or add it to the route tree if needed.
+This keeps `getServerInfo()` as the single source of truth. `fetchHealth()` is a thin wrapper that returns a standardized `{ status: 'ok', ... }` shape for CLI consumption.
 
 ### 3. Verify
 
 ```bash
-# Start the dev server, then:
 curl http://localhost:3000/api/health
 # Expected: {"status":"ok","port":3000,"pid":12345,"projectCount":1,"uptime":5,"version":"1.5.3"}
 ```
+
+Also verify `getServerInfo` is backward-compatible — existing callers (`ServerControls.tsx`) still work with the extended response.
 
 ---
 

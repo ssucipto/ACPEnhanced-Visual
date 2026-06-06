@@ -187,3 +187,93 @@ carryovers:
     verified_in_audit: audit-33
     notes: "M40 task-217: src/lib/svg-to-png.ts — 10 CSS properties inlined, 2x HiDPI scale, null fallback."
 
+  - finding_id: audit-34-F1
+    finding: "Folder scanner API has no depth limit — walk-up from user path could traverse to filesystem root, exposing system structure via web UI."
+    severity: high
+    status: pending
+    audit_ref: audit-34-m41-plan-gaps
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "M41 task-231: Cap walk-up to 10 directory levels. Add to task steps."
+
+  - finding_id: audit-34-F2
+    finding: "Scanner path validation is Linux-only — !resolvedPath.startsWith('/') rejects all Windows paths. Scanner broken on Windows."
+    severity: high
+    status: pending
+    audit_ref: audit-34-m41-plan-gaps
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "M41 task-231: Use path.isAbsolute() instead of .startsWith('/'). Add Windows forbidden dirs (C:\\Windows, C:\\Program Files)."
+
+  - finding_id: audit-34-F3
+    finding: "CLI open command is macOS-only — uses execSync('open ...'). Broken on Linux (xdg-open) and Windows (start)."
+    severity: high
+    status: pending
+    audit_ref: audit-34-m41-plan-gaps
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "M41 task-230: Detect process.platform and use open/xdg-open/start accordingly."
+
+  - finding_id: audit-34-F4
+    finding: "Health endpoint duplicates existing getServerInfo() in shutdown.ts — creates parallel API instead of extending existing one."
+    severity: medium
+    status: pending
+    audit_ref: audit-34-m41-plan-gaps
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "M41 task-227: Extend getServerInfo() to include pid, uptime, projectCount. New health endpoint delegates to it."
+
+  - finding_id: audit-34-F5
+    finding: "Server Manager task-233 ignores existing MaintenancePage with port table, PID display, and Stop buttons — proposes parallel UI."
+    severity: medium
+    status: pending
+    audit_ref: audit-34-m41-plan-gaps
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "M41 task-233: Enhance existing MaintenancePage Server Manager section with health data, do not create parallel component."
+
+  - finding_id: audit-34-F6
+    finding: "Add-project API does not validate that the progress.yaml path exists on the server before accepting the project."
+    severity: medium
+    status: pending
+    audit_ref: audit-34-m41-plan-gaps
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "M41 task-229: Add fs.existsSync check for local paths before saving project config."
+
+  - finding_id: audit-34-F7
+    finding: "CLI project name inference is fragile — uses path.dirname chaining instead of reading project.name from progress.yaml."
+    severity: medium
+    status: pending
+    audit_ref: audit-34-m41-plan-gaps
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "M41 task-230: Read project name from progress.yaml or use the directory name of the resolved project root."
+
+  - finding_id: audit-34-F8
+    finding: "Validator API inconsistency — task-229 uses .validator() while existing projects-config.ts uses .inputValidator()."
+    severity: low
+    status: pending
+    audit_ref: audit-34-m41-plan-gaps
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "M41 task-229: Standardize on .validator() (newer API) across all M41 server functions."
+
+  - finding_id: audit-34-F9
+    finding: "No CLI --status flag to show attached projects without opening browser."
+    severity: low
+    status: pending
+    audit_ref: audit-34-m41-plan-gaps
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "M41 task-230: Add --status flag that GETs /api/health and prints projectCount + project names."
+
+  - finding_id: audit-34-F10
+    finding: "Port file only stores port number — adding PID and timestamp would enable stale detection without health ping."
+    severity: low
+    status: pending
+    audit_ref: audit-34-m41-plan-gaps
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "M41 task-228: Write JSON {port, pid, started} to port file. CLI checks process.kill(pid, 0) for liveness."
+

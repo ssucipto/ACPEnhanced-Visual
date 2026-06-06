@@ -1182,28 +1182,28 @@ tasks:
 recent_work:
   - date: 2026-06-06
     description: |
-      ✅ M40 Complete — Audit Carryover Resolution & Export Hardening.
-      All 10 tasks implemented. Canvas SVG→PNG rasterization with CSS
-      inlining (svgToPngDataUri). Word export now uses PNG images (Word
-      doesn't support SVG data URIs). PDF export uses PNG for consistent
-      cross-browser print. Toast timer cleanup, bg-gray-750 fix,
-      print-color-adjust CSS. React ErrorBoundary component wrapping
-      layout shell. 13 new server function utility tests (110 total).
-      Coverage thresholds calibrated (statements:40, branches:30,
-      functions:35, lines:44). unescape() removed (obsoleted by PNG).
-      110 tests, 17 files, TS 0 errors, build clean, coverage passing.
+      🐛 Export reliability fixes — 7 commits resolving mermaid PNG rendering issues.
+      Root cause chain: (1) tainted canvas from foreignObject/use elements in SVG →
+      uncaught SecurityError on toDataURL. (2) Blank canvas detection falsely
+      triggered on every diagram (single-pixel check at 0,0). (3) dangerouslySetInnerHTML
+      object recreation on every re-render destroyed live SVGs. (4) Clone SVGs passed
+      to getComputedStyle returned detached-element defaults. (5) pre.textContent
+      fallback showed SVG CSS text instead of diagram source.
+      Fixes applied: crossOrigin=anonymous + try/catch on toDataURL, live SVG query,
+      memoized innerHTML, data-mermaid-src fallback, dual-approach (blob + data URI),
+      root SVG styling + 13 CSS props, HTML width attributes for Word compatibility,
+      table width=100% + table-layout:fixed for Word.
+      All 110 tests pass, TS 0 errors, build clean.
     items:
-      - "🎨 Canvas SVG→PNG utility with CSS inlining (svg-to-png.ts)"
-      - "📥 Word export: mermaid diagrams as PNG (Word-compatible)"
-      - "📄 PDF export: mermaid diagrams as PNG (cross-browser)"
-      - "🧹 Removed deprecated unescape() (obsoleted by PNG rasterization)"
-      - "🎨 Fixed bg-gray-750→bg-gray-700 in dark mode sidebar"
-      - "⏱️ Toast timer cleanup (no unmounted setState)"
-      - "🛡️ React ErrorBoundary with a11y role=alert"
-      - "🎨 print-color-adjust CSS standard property"
-      - "🧪 13 new server function utility tests (97→110)"
-      - "📊 Coverage thresholds met (110 tests, 17 files)"
-      - "✅ TS 0 errors, build clean"
+      - "🖼️ svgToPngDataUri: dual-approach resilience (blob + data URI)"
+      - "🔒 crossOrigin=anonymous + try/catch for tainted canvas (SecurityError)"
+      - "📐 Image width=650 for Word (HTML attribute, CSS not respected)"
+      - "📊 Table width=100% + table-layout:fixed for Word"
+      - "🧬 Live SVG query for getComputedStyle (not detached clone)"
+      - "🔄 memoized innerHTML (prevents re-render from destroying SVGs)"
+      - "📝 data-mermaid-src fallback (not SVG CSS text)"
+      - "🎨 Root SVG styling + 13 CSS properties inlined"
+      - "✅ 110 tests, TS 0 errors, build clean"
       - "✓ No artifacts — all templates, skip staleness check"
   - date: 2026-06-06
     description: |

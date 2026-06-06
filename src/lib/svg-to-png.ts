@@ -116,6 +116,8 @@ function renderImageToCanvas(
 ): Promise<string | null> {
   return new Promise((resolve) => {
     const img = new Image();
+    // crossOrigin prevents canvas tainting from SVGs with foreignObject/use elements
+    img.crossOrigin = 'anonymous';
     const done = (result: string | null) => {
       if (src.startsWith('blob:')) URL.revokeObjectURL(src);
       resolve(result);
@@ -134,7 +136,13 @@ function renderImageToCanvas(
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);
-      done(canvas.toDataURL('image/png'));
+      // toDataURL throws SecurityError on tainted canvases — catch gracefully
+      try {
+        done(canvas.toDataURL('image/png'));
+      } catch (e) {
+        console.warn('[svgToPng] tainted canvas — cannot export:', e instanceof Error ? e.message : e);
+        done(null);
+      }
     };
     img.onerror = (e) => {
       console.warn('[svgToPng] load error:', typeof e === 'string' ? e : 'event');

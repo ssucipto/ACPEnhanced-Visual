@@ -309,7 +309,8 @@ export function DocsViewer() {
           if (pngDataUri) {
             const img = document.createElement('img');
             img.src = pngDataUri;
-            img.style.cssText = 'max-width:650px;width:100%;height:auto;display:block;margin:1em auto;';
+            img.setAttribute('width', '650');
+            img.style.cssText = 'max-width:650px;width:650px;height:auto;display:block;margin:1em auto;';
             if (pre) pre.replaceWith(img);
             else container.appendChild(img);
           } else {

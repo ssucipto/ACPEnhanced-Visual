@@ -279,6 +279,7 @@ export function DocsViewer() {
       // IMPORTANT: Query live SVGs for getComputedStyle (clone SVGs are detached)
       const liveContainers = el.querySelectorAll<HTMLElement>('.mermaid-container');
       const containers = clone.querySelectorAll<HTMLElement>('.mermaid-container');
+      console.log('[exportWord] live containers:', liveContainers.length, 'clone containers:', containers.length);
       if (containers.length) {
         const conversions = Array.from(containers).map(async (container, i) => {
           (container as HTMLElement).style.background = 'transparent';
@@ -299,10 +300,12 @@ export function DocsViewer() {
 
           // Use LIVE SVG for getComputedStyle (clone SVG is detached → no styles)
           const liveSvg = liveContainers[i]?.querySelector('svg') as SVGSVGElement | null;
+          console.log('[exportWord] diagram', i, 'liveSvg found:', !!liveSvg, 'clone svg found:', !!svg);
           const pngDataUri = await Promise.race([
             svgToPngDataUri(liveSvg || (svg as unknown as SVGSVGElement)),
             new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
           ]);
+          console.log('[exportWord] diagram', i, 'pngDataUri:', pngDataUri ? 'YES (' + pngDataUri.length + ' chars)' : 'NULL');
 
           const pre = container.querySelector('pre.mermaid');
           if (pngDataUri) {

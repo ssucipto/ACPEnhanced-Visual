@@ -2,29 +2,30 @@
 
 **Task**: task-220  
 **Milestone**: M40 (Audit Carryover Resolution & Export Hardening)  
-**Priority**: P1  
+**Priority**: P3  
 **Status**: not_started  
 **Estimated**: 0.5 hours  
 **Carryover**: audit-29-F1  
+**Validation Gaps Addressed**: G4 (scope clarification), G10 (priority alignment)
 
 ## Objective
 
-Replace the deprecated `unescape()` function used in the base64 encoding pattern with a `TextEncoder`-based approach.
+Replace ALL deprecated `unescape()` function calls in the codebase with a `TextEncoder`-based approach. If tasks 217-219 remove all SVG→base64 code paths, this task may become a no-op — verify and close accordingly.
 
 ## Context
 
-The current code at `DocsViewer.tsx:276` uses:
+**Scope note** (addresses G4): After tasks 217-219 replace the SVG→base64 encoding with Canvas PNG rasterization, there may be zero remaining `unescape()` calls in the codebase. This task should:
+1. Run AFTER tasks 217-219 are complete
+2. Search for `unescape(` across the entire codebase
+3. If no results: mark complete immediately (no-op)
+4. If results found: replace each with TextEncoder approach
+
+The original target was `DocsViewer.tsx:276` which used:
 ```js
 const svgBase64 = btoa(unescape(encodeURIComponent(svgString)));
 ```
 
-`unescape()` is removed from Web standards. The replacement:
-```js
-const bytes = new TextEncoder().encode(svgString);
-const svgBase64 = btoa(String.fromCharCode(...bytes));
-```
-
-Or for very large strings (to avoid stack overflow with spread):
+`unescape()` is removed from Web standards. The replacement for any remaining usage:
 ```js
 function toBase64(str: string): string {
   const bytes = new TextEncoder().encode(str);
@@ -33,18 +34,17 @@ function toBase64(str: string): string {
 }
 ```
 
-Note: After task-217/218/219 are implemented, SVG→base64 encoding will be replaced by Canvas PNG rasterization. But there may be other base64 encodings in the codebase, or the utility itself may encode PNG data. Ensure ALL uses of `unescape()` are removed.
-
 ## Steps
 
-1. Search entire codebase for `unescape(` usage
-2. Replace with `TextEncoder`-based approach at each location
-3. Handle large strings (chunk the Uint8Array if needed)
-4. Verify the base64 output is identical to the old `unescape` approach
+1. After tasks 217-219 are implemented, search entire codebase: `grep -r "unescape(" src/`
+2. If zero results: mark task complete, document as "obsoleted by PNG rasterization"
+3. If results found: replace each occurrence with `TextEncoder`-based approach
+4. Handle large strings (chunk the Uint8Array if needed to avoid stack overflow)
+5. Verify the base64 output is identical to the old `unescape` approach
 
 ## Verification
 
-- [ ] `grep -r "unescape" src/` returns zero results
-- [ ] Base64 encoding produces identical output to old approach
-- [ ] Handles Unicode characters correctly (mermaid diagrams use Unicode)
-- [ ] No stack overflow for large SVG strings (>100KB)
+- [ ] `grep -r "unescape" src/` returns zero results (either removed or never existed)
+- [ ] If replacements made: base64 encoding produces identical output to old approach
+- [ ] If replacements made: handles Unicode characters correctly
+- [ ] If replacements made: no stack overflow for large strings (>100KB)

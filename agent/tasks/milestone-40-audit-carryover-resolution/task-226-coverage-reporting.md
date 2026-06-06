@@ -2,10 +2,12 @@
 
 **Task**: task-226  
 **Milestone**: M40 (Audit Carryover Resolution & Export Hardening)  
-**Priority**: P2  
+**Priority**: P3  
 **Status**: not_started  
 **Estimated**: 1 hour  
+**Depends On**: task-225 (needs server function tests to measure coverage)  
 **Carryover**: audit-19-F1  
+**Validation Gaps Addressed**: G10 (dependency ordering)  
 
 ## Objective
 

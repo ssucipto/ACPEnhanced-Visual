@@ -327,13 +327,24 @@ export function DocsViewer() {
         await Promise.allSettled(conversions);
       }
 
-      // Fix tables for Word — CSS max-width is ignored, use HTML attributes
+      // Fix tables for Word — Word ignores CSS, use HTML attributes + inline styles
+      clone.querySelectorAll('.table-wrapper').forEach((wrapper) => {
+        (wrapper as HTMLElement).style.cssText += ';width:100%;max-width:100%;overflow:hidden;';
+      });
       clone.querySelectorAll('table').forEach((table) => {
         table.setAttribute('width', '100%');
-        (table as HTMLElement).style.tableLayout = 'fixed';
+        const style = (table as HTMLElement).style;
+        style.width = '100%';
+        style.maxWidth = '100%';
+        style.tableLayout = 'fixed';
+        style.wordBreak = 'break-all';
       });
       clone.querySelectorAll('th, td').forEach((cell) => {
-        (cell as HTMLElement).style.wordBreak = 'break-word';
+        const style = (cell as HTMLElement).style;
+        style.width = 'auto';
+        style.wordBreak = 'break-all';
+        style.whiteSpace = 'normal';
+        style.overflowWrap = 'break-word';
       });
 
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>

@@ -302,7 +302,37 @@ This project uses [ACP Enhanced](https://github.com/ssucipto/acp-enhanced) for A
 
 ---
 
-## 📄 License
+## � Troubleshooting
+
+### Windows: Dashboard hangs / terminal error flood
+
+**Symptom**: After starting the visualizer on Windows 10/11, the browser tab freezes and the terminal floods with repeating `[vite] (client) [console.error] ...` messages until the process crashes.
+
+**Cause**: React 19 + TanStack Start SSR produces internal errors that Vite 8 relays from browser→server→browser in an exponential feedback loop. The default devtools plugin amplifies this.
+
+**Fix** (applied in v1.5.3+):
+- Server-side log filter breaks the relay loop at the Vite level
+- TanStack Devtools are disabled by default (opt-in)
+- Client-side console filter broadened to catch relay prefixes
+
+**To enable devtools** (for debugging only):
+```powershell
+# Windows PowerShell
+$env:VITE_ENABLE_DEVTOOLS="true"
+npm run dev
+
+# macOS / Linux
+VITE_ENABLE_DEVTOOLS=true npm run dev
+```
+
+**Still seeing issues?** Verify:
+- Visualizer version ≥ 1.5.3: `npx acp-visualizer --version`
+- No stale install: `rm -rf ~/.acp/visualizer && npx acp-visualizer@latest`
+- Node.js ≥ 18: `node --version`
+
+---
+
+## �📄 License
 
 MIT — see [LICENSE](LICENSE).
 

@@ -43,20 +43,25 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
         {/* Suppress React 19 + TanStack Start SSR streaming errors.
             Without this, repeated SSR errors accumulate and cause Node SIGABRT (~52s).
-            Filter: any error containing 'static flag', 'hydration', or 'TanStack' SSR internals. */}
+            On Windows/Vite 8, errors relay through client→server feedback loop causing
+            exponential terminal flood + browser hang. Fix from feedback-004.
+            Filter: any error containing SSR internals, Vite relay prefixes, or React internal errors.
+            See: agent/feedback/visualizer-windows-hang-2026-06-06.md */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var e=console.error;console.error=function(){for(var i=0;i<arguments.length;i++){var a=arguments[i];if(typeof a==='string'&&(a.indexOf('Expected static flag')!==-1||a.indexOf('hydrat')!==-1||a.indexOf('Suspense')!==-1||a.indexOf('Should have')!==-1))return}e.apply(console,arguments)}})();`,
+            __html: `(function(){var e=console.error;console.error=function(){for(var i=0;i<arguments.length;i++){var a=arguments[i];if(typeof a==='string'&&(a.indexOf('Expected static flag')!==-1||a.indexOf('hydrat')!==-1||a.indexOf('Suspense')!==-1||a.indexOf('Should have')!==-1||a.indexOf('[Server]')!==-1||a.indexOf('[console.error]')!==-1||a.indexOf('Internal React error')!==-1))return}e.apply(console,arguments)}})();`,
           }}
         />
       </head>
       <body>
         {children}
         <ClientOnly>
-          <TanStackDevtools
-            config={{ position: 'bottom-right' }}
-            plugins={[{ name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> }]}
-          />
+          {import.meta.env.VITE_ENABLE_DEVTOOLS === 'true' ? (
+            <TanStackDevtools
+              config={{ position: 'bottom-right' }}
+              plugins={[{ name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> }]}
+            />
+          ) : null}
         </ClientOnly>
         <Scripts />
       </body>

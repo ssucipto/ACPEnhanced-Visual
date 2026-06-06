@@ -309,7 +309,7 @@ export function DocsViewer() {
           if (pngDataUri) {
             const img = document.createElement('img');
             img.src = pngDataUri;
-            img.style.cssText = 'max-width:100%;height:auto;display:block;margin:1em auto;';
+            img.style.cssText = 'max-width:650px;width:100%;height:auto;display:block;margin:1em auto;';
             if (pre) pre.replaceWith(img);
             else container.appendChild(img);
           } else {
@@ -366,7 +366,7 @@ export function DocsViewer() {
           if (pngDataUri) {
             const img = document.createElement('img');
             img.src = pngDataUri;
-            img.style.cssText = 'max-width:100%;height:auto;display:block;margin:1em auto;';
+            img.style.cssText = 'max-width:650px;width:100%;height:auto;display:block;margin:1em auto;';
             svg.replaceWith(img);
           }
           // If rasterization fails, inline SVG stays (graceful degradation)

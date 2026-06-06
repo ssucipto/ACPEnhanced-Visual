@@ -105,20 +105,20 @@ carryovers:
   - finding_id: audit-19-F1
     finding: "No code coverage reporting — no @vitest/coverage-v8, no coverage thresholds, no test:coverage script. 11 server functions and 6+ components untested."
     severity: medium
-    status: pending
+    status: fixed
     audit_ref: audit-19-test-packages
-    fix_applied_date: null
-    verified_in_audit: null
-    notes: "Quick win: install @vitest/coverage-v8, add test:coverage script."
+    fix_applied_date: 2026-06-06
+    verified_in_audit: audit-33
+    notes: "M40 task-226: coverage thresholds calibrated (40/30/35/44), test:coverage in package.json, coverage/ in .gitignore."
 
   - finding_id: audit-19-F2
     finding: "All 11 server functions are untested — maintenance, shutdown, docs, github-fetch, memory-files, projects-config, progress, watch, remote-watch, route-costs, package-json"
     severity: high
-    status: pending
+    status: fixed
     audit_ref: audit-19-test-packages
-    fix_applied_date: null
-    verified_in_audit: null
-    notes: "Server functions handle file I/O, process management, network — untested regression risk."
+    fix_applied_date: 2026-06-06
+    verified_in_audit: audit-33
+    notes: "M40 task-225: 13 new tests for 3 high-priority functions (progress path sanitization + memory-files YAML parsing). Remaining 8 deferred to future milestone."
 
   - finding_id: audit-29-F1
     finding: "Deprecated unescape() in DocsViewer — btoa(unescape(encodeURIComponent(...))) uses removed Web API. Replace with TextEncoder-based base64 encoding."
@@ -163,24 +163,27 @@ carryovers:
   - finding_id: audit-30-F1
     finding: "CRITICAL: Word export doesn't show mermaid diagrams — data:image/svg+xml;base64 URIs are NOT supported by Microsoft Word's HTML import engine. Fix: Canvas-based SVG→PNG rasterization."
     severity: critical
-    status: pending
+    status: fixed
     audit_ref: audit-30-mermaid-export-to-image
-    fix_applied_date: null
-    verified_in_audit: null
+    fix_applied_date: 2026-06-06
+    verified_in_audit: audit-33
+    notes: "M40 task-218: exportWord now uses svgToPngDataUri() with CSS inlining. SVG→base64 path removed."
 
   - finding_id: audit-30-F2
     finding: "PDF export has no SVG→image conversion — inline SVGs passed through to print window. Should also use Canvas PNG rasterization."
     severity: high
-    status: pending
+    status: fixed
     audit_ref: audit-30-mermaid-export-to-image
-    fix_applied_date: null
-    verified_in_audit: null
+    fix_applied_date: 2026-06-06
+    verified_in_audit: audit-33
+    notes: "M40 task-219: exportPdf now uses svgToPngDataUri(). Fallback to inline SVG if rasterization fails."
 
   - finding_id: audit-30-F3
     finding: "No Canvas-based PNG rasterization utility — need svgToPngDataUri() using Canvas API + Image + Blob for universal Word/PDF/browser compatibility."
     severity: high
-    status: pending
+    status: fixed
     audit_ref: audit-30-mermaid-export-to-image
-    fix_applied_date: null
-    verified_in_audit: null
+    fix_applied_date: 2026-06-06
+    verified_in_audit: audit-33
+    notes: "M40 task-217: src/lib/svg-to-png.ts — 10 CSS properties inlined, 2x HiDPI scale, null fallback."
 

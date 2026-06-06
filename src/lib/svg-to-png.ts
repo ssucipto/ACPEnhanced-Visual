@@ -43,7 +43,8 @@ export async function svgToPngDataUri(
 
       if (styles.length) {
         const existing = cln.getAttribute('style') || '';
-        cln.setAttribute('style', existing + styles.join(';'));
+        const newStyles = styles.join(';');
+        cln.setAttribute('style', existing ? `${existing};${newStyles}` : newStyles);
       }
     }
 

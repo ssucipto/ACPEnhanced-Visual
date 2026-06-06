@@ -385,7 +385,9 @@ export function DocsViewer() {
       printWindow.document.close();
       printWindow.focus();
       printWindow.print();
-      printWindow.close();
+      // print() is modal in most browsers but Safari may not block —
+      // defer close to ensure the dialog gets focus first
+      setTimeout(() => printWindow.close(), 500);
     } catch { showToast('⚠️ PDF export failed'); }
   }, [selectedPath, showToast]);
 

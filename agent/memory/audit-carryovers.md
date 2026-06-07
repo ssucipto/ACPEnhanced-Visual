@@ -277,3 +277,48 @@ carryovers:
     verified_in_audit: null
     notes: "M41 task-228: Write JSON {port, pid, started} to port file. CLI checks process.kill(pid, 0) for liveness."
 
+  - finding_id: audit-35-PF1
+    finding: "Health endpoint reads process.env.PORT but Vite may not set it — actual port known only in configureServer hook. Port should be read from port file or server.httpServer.address()."
+    severity: medium
+    status: pending
+    audit_ref: audit-35-m41-pre-impl-readiness
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "Task-228 already writes actual port from configureServer. Ensure task-227 health handler reads port from same source (port file), not env."
+
+  - finding_id: audit-35-PF2
+    finding: "--status flag missing from flags object and switch statement in bin/acp-visualizer.mjs. Must add status: false to flags + case '--status' to switch."
+    severity: medium
+    status: pending
+    audit_ref: audit-35-m41-pre-impl-readiness
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "Task-230 step 3 has the parser code but didn't list it in the flag declarations. Add during implementation."
+
+  - finding_id: audit-35-PF3
+    finding: "server/lib/ directory does not exist. Task-228 creates server/lib/port-file.ts but relies on implicit directory creation."
+    severity: low
+    status: pending
+    audit_ref: audit-35-m41-pre-impl-readiness
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "Add mkdirSync to port-file.ts or create directory as first step in task-228."
+
+  - finding_id: audit-35-PF4
+    finding: "No CHANGELOG entry planned for M41. M41 is P1 with 17h scope — warrants a CHANGELOG entry."
+    severity: low
+    status: pending
+    audit_ref: audit-35-m41-pre-impl-readiness
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "Add CHANGELOG update to task-234 verification checklist."
+
+  - finding_id: audit-35-PF5
+    finding: "No version bump planned. M41 adds new API endpoints and CLI features — warrants minor version bump to 1.6.0."
+    severity: low
+    status: pending
+    audit_ref: audit-35-m41-pre-impl-readiness
+    fix_applied_date: null
+    verified_in_audit: null
+    notes: "Add version bump step to task-234 (npm version minor or manual package.json update)."
+

@@ -5,6 +5,22 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.4] - 2026-06-07
+
+### Added
+
+- **M41 Planned**: Multi-Instance Server Detection & Open Project Folder
+  (8 tasks, 17h, cross-platform). Smart CLI attach, health endpoint,
+  folder scanner API, UI folder picker, Server Manager enhancements.
+- **Audit Badge**: README now shows audit count (37 audits).
+
+### Fixed
+
+- **DocsViewer Drag-and-Drop**: Dropping a `.md` file now correctly
+  transitions from the drop zone to the reading interface. Previously,
+  `handleDrop` set content (triggering TOC) but not `selectedPath`
+  (which gates the reading view). (Audit-36)
+
 ## [1.5.3] - 2026-06-06
 
 ### Added

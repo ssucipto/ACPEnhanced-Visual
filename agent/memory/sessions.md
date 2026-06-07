@@ -2,6 +2,39 @@
 # Format: YAML blocks, last 3 loaded per session, auto-compacted at 15 entries
 # DO NOT edit manually — updated by /acp-commit
 
+- date: 2026-06-07
+  executor: copilot
+  persona: A
+  tasks_completed:
+    - M41-plan-multi-instance-server-detection
+    - audit-34-m41-plan-gaps
+    - audit-35-m41-pre-impl-readiness
+    - audit-36-docsviewer-drag-drop-fix
+    - audit-37-pdf-export-mermaid-regression
+    - docsviewer-drag-drop-bug-fix-committed
+  done:
+    - m41-8-tasks-planned-cross-platform-hardened
+    - audit-34-12-gaps-found-all-addressed-in-task-docs
+    - audit-35-pre-impl-5-preflight-items-ready-verdict
+    - audit-36-drag-drop-fix-setedpath-dropped-file-name
+    - audit-36-droppedref-guard-prevents-server-fetch-race
+    - audit-37-pdf-mermaid-regression-root-cause-pre-wrapper
+    - progress-yaml-updated-recent-work-next-steps-notes
+    - readme-status-active-milestones-17-audits-37
+    - changelog-unreleased-m41-planned-drag-drop-fix
+    - session-committed-10-entries
+  deferred:
+    - m41-implementation-not-started-8-tasks-remaining
+    - audit-37-fix-not-yet-implemented-pdf-export
+    - audit-34-carryovers-10-pending-m41-implementation
+    - m25-milestone-file-missing-legacy-issue
+  key_fact: >
+    Single-source-of-truth for server state: extend existing getServerInfo()
+    instead of creating parallel health endpoint. Same principle applies to
+    MaintenancePage — enhance, don't replace. Cross-platform hardening
+    (path.isAbsolute, process.platform for open command) is cheap to add
+    during planning and expensive to retrofit.
+
 - date: 2026-06-06
   executor: copilot
   persona: A

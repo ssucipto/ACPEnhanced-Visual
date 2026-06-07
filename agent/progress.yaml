@@ -1,6 +1,6 @@
 project:
   name: ACPEnhanced-Visual
-  version: 1.5.3
+  version: 1.5.4
   started: 2026-06-03
   status: active
   current_milestone: M41
@@ -1260,7 +1260,25 @@ tasks:
 recent_work:
   - date: 2026-06-07
     description: |
-      📋 M41 Planned — Multi-Instance Server Detection & Open Project Folder.
+      � Audits #34–#37 + bug fix. Audit-34 found 12 gaps in M41 plan
+      (4 cross-platform, 5 API consistency, 3 UX). All incorporated into
+      task docs. Audit-35 pre-impl readiness: 5 pre-flight items, READY
+      verdict. Audit-36: DocsViewer drag-and-drop stuck on drop zone —
+      fixed (handleDrop missing setSelectedPath). Audit-37: PDF export
+      mermaid regression — root cause identified (pre wrapper not removed).
+    items:
+      - "📋 Audit-34: 12 gaps in M41 plan — all addressed in task docs"
+      - "🔀 Audit-34: Cross-platform hardening — Windows paths, open command, depth cap"
+      - "✅ Audit-35: M41 pre-impl readiness — 5 pre-flight items, READY verdict"
+      - "🐛 Audit-36: DocsViewer drag-and-drop fix — setSelectedPath + droppedRef guard"
+      - "🔍 Audit-37: PDF export mermaid regression — pre wrapper not removed (vs Word)"
+      - "📝 M41 task docs updated: 11h→17h, 1wk→1.5wk, cross-platform aware"
+      - "💾 Commit cb9d9ec: DocsViewer drag-and-drop fix (110 tests pass)"
+      - "📊 110 tests passing, TS 0 errors, build clean"
+
+  - date: 2026-06-07
+    description: |
+      �📋 M41 Planned — Multi-Instance Server Detection & Open Project Folder.
       Smart CLI: detect running instance via ~/.acp-visualizer/port + health
       endpoint, attach new projects via POST /api/projects. Folder scanner API
       for auto-discovering ACP projects. UI folder picker in AddProjectDialog.
@@ -1278,6 +1296,10 @@ recent_work:
       - "🛠️ Server Manager enhancements — live port, PID, uptime, Stop Server"
       - "🧪 Integration tests + docs — health, add-project, scan-folder, CLI"
       - "✓ No artifacts — all templates, skip staleness check"
+
+  - date: 2026-06-06
+    description: |
+      🐛 Export reliability fixes — 7 commits resolving mermaid PNG rendering issues.
       Root cause chain: (1) tainted canvas from foreignObject/use elements in SVG →
       uncaught SecurityError on toDataURL. (2) Blank canvas detection falsely
       triggered on every diagram (single-pixel check at 0,0). (3) dangerouslySetInnerHTML
@@ -1568,15 +1590,19 @@ recent_work:
       - "⚠️ ACP Enhanced fixture has YAML error at M5:148 — sync test handles gracefully"
 
 next_steps:
-  - "🚀 M41: Implement Multi-Instance Server Detection — start with task-227 (health endpoint)"
-  - "🔵 npm publish — ship v1.6.0 to npm registry"
+  - "🚀 M41: Implement task-227 (Health Endpoint — extend getServerInfo)"
+  - "🐛 Fix audit-37: PDF export mermaid regression (pre wrapper removal)"
+  - "🔵 npm publish — ship v1.6.0 after M41 complete"
   - "🔵 Add E2E tests — Playwright full browser flow"
   - "🔵 Accessibility audit — axe-core on all pages"
-  - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
 
 notes:
   - 🎉 16 MILESTONES (M25-M40 complete, M41 planned) — 113 tasks across 16 milestones
-  - 110 tests passing across 15 test files
+  - 110 tests passing across 17 test files
+  - 37 audit reports (4 new: #34 M41 gaps, #35 pre-impl, #36 drag-drop fix, #37 PDF regression)
+  - 10 audit-34 carryovers pending (M41 implementation will resolve)
+  - 5 audit-35 pre-flight items (minor — address during M41 implementation)
+  - M41: 8 tasks, 17h, cross-platform hardened per audit-34/35
   - Coverage reporting enabled via npm run test:coverage
   - ACP Enhanced v6.9.1 framework installed
   - GitHub Actions CI: lint + test + build on push/PR

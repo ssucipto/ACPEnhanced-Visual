@@ -1,12 +1,13 @@
 # 🚀 ACP Progress Visualizer
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.5.3-blue?style=flat-square" alt="Version">
-  <img src="https://img.shields.io/badge/status-completed-success?style=flat-square" alt="Status">
+  <img src="https://img.shields.io/badge/version-1.5.4-blue?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/status-active-brightgreen?style=flat-square" alt="Status">
   <img src="https://img.shields.io/badge/ACP%20Enhanced-v6.9.1-6e47ff?style=flat-square" alt="ACP Enhanced">
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/milestones-16%20complete-blueviolet?style=flat-square" alt="Milestones">
+  <img src="https://img.shields.io/badge/milestones-17%20(16%20done,%201%20planned)-blueviolet?style=flat-square" alt="Milestones">
   <img src="https://img.shields.io/badge/tests-110%20passing-success?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/audits-37-lightgrey?style=flat-square" alt="Audits">
 </p>
 
 > **Bring your ACP Enhanced progress.yaml to life.** A web dashboard that turns structured YAML milestone data into an interactive, sortable, searchable UI. Supports local filesystem and GitHub remote sources, multi-project tabs, and extended ACP memory visualizations.
@@ -55,6 +56,15 @@
 - 🛡️ **React Error Boundary** — graceful fallback UI instead of blank page on render crash
 - ⚠️ **Error Card** — amber warnings for YAML parse/Zod errors with fix steps
 - 🌐 **Multi-Project Normalization** — supports ACP format variants (array milestones, alt statuses)
+
+### Upcoming (M41 — Planned)
+- 🔗 **Smart CLI Attach** — `npx acp-visualizer` detects running instance, attaches new projects instead of spawning new servers
+- 📁 **Folder Picker** — browse for ACP project folders in the Add Project dialog, auto-discovers progress.yaml
+- 🏥 **Health Endpoint** — live server status (port, PID, uptime, project count)
+- 🖥️ **Cross-Platform** — Windows, macOS, Linux support for CLI, folder scanner, and browser open
+
+### Latest Fix (2026-06-07)
+- 🐛 **Drag-and-Drop Fix** — dropping a `.md` file now transitions from drop zone to reading interface (was stuck showing TOC only)
 
 ---
 
